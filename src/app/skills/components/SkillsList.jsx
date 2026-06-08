@@ -405,9 +405,9 @@ export function SkillsList({ skills }) {
                   <div className="lg:col-span-2 flex items-center gap-1.5 text-xs text-text-primary lg:justify-center w-full lg:w-auto border-t lg:border-t-0 border-white/5 pt-3 lg:pt-0">
                     <span className="lg:hidden text-[10px] text-text-secondary font-bold uppercase w-24 shrink-0">Author:</span>
                     <div className="flex items-center gap-1">
-                      <span className="font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer">
+                      <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer">
                         @{skill.ownerUsername || 'unknown'}
-                      </span>
+                      </Link>
                       <CheckCircle2 className="w-3.5 h-3.5 text-kresh-green fill-kresh-green/10" />
                     </div>
                   </div>

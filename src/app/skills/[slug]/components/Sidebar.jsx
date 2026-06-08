@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Download, Star, Terminal, Copy, Check, Info, Calendar, Shield, Award } from 'lucide-react';
 
 /**
@@ -129,15 +130,15 @@ export function Sidebar({ skill, ownerUsername, latestVersion }) {
       {/* Contributor / Publisher */}
       <div className="flex flex-col gap-2.5">
         <h3 className="text-sm font-bold text-text-primary">Publisher</h3>
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 text-sm font-bold text-text-primary uppercase">
+        <Link href={`/@${ownerUsername || 'unknown'}`} className="flex items-center gap-3 hover:opacity-85 transition-opacity">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 text-sm font-bold text-text-primary uppercase shrink-0">
             {ownerUsername ? ownerUsername.charAt(0) : 'U'}
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-semibold text-text-primary">@{ownerUsername || 'unknown'}</span>
+            <span className="text-xs font-semibold text-text-primary hover:text-kresh-green transition-colors">@{ownerUsername || 'unknown'}</span>
             <span className="text-[10px] text-text-secondary">Open registry contributor</span>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { FileText, GitCommit } from 'lucide-react';
 
 /**
@@ -39,11 +40,14 @@ export function FileExplorer({ files, ownerUsername, latestVersion, publishedAt 
       {/* File Explorer Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-color bg-white/[0.02] px-4 py-3 text-xs text-text-secondary">
         <div className="flex items-center gap-2">
-          {/* User Avatar Circle */}
-          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-kresh-green/10 text-[10px] font-bold text-kresh-green uppercase shrink-0">
-            {ownerUsername ? ownerUsername.charAt(0) : 'U'}
-          </div>
-          <span className="font-semibold text-text-primary shrink-0">@{ownerUsername || 'unknown'}</span>
+          <Link href={`/@${ownerUsername || 'unknown'}`} className="flex items-center gap-2 hover:opacity-85 transition-opacity shrink-0">
+            {/* User Avatar Circle */}
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-kresh-green/10 text-[10px] font-bold text-kresh-green uppercase">
+              {ownerUsername ? ownerUsername.charAt(0) : 'U'}
+            </div>
+            <span className="font-semibold text-text-primary">@{ownerUsername || 'unknown'}</span>
+          </Link>
+          <span className="text-text-secondary/30 select-none">|</span>
           <span className="truncate text-text-secondary/85 max-w-[240px] md:max-w-[400px]" title={commitMessage}>
             {commitMessage}
           </span>

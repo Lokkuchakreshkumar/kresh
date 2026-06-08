@@ -19,7 +19,11 @@ export function SkillCard({ skill }) {
         <div className="min-w-0">
           <h2 className="truncate text-lg font-bold text-text-primary">{skill.name}</h2>
           <p className="mt-1 text-xs text-text-secondary">
-            by @{skill.ownerUsername || 'unknown'} | v{skill.currentVersion || '1.0.0'}
+            by{' '}
+            <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold hover:text-text-primary transition-colors">
+              @{skill.ownerUsername || 'unknown'}
+            </Link>{' '}
+            | v{skill.currentVersion || '1.0.0'}
           </p>
         </div>
         <Badge variant="default" className="shrink-0 normal-case">
