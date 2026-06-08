@@ -60,6 +60,7 @@ export default async function PublishSkillPage({ searchParams }) {
           slug: skill.slug,
           description: skill.description || '',
           category: skill.category,
+          visibility: skill.visibility || 'public',
           version: version?.version || '1.0.0',
           markdown
         };

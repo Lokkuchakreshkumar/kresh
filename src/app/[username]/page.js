@@ -51,6 +51,10 @@ export default async function UserProfilePage({ params }) {
     notFound();
   }
 
+  // 6. Check if logged-in user is the profile owner
+  const session = await verifySession();
+  const isOwner = session && session.userId === userRecord.id;
+
   // 2. Fetch user's published skills
   const userSkills = await db
     .select({
@@ -63,11 +67,16 @@ export default async function UserProfilePage({ params }) {
       installsCount: skills.installsCount,
       starsCount: skills.starsCount,
       createdAt: skills.createdAt,
-      ownerUsername: users.username
+      ownerUsername: users.username,
+      visibility: skills.visibility
     })
     .from(skills)
     .leftJoin(users, eq(skills.ownerId, users.id))
-    .where(eq(skills.ownerId, userRecord.id))
+    .where(
+      isOwner
+        ? eq(skills.ownerId, userRecord.id)
+        : and(eq(skills.ownerId, userRecord.id), eq(skills.visibility, 'public'))
+    )
     .orderBy(desc(skills.createdAt));
 
   // 3. Fetch user's received stars for the activity timeline
@@ -108,9 +117,6 @@ export default async function UserProfilePage({ params }) {
   const totalStars = userSkills.reduce((acc, skill) => acc + (skill.starsCount || 0), 0);
   const formattedDate = formatMemberDate(userRecord.createdAt);
 
-  // 6. Check if logged-in user is the profile owner
-  const session = await verifySession();
-  const isOwner = session && session.userId === userRecord.id;
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-kresh-green/30">

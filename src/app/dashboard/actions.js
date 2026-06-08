@@ -73,6 +73,7 @@ export async function createSkillAction(prevState, formData) {
     const name = formData.get('name')?.trim();
     const description = formData.get('description')?.trim();
     const category = formData.get('category')?.trim() || 'Skills';
+    const visibility = formData.get('visibility')?.trim() || 'public';
     const version = formData.get('version')?.trim() || '1.0.0';
     const changelog = formData.get('changelog')?.trim();
     const { content: skillMarkdown, error: markdownError } = await getSkillMarkdown(formData);
@@ -135,6 +136,7 @@ export async function createSkillAction(prevState, formData) {
           .set({
             description: description || null,
             category,
+            visibility,
             currentVersion: version,
             updatedAt: new Date()
           })
@@ -201,7 +203,7 @@ export async function createSkillAction(prevState, formData) {
           name,
           description: description || null,
           category,
-          visibility: 'public',
+          visibility,
           currentVersion: version,
           installsCount: 0,
           starsCount: 0

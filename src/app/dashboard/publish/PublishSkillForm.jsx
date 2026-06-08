@@ -114,6 +114,20 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
           </div>
         </div>
 
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-xs font-semibold uppercase text-text-secondary">Visibility</label>
+            <select
+              name="visibility"
+              defaultValue={initialSkill ? initialSkill.visibility : 'public'}
+              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors focus:border-text-primary/30 [&>option]:bg-background [&>option]:text-text-primary"
+            >
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+        </div>
+
         <div className="space-y-2">
           <label className="text-xs font-semibold uppercase text-text-secondary">Description</label>
           <textarea

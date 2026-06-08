@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, or } from 'drizzle-orm';
 import { db } from '@/db';
 import { skillFiles, skills, skillVersions, skillStars, users } from '@/db/schema';
 import { Footer } from '@/components/layout/Footer';
@@ -23,8 +23,12 @@ export const dynamic = 'force-dynamic';
  *
  * @param {string} slug Skill slug
  */
-async function getSkillWithMarkdown(slug) {
+async function getSkillWithMarkdown(slug, userId = null) {
   try {
+    const whereClause = userId
+      ? and(eq(skills.slug, slug), or(eq(skills.visibility, 'public'), eq(skills.ownerId, userId)))
+      : and(eq(skills.slug, slug), eq(skills.visibility, 'public'));
+
     const skillRows = await db
       .select({
         id: skills.id,
@@ -37,11 +41,12 @@ async function getSkillWithMarkdown(slug) {
         starsCount: skills.starsCount,
         createdAt: skills.createdAt,
         ownerId: skills.ownerId,
-        ownerUsername: users.username
+        ownerUsername: users.username,
+        visibility: skills.visibility
       })
       .from(skills)
       .leftJoin(users, eq(skills.ownerId, users.id))
-      .where(and(eq(skills.slug, slug), eq(skills.visibility, 'public')))
+      .where(whereClause)
       .limit(1);
 
     const skill = skillRows[0];
@@ -98,14 +103,14 @@ async function getSkillWithMarkdown(slug) {
 
 export default async function SkillMarkdownPage({ params }) {
   const { slug } = await params;
-  const data = await getSkillWithMarkdown(slug);
+  const session = await verifySession();
+  const data = await getSkillWithMarkdown(slug, session?.userId);
 
   if (!data) {
     notFound();
   }
 
   const { skill, version, markdown, files } = data;
-  const session = await verifySession();
 
   // Determine if the currently logged-in user has starred this skill
   let isStarred = false;
@@ -144,8 +149,8 @@ export default async function SkillMarkdownPage({ params }) {
             <span className="font-bold text-text-primary font-mono select-all">
               {skill.slug}
             </span>
-            <span className="ml-1.5 rounded-full border border-border-color bg-white/[0.02] px-2 py-0.5 text-[10px] font-semibold text-text-secondary">
-              Public
+            <span className="ml-1.5 rounded-full border border-border-color bg-white/[0.02] px-2 py-0.5 text-[10px] font-semibold text-text-secondary capitalize">
+              {skill.visibility || 'public'}
             </span>
           </div>
 
