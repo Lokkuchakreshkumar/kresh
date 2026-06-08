@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { users, skills, skillStars } from '@/db/schema';
 import { verifySession } from '@/lib/auth';
@@ -43,7 +43,7 @@ export default async function UserProfilePage({ params }) {
   const userRows = await db
     .select()
     .from(users)
-    .where(eq(users.username, username))
+    .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
     .limit(1);
 
   const userRecord = userRows[0];
