@@ -24,6 +24,7 @@ export async function searchSkills(query) {
       if (skill.description) {
         console.log(`   ${skill.description}`);
       }
+      console.log(`   ${logger.dim('Install:')} kresh install ${skill.slug}`);
       console.log();
     });
   } catch (error) {

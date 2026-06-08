@@ -158,6 +158,58 @@ export async function createSkillAction(prevState, formData) {
         return { error: 'Skill not found or unauthorized.' };
       }
 
+      // 1. Ensure title is not getting any fights with the other ones (title conflict check)
+      if (name && name.toLowerCase() !== skill.name.toLowerCase()) {
+        const titleConflict = await db
+          .select()
+          .from(skills)
+          .where(and(eq(sql`LOWER(${skills.name})`, name.toLowerCase()), sql`${skills.id} != ${skillId}`))
+          .limit(1);
+        if (titleConflict.length > 0) {
+          return { error: `A skill with the title "${name}" already exists.` };
+        }
+      }
+
+      // 2. Ensure we only publish if there are actual changes (description, category, visibility, title, or files)
+      const latestVersionRows = await db
+        .select()
+        .from(skillVersions)
+        .where(eq(skillVersions.skillId, skillId))
+        .orderBy(sql`${skillVersions.publishedAt} DESC`)
+        .limit(1);
+
+      let filesChanged = false;
+      if (latestVersionRows.length > 0) {
+        const latestVersion = latestVersionRows[0];
+        const latestFiles = await db
+          .select()
+          .from(skillFiles)
+          .where(eq(skillFiles.skillVersionId, latestVersion.id));
+
+        if (files.length !== latestFiles.length) {
+          filesChanged = true;
+        } else {
+          for (const newFile of files) {
+            const matchedFile = latestFiles.find((lf) => lf.path === newFile.path);
+            if (!matchedFile || matchedFile.content !== newFile.content) {
+              filesChanged = true;
+              break;
+            }
+          }
+        }
+      } else {
+        filesChanged = true;
+      }
+
+      const nameChanged = name && name !== skill.name;
+      const descriptionChanged = (description || null) !== (skill.description || null);
+      const categoryChanged = category !== skill.category;
+      const visibilityChanged = visibility !== skill.visibility;
+
+      if (!nameChanged && !descriptionChanged && !categoryChanged && !visibilityChanged && !filesChanged) {
+        return { error: 'No changes detected. Please update the skill files, name, description, category, or visibility to publish a new version.' };
+      }
+
       // Check if version is already published
       const existingVersionRows = await db
         .select()
@@ -166,7 +218,7 @@ export async function createSkillAction(prevState, formData) {
         .limit(1);
 
       if (existingVersionRows.length > 0) {
-        return { error: `Version ${version} has already been published.` };
+        return { error: `Version ${version} has already been published. Please change the version number.` };
       }
 
       const versionId = crypto.randomUUID();
@@ -181,6 +233,7 @@ export async function createSkillAction(prevState, formData) {
         await tx
           .update(skills)
           .set({
+            name: name || skill.name,
             description: description || null,
             category,
             visibility,
@@ -221,6 +274,16 @@ export async function createSkillAction(prevState, formData) {
       };
     } else {
       // Creation mode: publish a new skill
+      if (name) {
+        const titleConflict = await db
+          .select()
+          .from(skills)
+          .where(eq(sql`LOWER(${skills.name})`, name.toLowerCase()))
+          .limit(1);
+        if (titleConflict.length > 0) {
+          return { error: `A skill with the title "${name}" already exists.` };
+        }
+      }
       const userPrefix = `@${session.username.toLowerCase()}`;
       const nameSlug = slugifySkillName(name);
 

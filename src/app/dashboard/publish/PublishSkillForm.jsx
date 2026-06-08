@@ -58,13 +58,10 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
               maxLength={120}
               placeholder="senior-engineer"
               defaultValue={initialSkill ? initialSkill.name : ''}
-              readOnly={isEditMode}
-              className={`w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors placeholder:text-text-secondary/50 focus:border-text-primary/30 ${
-                isEditMode ? 'opacity-60 cursor-not-allowed select-none' : ''
-              }`}
+              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors placeholder:text-text-secondary/50 focus:border-text-primary/30"
             />
             {isEditMode && (
-              <p className="text-[10px] text-text-secondary/80">Skill name and slug cannot be altered after publication.</p>
+              <p className="text-[10px] text-text-secondary/80">Title can be updated, but the slug remains unchanged.</p>
             )}
           </div>
 
