@@ -65,6 +65,7 @@ async function getPublishedFiles(formData) {
         return { error: 'Select a valid directory to upload.' };
       }
       
+      const seenPaths = new Set();
       let skillMdFound = false;
       for (const file of uploadedFiles) {
         if (!file || file.size === 0) continue;
@@ -73,7 +74,6 @@ async function getPublishedFiles(formData) {
         }
         
         const filePath = file.name;
-        const content = await file.text();
         let normalizedPath = filePath;
         
         if (filePath.toLowerCase() === 'skill.md') {
@@ -81,6 +81,12 @@ async function getPublishedFiles(formData) {
           skillMdFound = true;
         }
         
+        if (seenPaths.has(normalizedPath)) {
+          continue;
+        }
+        seenPaths.add(normalizedPath);
+        
+        const content = await file.text();
         files.push({ path: normalizedPath, content: content });
       }
       
