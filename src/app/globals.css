@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+GB+J:ital,wght@0,100..400;1,100..400&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+GB+J:ital,wght@0,100..400;1,100..400&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap');
 @import "tailwindcss";
 
 ::selection, input::selection, textarea::selection {
@@ -104,8 +104,11 @@ body {
   font-style: normal;
 }
 
-.dotgothic16-regular {
-  font-family: "DotGothic16", sans-serif;
+.doto-regular {
+  font-family: "Doto", sans-serif;
+  font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+  font-variation-settings:
+    "ROND" 0;
 }

@@ -8,7 +8,7 @@ import MagicBento from '@/components/ui/MagicBento';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Glass } from '@/components/ui/Glass';
-import { 
+import {
   Copy, Check, ChevronRight
 } from 'lucide-react';
 
@@ -29,11 +29,10 @@ function CopyButton({ text }) {
   };
 
   return (
-    <button 
+    <button
       onClick={handleCopy}
-      className={`transition-all duration-200 p-1.5 rounded-md hover:bg-text-primary/10 ${
-        copied ? 'text-kresh-green' : 'text-text-secondary hover:text-text-primary'
-      }`}
+      className={`transition-all duration-200 p-1.5 rounded-md hover:bg-text-primary/10 ${copied ? 'text-kresh-green' : 'text-text-secondary hover:text-text-primary'
+        }`}
       aria-label="Copy to clipboard"
     >
       {copied ? (
@@ -81,7 +80,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-kresh-green/30">
       <Header />
-      
+
       <main className="pt-32 pb-16">
         {/* HERO SECTION */}
         {/* HERO SECTION */}
@@ -95,8 +94,8 @@ export default function Home() {
                 { word: "Publish", type: "grotsek" },
                 { word: "Skills.", type: "playwrite" }
               ].map((item, i) => {
-                const fontClass = item.type === "playwrite" 
-                  ? "playwrite-gb-j-hero text-4xl sm:text-5xl text-text-primary" 
+                const fontClass = item.type === "playwrite"
+                  ? "playwrite-gb-j-hero text-4xl sm:text-5xl text-text-primary"
                   : "schibsted-grotesk-hero text-5xl sm:text-6xl text-text-primary";
                 return (
                   <BlurText
@@ -114,19 +113,19 @@ export default function Home() {
             <p className="text-lg text-text-secondary font-semibold max-w-xl leading-relaxed mb-8 mx-auto">
               AI Knows More With Kresh.
             </p>
-            
+
             <div className="relative w-full max-w-sm mb-6 mx-auto">
-              <img 
-                src="/arrow.png" 
-                alt="Arrow pointing to installation command" 
+              <img
+                src="/arrow.png"
+                alt="Arrow pointing to installation command"
                 className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85 [html.light_&]:invert [html.light_&]:opacity-70"
               />
               <Glass className="p-4 flex items-center justify-between group cursor-text w-full">
-                <div className="flex items-center gap-3 dotgothic16-regular text-base">
+                <div className="flex items-center gap-3 doto-regular text-base">
                   <span className="text-kresh-green">$</span>
-                  <span className="text-text-secondary">kresh install senior-engineer</span>
+                  <span className="text-text-secondary">npm i -g @chakresh/kresh</span>
                 </div>
-                <CopyButton text="kresh install senior-engineer" />
+                <CopyButton text="npm i -g @chakresh/kresh" />
               </Glass>
             </div>
 
@@ -150,21 +149,21 @@ export default function Home() {
           <p className="text-xs uppercase text-gray-500 font-semibold mb-10">Works with</p>
           <div className="w-full relative marquee-container py-4">
             {/* Left and right fade/blur overlays to blend the edges beautifully without sharp cuts */}
-            <div 
-              className="absolute left-0 top-0 bottom-0 w-48 bg-background pointer-events-none z-20 backdrop-blur-md" 
-              style={{ 
-                maskImage: 'linear-gradient(to right, black 20%, transparent)', 
-                WebkitMaskImage: 'linear-gradient(to right, black 20%, transparent)' 
-              }} 
+            <div
+              className="absolute left-0 top-0 bottom-0 w-48 bg-background pointer-events-none z-20 backdrop-blur-md"
+              style={{
+                maskImage: 'linear-gradient(to right, black 20%, transparent)',
+                WebkitMaskImage: 'linear-gradient(to right, black 20%, transparent)'
+              }}
             />
-            <div 
-              className="absolute right-0 top-0 bottom-0 w-48 bg-background pointer-events-none z-20 backdrop-blur-md" 
-              style={{ 
-                maskImage: 'linear-gradient(to left, black 20%, transparent)', 
-                WebkitMaskImage: 'linear-gradient(to left, black 20%, transparent)' 
-              }} 
+            <div
+              className="absolute right-0 top-0 bottom-0 w-48 bg-background pointer-events-none z-20 backdrop-blur-md"
+              style={{
+                maskImage: 'linear-gradient(to left, black 20%, transparent)',
+                WebkitMaskImage: 'linear-gradient(to left, black 20%, transparent)'
+              }}
             />
-            
+
             {/* Masked marquee wrapper */}
             <div className="w-full overflow-hidden py-4" style={{ maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)' }}>
               <div className="flex items-center gap-24 animate-marquee w-max pl-12">
@@ -180,10 +179,10 @@ export default function Home() {
                     }
                     return firstHalf.map((logo, i) => (
                       <div key={`a-${i}`} className="flex items-center shrink-0">
-                        <img 
-                          src={logo.src} 
-                          alt={logo.name} 
-                          className="w-16 h-16 object-contain grayscale opacity-45 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer" 
+                        <img
+                          src={logo.src}
+                          alt={logo.name}
+                          className="w-16 h-16 object-contain grayscale opacity-45 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
                         />
                       </div>
                     ));
@@ -204,10 +203,10 @@ export default function Home() {
                     }
                     return secondHalf.map((logo, i) => (
                       <div key={`b-${i}`} className="flex items-center shrink-0">
-                        <img 
-                          src={logo.src} 
-                          alt={logo.name} 
-                          className="w-16 h-16 object-contain grayscale opacity-45 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer" 
+                        <img
+                          src={logo.src}
+                          alt={logo.name}
+                          className="w-16 h-16 object-contain grayscale opacity-45 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-300 cursor-pointer"
                         />
                       </div>
                     ));
@@ -232,7 +231,7 @@ export default function Home() {
             <span className="text-xs uppercase text-gray-500 font-semibold mb-3">Intelligence Schema</span>
             <h2 className="text-3xl font-bold text-text-primary">The Ecosystem Structure</h2>
           </div>
-          <MagicBento 
+          <MagicBento
             textAutoHide={true}
             enableStars={false}
             enableSpotlight={true}
