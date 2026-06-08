@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.KRESH_API_URL || 'http://localhost:3000';
+const baseURL = process.env.KRESH_API_URL || 'https://kresh.vercel.app';
 
 export const api = axios.create({
   baseURL,
