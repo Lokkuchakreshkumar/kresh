@@ -9,7 +9,8 @@ function safeDownloadName(slug) {
 
 export async function GET(request, { params }) {
   try {
-    const { slug } = await params;
+    const { slug: rawSlug } = await params;
+    const slug = decodeURIComponent(Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug || '');
 
     const skillRows = await db
       .select({

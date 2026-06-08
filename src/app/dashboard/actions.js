@@ -220,12 +220,14 @@ export async function createSkillAction(prevState, formData) {
       };
     } else {
       // Creation mode: publish a new skill
-      const slugBase = slugifySkillName(name);
+      const userPrefix = `@${session.username.toLowerCase()}`;
+      const nameSlug = slugifySkillName(name);
 
-      if (!slugBase) {
+      if (!nameSlug) {
         return { error: 'Invalid skill name.' };
       }
 
+      const slugBase = `${userPrefix}/${nameSlug}`;
       let slug = slugBase;
       let counter = 1;
       while (true) {
@@ -233,7 +235,7 @@ export async function createSkillAction(prevState, formData) {
         if (existing.length === 0) {
           break;
         }
-        slug = `${slugBase}-${counter}`;
+        slug = `${userPrefix}/${nameSlug}-${counter}`;
         counter++;
       }
       const id = crypto.randomUUID();

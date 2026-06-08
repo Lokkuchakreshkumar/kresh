@@ -102,7 +102,8 @@ async function getSkillWithMarkdown(slug, userId = null) {
 }
 
 export default async function SkillMarkdownPage({ params }) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug || '');
   const session = await verifySession();
   const data = await getSkillWithMarkdown(slug, session?.userId);
 
@@ -201,7 +202,7 @@ export default async function SkillMarkdownPage({ params }) {
             <div className="flex items-center justify-end gap-3">
               {/* Action buttons */}
               <div className="flex items-center gap-2 shrink-0">
-                <a href={`/api/skills/${skill.slug}/download`}>
+                <a href={`/api/skills/download/${skill.slug}`}>
                   <Button className="rounded-md px-3.5 py-1.5 text-xs font-semibold">
                     Download
                   </Button>

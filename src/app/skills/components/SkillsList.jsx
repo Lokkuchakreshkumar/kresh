@@ -448,7 +448,7 @@ export function SkillsList({ skills }) {
                       View
                     </button>
                   </Link>
-                  <a href={`/api/skills/${skill.slug}/download`}>
+                  <a href={`/api/skills/download/${skill.slug}`}>
                     <button 
                       type="button" 
                       className="rounded border border-border-color bg-text-primary px-4 py-1.5 text-center text-xs font-bold text-background hover:opacity-90 transition-all duration-150 outline-none flex items-center gap-1.5"

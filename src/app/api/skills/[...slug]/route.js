@@ -5,7 +5,8 @@ import { skillFiles, skills, skillVersions, users } from '@/db/schema';
 
 export async function GET(request, { params }) {
   try {
-    const { slug } = await params;
+    const { slug: rawSlug } = await params;
+    const slug = decodeURIComponent(Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug || '');
 
     // Fetch skill and owner details
     const skillRows = await db

@@ -47,7 +47,7 @@ export function SkillCard({ skill }) {
           View SKILL.md
         </Link>
         <a
-          href={`/api/skills/${skill.slug}/download`}
+          href={`/api/skills/download/${skill.slug}`}
           className="rounded border border-border-color bg-text-primary px-3 py-2 text-center font-semibold text-background transition-opacity hover:opacity-90"
         >
           Download
