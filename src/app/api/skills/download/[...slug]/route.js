@@ -4,7 +4,11 @@ import { db } from '@/db';
 import { skillFiles, skills, skillVersions } from '@/db/schema';
 
 function safeDownloadName(slug) {
-  return `${String(slug || 'skill').replace(/[^a-zA-Z0-9-]/g, '-')}-SKILL.md`;
+  if (!slug) return 'skill-SKILL.md';
+  const startsWithAt = slug.startsWith('@');
+  const cleanSlug = slug.replace(/^@/, '');
+  const sanitized = cleanSlug.replace(/[^a-zA-Z0-9-]/g, '-');
+  return `${startsWithAt ? '@' : ''}${sanitized}-SKILL.md`;
 }
 
 export async function GET(request, { params }) {

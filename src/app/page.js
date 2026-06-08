@@ -135,9 +135,9 @@ export default function Home() {
                   {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </a>
-              <a href={session ? `/@${session.username}` : "/signin"}>
+              <a href={session ? `/skills` : "/signin"}>
                 <Button variant="glass" className="font-semibold px-6 py-3">
-                  {session ? "Manage Skills" : "Sign In"}
+                  {session ? "Explore Skills" : "Sign In"}
                 </Button>
               </a>
             </div>

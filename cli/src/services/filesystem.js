@@ -39,6 +39,20 @@ export async function removeLocalSkill(slug) {
   try {
     const targetDir = path.join(process.cwd(), 'skills', slug);
     await fs.rm(targetDir, { recursive: true, force: true });
+    
+    // Clean up empty parent directory (e.g. @username) if it becomes empty
+    if (slug.includes('/')) {
+      const parts = slug.split('/');
+      const parentDir = path.join(process.cwd(), 'skills', parts[0]);
+      try {
+        const files = await fs.readdir(parentDir);
+        if (files.length === 0) {
+          await fs.rmdir(parentDir);
+        }
+      } catch (e) {
+        // Ignore errors if directory is not empty or doesn't exist
+      }
+    }
     return true;
   } catch (error) {
     console.error('Failed to remove skill files from the skills directory:', error);
@@ -63,15 +77,43 @@ export async function listLocalSkills() {
     const skills = [];
     for (const entry of entries) {
       if (entry.isDirectory()) {
-        const metadata = await readLocalSkillMetadata(entry.name);
-        if (metadata) {
-          skills.push({
-            slug: metadata.slug || entry.name,
-            installed: true,
-            version: metadata.version || metadata.currentVersion || 'unknown',
-            name: metadata.name || 'unknown',
-            description: metadata.description || ''
-          });
+        if (entry.name.startsWith('@')) {
+          // It's a user scope directory, scan subdirectories inside it
+          const scopeDir = path.join(skillsDir, entry.name);
+          let subEntries = [];
+          try {
+            subEntries = await fs.readdir(scopeDir, { withFileTypes: true });
+          } catch (e) {
+            continue;
+          }
+          
+          for (const subEntry of subEntries) {
+            if (subEntry.isDirectory()) {
+              const scopedSlug = `${entry.name}/${subEntry.name}`;
+              const metadata = await readLocalSkillMetadata(scopedSlug);
+              if (metadata) {
+                skills.push({
+                  slug: metadata.slug || scopedSlug,
+                  installed: true,
+                  version: metadata.version || metadata.currentVersion || 'unknown',
+                  name: metadata.name || 'unknown',
+                  description: metadata.description || ''
+                });
+              }
+            }
+          }
+        } else {
+          // Standard/global skill directory
+          const metadata = await readLocalSkillMetadata(entry.name);
+          if (metadata) {
+            skills.push({
+              slug: metadata.slug || entry.name,
+              installed: true,
+              version: metadata.version || metadata.currentVersion || 'unknown',
+              name: metadata.name || 'unknown',
+              description: metadata.description || ''
+            });
+          }
         }
       }
     }

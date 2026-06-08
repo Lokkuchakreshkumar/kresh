@@ -1,11 +1,12 @@
 'use server';
 
 import { db } from '@/db';
-import { skills, skillFiles, skillVersions } from '@/db/schema';
+import { skills, skillFiles, skillVersions, skillStars } from '@/db/schema';
 import { verifySession } from '@/lib/auth';
 import crypto from 'crypto';
 import { revalidatePath } from 'next/cache';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
 
 const MAX_SKILL_FILE_BYTES = 256 * 1024;
 const DEFAULT_SKILL_MD = `# Skill Name
@@ -298,4 +299,67 @@ export async function createSkillAction(prevState, formData) {
 
 export async function getDefaultSkillMarkdown() {
   return DEFAULT_SKILL_MD;
+}
+
+export async function deleteSkillAction(skillId) {
+  let isSuccessful = false;
+  let redirectUrl = '/skills';
+  try {
+    const session = await verifySession();
+    if (!session) {
+      return { error: 'Unauthorized. Please sign in again.' };
+    }
+
+    const existingSkillRows = await db
+      .select({ id: skills.id, slug: skills.slug })
+      .from(skills)
+      .where(and(eq(skills.id, skillId), eq(skills.ownerId, session.userId)))
+      .limit(1);
+
+    const skill = existingSkillRows[0];
+    if (!skill) {
+      return { error: 'Skill not found or unauthorized.' };
+    }
+
+    redirectUrl = `/@${session.username}`;
+
+    await db.transaction(async (tx) => {
+      // 1. Get all version IDs for this skill
+      const versions = await tx
+        .select({ id: skillVersions.id })
+        .from(skillVersions)
+        .where(eq(skillVersions.skillId, skillId));
+
+      const versionIds = versions.map(v => v.id);
+
+      // 2. Delete from skill_files
+      for (const vid of versionIds) {
+        await tx.delete(skillFiles).where(eq(skillFiles.skillVersionId, vid));
+      }
+
+      // 3. Delete from skill_versions
+      await tx.delete(skillVersions).where(eq(skillVersions.skillId, skillId));
+
+      // 4. Delete from skill_stars
+      await tx.delete(skillStars).where(eq(skillStars.skillId, skillId));
+
+      // 5. Delete from collection_skills
+      await tx.execute(sql`DELETE FROM collection_skills WHERE skill_id = ${skillId}`);
+
+      // 6. Delete from skills
+      await tx.delete(skills).where(eq(skills.id, skillId));
+    });
+
+    revalidatePath('/dashboard');
+    revalidatePath(`/@${session.username}`);
+    revalidatePath('/skills');
+    isSuccessful = true;
+  } catch (error) {
+    console.error("Failed to delete skill:", error);
+    return { error: 'An error occurred while deleting the skill.' };
+  }
+
+  if (isSuccessful) {
+    redirect(redirectUrl);
+  }
 }

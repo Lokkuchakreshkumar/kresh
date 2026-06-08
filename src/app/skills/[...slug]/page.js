@@ -14,6 +14,7 @@ import { SkillHeaderActions } from './components/SkillHeaderActions';
 import { FileExplorer } from './components/FileExplorer';
 import { ReadmeContainer } from './components/ReadmeContainer';
 import { Sidebar } from './components/Sidebar';
+import { deleteSkillAction } from '@/app/dashboard/actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -202,6 +203,16 @@ export default async function SkillMarkdownPage({ params }) {
             <div className="flex items-center justify-end gap-3">
               {/* Action buttons */}
               <div className="flex items-center gap-2 shrink-0">
+                {isOwner && (
+                  <form action={async () => {
+                    'use server';
+                    await deleteSkillAction(skill.id);
+                  }}>
+                    <Button type="submit" variant="outline" className="border border-red-500/30 hover:bg-red-500/10 text-red-400 hover:text-red-300 rounded-md px-3.5 py-1.5 text-xs font-semibold">
+                      Delete Skill
+                    </Button>
+                  </form>
+                )}
                 <a href={`/api/skills/download/${skill.slug}`}>
                   <Button className="rounded-md px-3.5 py-1.5 text-xs font-semibold">
                     Download
