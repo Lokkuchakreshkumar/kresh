@@ -140,34 +140,60 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
         </div>
 
         <fieldset className="space-y-4">
-          <legend className="text-xs font-semibold uppercase text-text-secondary">SKILL.md source</legend>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <label className="flex cursor-pointer items-center justify-between rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary">
-              <span>Write SKILL.md</span>
+          <legend className="text-xs font-semibold uppercase text-text-secondary">Publish Method</legend>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border p-5 text-center transition-all duration-200 ${
+              source === 'editor'
+                ? 'border-white bg-white/10 text-text-primary shadow-lg shadow-white/5'
+                : 'border-border-color bg-text-primary/5 text-text-secondary hover:border-white/10'
+            }`}>
+              <span className="text-sm font-bold">Write SKILL.md</span>
+              <span className="mt-1 text-[10px] text-text-secondary/80">Use the built-in editor</span>
               <input
                 type="radio"
                 name="source"
                 value="editor"
                 checked={source === 'editor'}
                 onChange={handleSourceChange}
-                className="accent-white"
+                className="mt-3 accent-white"
               />
             </label>
-            <label className="flex cursor-pointer items-center justify-between rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary">
-              <span>Upload SKILL.md</span>
+            <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border p-5 text-center transition-all duration-200 ${
+              source === 'upload'
+                ? 'border-white bg-white/10 text-text-primary shadow-lg shadow-white/5'
+                : 'border-border-color bg-text-primary/5 text-text-secondary hover:border-white/10'
+            }`}>
+              <span className="text-sm font-bold">Upload SKILL.md File</span>
+              <span className="mt-1 text-[10px] text-text-secondary/80">Select a single markdown file</span>
               <input
                 type="radio"
                 name="source"
                 value="upload"
                 checked={source === 'upload'}
                 onChange={handleSourceChange}
-                className="accent-white"
+                className="mt-3 accent-white"
+              />
+            </label>
+            <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border p-5 text-center transition-all duration-200 ${
+              source === 'folder'
+                ? 'border-white bg-white/10 text-text-primary shadow-lg shadow-white/5'
+                : 'border-border-color bg-text-primary/5 text-text-secondary hover:border-white/10'
+            }`}>
+              <span className="text-sm font-bold">Upload Skill Folder</span>
+              <span className="mt-1 text-[10px] text-text-secondary/80">Select a folder with multiple files</span>
+              <input
+                type="radio"
+                name="source"
+                value="folder"
+                checked={source === 'folder'}
+                onChange={handleSourceChange}
+                className="mt-3 accent-white"
               />
             </label>
           </div>
         </fieldset>
 
-        {source === 'editor' ? (
+        {source === 'editor' && (
           <div className="space-y-2">
             <label className="text-xs font-semibold uppercase text-text-secondary">SKILL.md</label>
             <textarea
@@ -177,7 +203,9 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
               className="min-h-[420px] w-full resize-y rounded-lg border border-border-color bg-text-primary/5 px-4 py-4 font-mono text-sm leading-6 text-text-primary outline-none transition-colors focus:border-text-primary/30"
             />
           </div>
-        ) : (
+        )}
+
+        {source === 'upload' && (
           <div className="space-y-2 rounded-lg border border-border-color bg-text-primary/5 p-4">
             <label className="text-xs font-semibold uppercase text-text-secondary">Upload markdown</label>
             <input
@@ -186,8 +214,25 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
               accept=".md,text/markdown,text/plain"
               className="block w-full cursor-pointer rounded-lg border border-border-color bg-text-primary/5 text-sm text-text-secondary file:mr-4 file:border-0 file:bg-text-primary file:px-4 file:py-3 file:text-sm file:font-semibold file:text-background"
             />
-            <p className="text-xs leading-5 text-text-secondary">
+            <p className="text-xs leading-5 text-text-secondary mt-1">
               Upload the skill instructions as Markdown. The registry stores it as `SKILL.md`.
+            </p>
+          </div>
+        )}
+
+        {source === 'folder' && (
+          <div className="space-y-2 rounded-lg border border-border-color bg-text-primary/5 p-4">
+            <label className="text-xs font-semibold uppercase text-text-secondary">Upload skill folder</label>
+            <input
+              name="skillFolder"
+              type="file"
+              webkitdirectory=""
+              directory=""
+              multiple
+              className="block w-full cursor-pointer rounded-lg border border-border-color bg-text-primary/5 text-sm text-text-secondary file:mr-4 file:border-0 file:bg-text-primary file:px-4 file:py-3 file:text-sm file:font-semibold file:text-background"
+            />
+            <p className="text-xs leading-5 text-text-secondary mt-1">
+              Select a folder. The registry will upload all files inside it. A `SKILL.md` file is required.
             </p>
           </div>
         )}
