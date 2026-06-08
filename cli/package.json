@@ -1,16 +1,17 @@
 {
   "name": "@chakresh/kresh",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "bin": {
     "kresh": "./src/index.js"
   },
   "type": "module",
   "dependencies": {
-    "commander": "^11.1.0",
+    "@chakresh/kresh": "^0.1.1",
     "axios": "^1.6.8",
     "chalk": "^5.3.0",
-    "ora": "^8.0.1",
-    "inquirer": "^9.2.16"
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.16",
+    "ora": "^8.0.1"
   },
   "publishConfig": {
     "access": "public"
