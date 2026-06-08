@@ -563,7 +563,7 @@ export const MagicBento = ({
           const cardProps = {
             className: baseClassName,
             style: {
-              backgroundColor: card.color,
+              '--card-bg': card.color,
               '--glow-color': glowColor
             }
           };
