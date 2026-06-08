@@ -131,12 +131,12 @@ export default function Home() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-              <a href={session ? "/dashboard" : "/signup"}>
+              <a href={session ? `/@${session.username}` : "/signup"}>
                 <Button className="font-semibold px-6 py-3">
                   {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </a>
-              <a href={session ? "/dashboard" : "/signin"}>
+              <a href={session ? `/@${session.username}` : "/signin"}>
                 <Button variant="glass" className="font-semibold px-6 py-3">
                   {session ? "Manage Skills" : "Sign In"}
                 </Button>

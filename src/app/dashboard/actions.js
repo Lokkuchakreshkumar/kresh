@@ -160,6 +160,7 @@ export async function createSkillAction(prevState, formData) {
       });
 
       revalidatePath('/dashboard');
+      revalidatePath(`/@${session.username}`);
       revalidatePath(`/skills/${skill.slug}`);
       return {
         success: `Version ${version} published successfully.`,
@@ -174,8 +175,16 @@ export async function createSkillAction(prevState, formData) {
         return { error: 'Invalid skill name.' };
       }
 
-      const randomSuffix = crypto.randomBytes(3).toString('hex');
-      const slug = `${slugBase}-${randomSuffix}`;
+      let slug = slugBase;
+      let counter = 1;
+      while (true) {
+        const existing = await db.select().from(skills).where(eq(skills.slug, slug));
+        if (existing.length === 0) {
+          break;
+        }
+        slug = `${slugBase}-${counter}`;
+        counter++;
+      }
       const id = crypto.randomUUID();
       const versionId = crypto.randomUUID();
       const fileId = crypto.randomUUID();
@@ -216,6 +225,7 @@ export async function createSkillAction(prevState, formData) {
       });
 
       revalidatePath('/dashboard');
+      revalidatePath(`/@${session.username}`);
       revalidatePath('/dashboard/publish');
       return {
         success: 'Skill published successfully.',

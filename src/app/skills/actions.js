@@ -81,6 +81,7 @@ export async function toggleStarAction(skillId) {
       revalidatePath(`/skills/${slug}`);
       revalidatePath(`/skills`);
       revalidatePath(`/dashboard`);
+      revalidatePath(`/@${session.username}`);
     }
 
     return { success: true, starred, starsCount: updatedStarsCount };

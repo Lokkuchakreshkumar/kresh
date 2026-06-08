@@ -2,42 +2,78 @@
 
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { hashPassword, verifyPassword, createSession, deleteSession, verifySession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import crypto from 'crypto';
 
 export async function signupAction(prevState, formData) {
-  const username = formData.get('username');
-  const email = formData.get('email');
-  const password = formData.get('password');
+  try {
+    const rawUsername = formData.get('username');
+    const rawEmail = formData.get('email');
+    const password = formData.get('password');
 
-  if (!username || !email || !password) {
-    return { error: 'All fields are required.' };
+    if (!rawUsername || !rawEmail || !password) {
+      return { error: 'All fields are required.' };
+    }
+
+    let username = rawUsername.trim();
+    if (username.startsWith('@')) {
+      username = username.substring(1);
+    }
+
+    if (!username) {
+      return { error: 'Username is required.' };
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+      return { error: 'Username can only contain letters, numbers, underscores, or hyphens.' };
+    }
+
+    if (username.length < 3) {
+      return { error: 'Username must be at least 3 characters long.' };
+    }
+
+    const email = rawEmail.trim().toLowerCase();
+
+    // Check if user already exists (case-insensitive email check)
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(sql`lower(${users.email})`, email))
+      .limit(1);
+
+    if (existingUser.length > 0) {
+      return { error: 'User already exists.' };
+    }
+
+    // Check if username is taken (case-insensitive username check)
+    const existingUsername = await db
+      .select()
+      .from(users)
+      .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
+      .limit(1);
+
+    if (existingUsername.length > 0) {
+      return { error: 'Username is taken.' };
+    }
+
+    const hashedPassword = await hashPassword(password);
+    const id = crypto.randomUUID();
+
+    await db.insert(users).values({
+      id,
+      username,
+      email,
+      passwordHash: hashedPassword,
+    });
+
+    await createSession(id, username);
+  } catch (error) {
+    console.error('Signup action failed:', error);
+    return { error: 'An unexpected error occurred during signup.' };
   }
 
-  // Check if user already exists
-  const existingUser = await db.select().from(users).where(eq(users.email, email));
-  if (existingUser.length > 0) {
-    return { error: 'User already exists.' };
-  }
-
-  const existingUsername = await db.select().from(users).where(eq(users.username, username));
-  if (existingUsername.length > 0) {
-    return { error: 'Username is taken.' };
-  }
-
-  const hashedPassword = await hashPassword(password);
-  const id = crypto.randomUUID();
-
-  await db.insert(users).values({
-    id,
-    username,
-    email,
-    passwordHash: hashedPassword,
-  });
-
-  await createSession(id, username);
   redirect('/');
 }
 

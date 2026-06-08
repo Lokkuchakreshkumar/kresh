@@ -57,7 +57,7 @@ export function Header() {
           <div className="hidden sm:flex items-center gap-4">
             {session ? (
               <div className="flex items-center gap-4">
-                <a href="/dashboard" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1.5">
+                <a href={`/@${session.username}`} className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
                   @{session.username}
                 </a>
