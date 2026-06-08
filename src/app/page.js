@@ -121,7 +121,7 @@ export default function Home() {
                 className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85 [html.light_&]:invert [html.light_&]:opacity-70"
               />
               <Glass className="p-4 flex items-center justify-between group cursor-text w-full">
-                <div className="flex items-center gap-3 doto-bold text-base">
+                <div className="flex items-center gap-3 font-schibsted text-base">
                   <span className="text-kresh-green">$</span>
                   <span className="text-text-secondary font-bold">npm i -g @chakresh/kresh</span>
                 </div>
