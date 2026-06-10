@@ -51,14 +51,33 @@ export async function getWorkspaceRoot(startDir = process.cwd()) {
 /**
  * Writes the SKILL.md and metadata.json files directly in a folder named after the skill's slug (excluding @owner scope folder) inside the skills folder.
  */
-export async function writeLocalSkill(slug, skillContent, metadata, baseDir = 'skills') {
+export async function writeLocalSkill(slug, skillContent, metadata, baseDir = 'skills', files = []) {
   try {
     const rootDir = await getWorkspaceRoot();
     const folderName = (slug || metadata.slug).split('/').pop();
     const targetDir = path.join(rootDir, baseDir, folderName);
     
     await fs.mkdir(targetDir, { recursive: true });
-    await fs.writeFile(path.join(targetDir, 'SKILL.md'), skillContent, 'utf8');
+    
+    if (files && files.length > 0) {
+      for (const file of files) {
+        const filePath = path.join(targetDir, file.path);
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+        if (file.fileType === 'image' && file.content.startsWith('data:image')) {
+          const base64Data = file.content.replace(/^data:image\/\w+;base64,/, "");
+          await fs.writeFile(filePath, Buffer.from(base64Data, 'base64'));
+        } else {
+          await fs.writeFile(filePath, file.content, 'utf8');
+        }
+      }
+      // Ensure SKILL.md is written even if missing from files (fallback)
+      if (!files.some(f => f.path === 'SKILL.md') && skillContent) {
+        await fs.writeFile(path.join(targetDir, 'SKILL.md'), skillContent, 'utf8');
+      }
+    } else {
+      await fs.writeFile(path.join(targetDir, 'SKILL.md'), skillContent, 'utf8');
+    }
+    
     await fs.writeFile(path.join(targetDir, 'metadata.json'), JSON.stringify(metadata, null, 2), 'utf8');
     return targetDir;
   } catch (error) {

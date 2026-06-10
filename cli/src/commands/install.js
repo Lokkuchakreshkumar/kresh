@@ -15,7 +15,7 @@ export async function installSkill(skillSlug, isRetry = false) {
   const spinner = ora(`Fetching skill "${skillSlug}"...`).start();
   try {
     const response = await api.get(`/api/skills/${skillSlug}`);
-    const { skillContent, ...metadata } = response.data;
+    const { skillContent, files, ...metadata } = response.data;
     spinner.stop();
 
     if (metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'AGENT.md/CLAUDE.md' || metadata.category === 'Agents') {
@@ -51,6 +51,21 @@ export async function installSkill(skillSlug, isRetry = false) {
         if (shouldWrite) {
           spinner.start(`Writing ${fileName} to root directory...`);
           await fs.writeFile(targetPath, skillContent, 'utf8');
+          
+          if (files && files.length > 0) {
+            for (const file of files) {
+              if (file.path === 'SKILL.md') continue;
+              const filePath = path.join(rootDir, file.path);
+              await fs.mkdir(path.dirname(filePath), { recursive: true });
+              if (file.fileType === 'image') {
+                const base64Data = file.content.replace(/^data:image\/\w+;base64,/, "");
+                await fs.writeFile(filePath, Buffer.from(base64Data, 'base64'));
+              } else {
+                await fs.writeFile(filePath, file.content, 'utf8');
+              }
+            }
+          }
+          
           spinner.succeed(`Successfully installed ${logger.bold(metadata.name)} (v${metadata.currentVersion}) by @${metadata.ownerUsername}`);
           logger.info(`Saved to: ${logger.bold(targetPath)}`);
         } else {
@@ -76,7 +91,7 @@ export async function installSkill(skillSlug, isRetry = false) {
     ]);
 
     spinner.start('Writing skill files locally...');
-    const savedDir = await writeLocalSkill(skillSlug, skillContent, metadata, agentType);
+    const savedDir = await writeLocalSkill(skillSlug, skillContent, metadata, agentType, files);
 
     spinner.succeed(`Successfully installed ${logger.bold(metadata.name)} (v${metadata.currentVersion}) by @${metadata.ownerUsername}`);
     logger.info(`Saved to: ${logger.bold(savedDir)}`);
