@@ -60,8 +60,23 @@ export async function installSkill(skillSlug, isRetry = false) {
       }
     }
 
+    const { agentType } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'agentType',
+        message: 'Which AI Agent are you installing this skill for?',
+        choices: [
+          { name: 'Antigravity (.agents/skills)', value: '.agents/skills' },
+          { name: 'Claude Code (.claude/skills)', value: '.claude/skills' },
+          { name: 'Codex (.codex/skills)', value: '.codex/skills' },
+          { name: 'Cursor (.cursor/skills)', value: '.cursor/skills' },
+          { name: 'Standard / Other (skills)', value: 'skills' }
+        ]
+      }
+    ]);
+
     spinner.start('Writing skill files locally...');
-    const savedDir = await writeLocalSkill(skillSlug, skillContent, metadata);
+    const savedDir = await writeLocalSkill(skillSlug, skillContent, metadata, agentType);
 
     spinner.succeed(`Successfully installed ${logger.bold(metadata.name)} (v${metadata.currentVersion}) by @${metadata.ownerUsername}`);
     logger.info(`Saved to: ${logger.bold(savedDir)}`);
