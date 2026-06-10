@@ -18,7 +18,7 @@ export async function installSkill(skillSlug, isRetry = false) {
     const { skillContent, ...metadata } = response.data;
     spinner.stop();
 
-    if (metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'Agents') {
+    if (metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'AGENT.md/CLAUDE.md' || metadata.category === 'Agents') {
       const { fileName } = await inquirer.prompt([
         {
           type: 'list',
