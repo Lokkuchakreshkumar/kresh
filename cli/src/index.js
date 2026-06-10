@@ -19,8 +19,12 @@ program
   .command('install <skill>')
   .alias('i')
   .description('Install a skill locally')
-  .action(async (skill) => {
-    await installSkill(skill);
+  .option('--claude', 'Install for Claude Code')
+  .option('--codex', 'Install for Codex')
+  .option('--agy', 'Install for Antigravity')
+  .option('--cursor', 'Install for Cursor')
+  .action(async (skill, options) => {
+    await installSkill(skill, false, options);
   });
 
 program

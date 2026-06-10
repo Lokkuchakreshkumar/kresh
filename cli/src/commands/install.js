@@ -11,7 +11,7 @@ import { cliAuthFlow, getToken } from '../services/auth.js';
 /**
  * Installs a skill from the registry locally.
  */
-export async function installSkill(skillSlug, isRetry = false) {
+export async function installSkill(skillSlug, isRetry = false, options = {}) {
   const spinner = ora(`Fetching skill "${skillSlug}"...`).start();
   try {
     const response = await api.get(`/api/skills/${skillSlug}`);
@@ -75,20 +75,28 @@ export async function installSkill(skillSlug, isRetry = false) {
       }
     }
 
-    const { agentType } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'agentType',
-        message: 'Which AI Agent are you installing this skill for?',
-        choices: [
-          { name: 'Antigravity (.agents/skills)', value: '.agents/skills' },
-          { name: 'Claude Code (.claude/skills)', value: '.claude/skills' },
-          { name: 'Codex (.codex/skills)', value: '.codex/skills' },
-          { name: 'Cursor (.cursor/skills)', value: '.cursor/skills' },
-          { name: 'Standard / Other (skills)', value: 'skills' }
-        ]
-      }
-    ]);
+    let agentType = 'skills';
+    if (options.claude) agentType = '.claude/skills';
+    else if (options.codex) agentType = '.codex/skills';
+    else if (options.agy) agentType = '.agents/skills';
+    else if (options.cursor) agentType = '.cursor/skills';
+    else {
+      const answers = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'agentType',
+          message: 'Which AI Agent are you installing this skill for?',
+          choices: [
+            { name: 'Antigravity (.agents/skills)', value: '.agents/skills' },
+            { name: 'Claude Code (.claude/skills)', value: '.claude/skills' },
+            { name: 'Codex (.codex/skills)', value: '.codex/skills' },
+            { name: 'Cursor (.cursor/skills)', value: '.cursor/skills' },
+            { name: 'Standard / Other (skills)', value: 'skills' }
+          ]
+        }
+      ]);
+      agentType = answers.agentType;
+    }
 
     spinner.start('Writing skill files locally...');
     const savedDir = await writeLocalSkill(skillSlug, skillContent, metadata, agentType, files);

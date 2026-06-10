@@ -45,7 +45,20 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
 
   return (
     <Glass className="border-white/10 bg-white/[0.02] p-6 sm:p-8">
-      <form action={formAction} className="space-y-8">
+      <form action={(formData) => {
+        if (source === 'folder') {
+          const input = document.querySelector('input[name="skillFolder"]');
+          if (input && input.files && input.files.length > 0) {
+            formData.delete('skillFolder');
+            for (let i = 0; i < input.files.length; i++) {
+              const file = input.files[i];
+              // Use webkitRelativePath to preserve the folder structure
+              formData.append('skillFolder', file, file.webkitRelativePath || file.name);
+            }
+          }
+        }
+        formAction(formData);
+      }} className="space-y-8">
         {/* Hidden inputs to pass skillId and edit mode indicator */}
         {isEditMode && <input type="hidden" name="skillId" value={initialSkill.id} />}
 

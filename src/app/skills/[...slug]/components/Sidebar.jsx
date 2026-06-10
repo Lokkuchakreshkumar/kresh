@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Download, Star, Terminal, Copy, Check, Info, Calendar, Shield, Award } from 'lucide-react';
+import { Download, Star, Terminal, Copy, Check, Info, Calendar, Shield, Award, X, ChevronRight, MonitorSmartphone } from 'lucide-react';
 
 /**
  * Sidebar Component
@@ -10,17 +10,44 @@ import { Download, Star, Terminal, Copy, Check, Info, Calendar, Shield, Award } 
  */
 export function Sidebar({ skill, ownerUsername, latestVersion }) {
   const [copied, setCopied] = useState(false);
-  const installText = `kresh install ${skill.slug}`;
+  const [showInstallOptions, setShowInstallOptions] = useState(false);
+  const [selectedEnv, setSelectedEnv] = useState(null);
+  const [copiedEnv, setCopiedEnv] = useState(false);
+  
+  const isAgentConfig = skill.category === 'AGENTS.md/CLAUDE.md' || skill.category === 'AGENT.md/CLAUDE.md' || skill.category === 'Agents';
+  const baseInstallText = `kresh install ${skill.slug}`;
+
+  const getEnvInstallText = () => {
+    if (!selectedEnv) return baseInstallText;
+    return `kresh install ${skill.slug} --${selectedEnv}`;
+  };
+
+  const handleCopyEnv = async () => {
+    try {
+      await navigator.clipboard.writeText(getEnvInstallText());
+      setCopiedEnv(true);
+      setTimeout(() => setCopiedEnv(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text to clipboard:', err);
+    }
+  };
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(installText);
+      await navigator.clipboard.writeText(baseInstallText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy text to clipboard:', err);
     }
   };
+
+  const environments = [
+    { id: 'claude', name: 'Claude Code', image: '/install_images/claude_code.png' },
+    { id: 'codex', name: 'Codex', image: '/install_images/codex.png' },
+    { id: 'agy', name: 'Antigravity', image: '/install_images/antigravity.png' },
+    { id: 'cursor', name: 'Cursor', image: '/install_images/cursor.png' },
+  ];
 
   const publishDate = latestVersion?.publishedAt 
     ? new Date(latestVersion.publishedAt).toLocaleDateString(undefined, {
@@ -59,31 +86,111 @@ export function Sidebar({ skill, ownerUsername, latestVersion }) {
 
       <hr className="border-white/10" />
 
-      {/* Install Command */}
+      {/* Install Action */}
       <div className="flex flex-col gap-2.5">
         <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
           <Terminal className="w-4 h-4 text-text-secondary" />
-          Install CLI Command
+          Installation
         </h3>
-        <div className="flex items-center justify-between rounded-lg border border-border-color bg-white/[0.01] p-3 text-xs font-mono text-text-secondary backdrop-blur-sm">
-          <div className="flex items-center gap-2 truncate">
-            <span className="text-kresh-green shrink-0">$</span>
-            <span className="truncate text-text-primary select-all">{installText}</span>
+        
+        {isAgentConfig ? (
+          <div className="flex items-center justify-between rounded-lg border border-border-color bg-white/[0.01] p-3 text-xs font-mono text-text-secondary backdrop-blur-sm">
+            <div className="flex items-center gap-2 truncate">
+              <span className="text-kresh-green shrink-0">$</span>
+              <span className="truncate text-text-primary select-all">{baseInstallText}</span>
+            </div>
+            <button 
+              type="button"
+              onClick={handleCopy}
+              className={`transition-all duration-200 p-1.5 rounded-md hover:bg-white/10 ml-2 shrink-0 outline-none ${
+                copied ? 'text-kresh-green' : 'text-text-secondary hover:text-text-primary'
+              }`}
+              aria-label="Copy install command"
+            >
+              {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
           </div>
-          <button 
-            type="button"
-            onClick={handleCopy}
-            className={`transition-all duration-200 p-1.5 rounded-md hover:bg-white/10 ml-2 shrink-0 outline-none ${
-              copied ? 'text-kresh-green' : 'text-text-secondary hover:text-text-primary'
-            }`}
-            aria-label="Copy install command"
+        ) : (
+          <button
+            onClick={() => setShowInstallOptions(true)}
+            className="group flex w-full items-center justify-between rounded-lg border border-border-color bg-white/[0.02] p-4 transition-all duration-200 hover:border-white/20 hover:bg-white/[0.05]"
           >
-            {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-kresh-green/10 text-kresh-green">
+                <MonitorSmartphone className="h-4 w-4" />
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="text-sm font-semibold text-text-primary">Install Component</span>
+                <span className="text-[10px] text-text-secondary">Select target environment</span>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-text-secondary group-hover:text-text-primary transition-colors" />
           </button>
-        </div>
+        )}
       </div>
 
       <hr className="border-white/10" />
+
+      {/* Glass Install Modal */}
+      {showInstallOptions && !isAgentConfig && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div 
+            className="w-full max-w-md overflow-hidden rounded-[28px] border border-white/20 bg-black/40 p-6 shadow-[0_12px_40px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-1px_0_rgba(255,255,255,0.02)] backdrop-blur-[22px] animate-in fade-in zoom-in-95 duration-200"
+            style={{ WebkitBackdropFilter: 'blur(22px) saturate(170%)' }}
+          >
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-white drop-shadow-sm">Install Environment</h2>
+                <p className="text-xs text-white/60 mt-1">Select where you want to install this skill</p>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowInstallOptions(false);
+                  setSelectedEnv(null);
+                }}
+                className="rounded-full p-2 text-white/50 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {environments.map((env) => (
+                <button
+                  key={env.id}
+                  onClick={() => setSelectedEnv(env.id)}
+                  className={`flex flex-col items-center gap-3 rounded-2xl border p-4 transition-all duration-200 ${
+                    selectedEnv === env.id 
+                      ? 'border-kresh-green bg-kresh-green/10 shadow-[0_0_15px_rgba(74,222,128,0.15)]' 
+                      : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                  }`}
+                >
+                  <img src={env.image} alt={env.name} className="h-10 w-10 object-contain drop-shadow-md" />
+                  <span className="text-xs font-semibold text-white/90">{env.name}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className={`transition-all duration-300 ${selectedEnv ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}`}>
+              <p className="text-xs font-medium text-white/70 mb-2">Run this command:</p>
+              <div className="flex items-center justify-between rounded-xl border border-white/15 bg-black/40 p-3 backdrop-blur-md">
+                <div className="flex items-center gap-2 truncate font-mono text-sm">
+                  <span className="text-kresh-green">$</span>
+                  <span className="truncate text-white select-all drop-shadow-sm">{getEnvInstallText()}</span>
+                </div>
+                <button 
+                  onClick={handleCopyEnv}
+                  className={`ml-2 shrink-0 rounded-lg p-2 transition-all duration-200 ${
+                    copiedEnv ? 'bg-kresh-green/20 text-kresh-green' : 'bg-white/10 text-white hover:bg-white/20'
+                  }`}
+                >
+                  {copiedEnv ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="flex flex-col gap-2.5 text-sm">
