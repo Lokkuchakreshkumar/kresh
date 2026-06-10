@@ -62,4 +62,13 @@ export async function deleteSession() {
   }
 }
 
+export async function getSessionToken() {
+  try {
+    const cookieStore = await cookies();
+    return cookieStore.get('session')?.value || null;
+  } catch (error) {
+    return null;
+  }
+}
+
 export { decrypt };

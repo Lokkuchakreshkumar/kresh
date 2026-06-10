@@ -1,12 +1,32 @@
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, or, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { skillFiles, skills, skillVersions, users } from '@/db/schema';
+import { decrypt } from '@/lib/auth';
 
 export async function GET(request, { params }) {
   try {
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug || '');
+
+    // Extract optional CLI token
+    const authHeader = request.headers.get('authorization');
+    let authenticatedUserId = null;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        const sessionData = await decrypt(token);
+        if (sessionData) {
+          authenticatedUserId = sessionData.userId;
+        }
+      } catch (err) {
+        console.error('Invalid CLI auth token:', err);
+      }
+    }
+
+    const whereClause = authenticatedUserId 
+      ? and(eq(skills.slug, slug), or(eq(skills.visibility, 'public'), eq(skills.ownerId, authenticatedUserId)))
+      : and(eq(skills.slug, slug), eq(skills.visibility, 'public'));
 
     // Fetch skill and owner details
     const skillRows = await db
@@ -25,7 +45,7 @@ export async function GET(request, { params }) {
       })
       .from(skills)
       .leftJoin(users, eq(skills.ownerId, users.id))
-      .where(and(eq(skills.slug, slug), eq(skills.visibility, 'public')))
+      .where(whereClause)
       .limit(1);
 
     const skill = skillRows[0];
