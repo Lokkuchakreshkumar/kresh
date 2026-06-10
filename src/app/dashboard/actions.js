@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache';
 import { and, eq, sql } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
-const MAX_SKILL_FILE_BYTES = 256 * 1024;
+const MAX_SKILL_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 const DEFAULT_SKILL_MD = `# Skill Name
 
 ## Purpose
@@ -45,21 +45,21 @@ async function getPublishedFiles(formData) {
       if (!editorContent) {
         return { error: 'Add SKILL.md content.' };
       }
-      files.push({ path: 'SKILL.md', content: editorContent });
+      files.push({ path: 'SKILL.md', content: editorContent, fileType: 'markdown' });
     } else if (source === 'upload') {
       const uploadedFile = formData.get('skillFile');
       if (!isReadableUpload(uploadedFile)) {
         return { error: 'Upload a Markdown file for SKILL.md.' };
       }
       if (uploadedFile.size > MAX_SKILL_FILE_BYTES) {
-        return { error: 'SKILL.md must be smaller than 256KB.' };
+        return { error: 'SKILL.md must be smaller than 10MB.' };
       }
       const fileName = uploadedFile.name || '';
       if (fileName && !fileName.toLowerCase().endsWith('.md')) {
         return { error: 'Upload a Markdown file for SKILL.md.' };
       }
       const content = await uploadedFile.text();
-      files.push({ path: 'SKILL.md', content: content.trim() });
+      files.push({ path: 'SKILL.md', content: content.trim(), fileType: 'markdown' });
     } else if (source === 'folder') {
       const uploadedFiles = formData.getAll('skillFolder');
       if (!uploadedFiles || uploadedFiles.length === 0 || (uploadedFiles.length === 1 && uploadedFiles[0].size === 0)) {
@@ -71,13 +71,21 @@ async function getPublishedFiles(formData) {
       for (const file of uploadedFiles) {
         if (!file || file.size === 0) continue;
         if (file.size > MAX_SKILL_FILE_BYTES) {
-          return { error: `File ${file.name} exceeds the size limit of 256KB.` };
+          return { error: `File ${file.name} exceeds the size limit of 10MB.` };
         }
         
         const filePath = file.name;
         let normalizedPath = filePath;
         
-        if (filePath.toLowerCase() === 'skill.md') {
+        // Browsers prefix file.name with the root folder name when using webkitdirectory
+        // Strip the top-level directory name so the internal structure is relative
+        const pathParts = normalizedPath.split(/[/\\]/);
+        if (pathParts.length > 1) {
+          pathParts.shift();
+          normalizedPath = pathParts.join('/');
+        }
+        
+        if (normalizedPath.toLowerCase() === 'skill.md') {
           normalizedPath = 'SKILL.md';
           skillMdFound = true;
         }
@@ -87,8 +95,30 @@ async function getPublishedFiles(formData) {
         }
         seenPaths.add(normalizedPath);
         
-        const content = await file.text();
-        files.push({ path: normalizedPath, content: content });
+        const ext = normalizedPath.split('.').pop().toLowerCase();
+        const binaryExts = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'pdf', 'mp4', 'webm', 'mp3', 'wav', 'ogg'];
+        const isBinary = file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/') || binaryExts.includes(ext);
+
+        let content;
+        if (isBinary) {
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const mimeType = file.type || `image/${ext === 'jpg' ? 'jpeg' : ext}`;
+          content = `data:${mimeType};base64,${buffer.toString('base64')}`;
+        } else {
+          content = await file.text();
+        }
+        
+        let finalFileType = 'text';
+        if (isBinary) {
+          finalFileType = 'image';
+        } else if (ext === 'md' || ext === 'markdown') {
+          finalFileType = 'markdown';
+        } else if (['js', 'jsx', 'ts', 'tsx', 'json', 'css', 'html'].includes(ext)) {
+          finalFileType = 'code';
+        }
+        
+        files.push({ path: normalizedPath, content: content, fileType: finalFileType });
       }
       
       if (!skillMdFound) {
@@ -142,7 +172,7 @@ export async function createSkillAction(prevState, formData) {
     }
 
     if (skillMarkdown.length > MAX_SKILL_FILE_BYTES) {
-      return { error: 'SKILL.md must be smaller than 256KB.' };
+      return { error: 'SKILL.md must be smaller than 10MB.' };
     }
 
     if (isEditMode) {
@@ -259,7 +289,7 @@ export async function createSkillAction(prevState, formData) {
             skillVersionId: versionId,
             path: file.path,
             content: file.content,
-            fileType: file.path.toLowerCase().endsWith('.md') ? 'markdown' : 'text'
+            fileType: file.fileType || 'text'
           });
         }
       });
@@ -340,7 +370,7 @@ export async function createSkillAction(prevState, formData) {
             skillVersionId: versionId,
             path: file.path,
             content: file.content,
-            fileType: file.path.toLowerCase().endsWith('.md') ? 'markdown' : 'text'
+            fileType: file.fileType || 'text'
           });
         }
       });

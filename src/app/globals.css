@@ -11,6 +11,9 @@
   --kresh-green: #2ecc71;
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight-top: rgba(255, 255, 255, 0.15);
+  --glass-highlight-bottom: rgba(255, 255, 255, 0.02);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
   --text-primary: #ffffff;
   --text-secondary: #9ca3af;
   --border-color: rgba(255, 255, 255, 0.1);
@@ -23,6 +26,9 @@
   --kresh-green: #2ecc71;
   --glass-bg: rgba(22, 30, 22, 0.045);
   --glass-border: rgba(22, 30, 22, 0.12);
+  --glass-highlight-top: rgba(255, 255, 255, 0.5);
+  --glass-highlight-bottom: rgba(0, 0, 0, 0.05);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
   --text-primary: #171c17;
   --text-secondary: #566156;
   --border-color: rgba(22, 30, 22, 0.14);
@@ -54,8 +60,13 @@ body {
 /* Base Glass utility classes for easy access alongside tailwind */
 @utility glass {
   background-color: var(--glass-bg);
-  backdrop-filter: url(#glass-refraction);
+  backdrop-filter: blur(22px) saturate(170%) url(#glass-refraction);
+  -webkit-backdrop-filter: blur(22px) saturate(170%) url(#glass-refraction);
   border: 1px solid var(--glass-border);
+  box-shadow:
+    0 12px 40px var(--glass-shadow),
+    inset 0 1px 0 var(--glass-highlight-top),
+    inset 0 -1px 0 var(--glass-highlight-bottom);
 }
 
 @utility glass-sphere {

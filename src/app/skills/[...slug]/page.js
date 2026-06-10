@@ -67,7 +67,7 @@ async function getSkillWithMarkdown(slug, userId = null) {
       return { skill, version: null, markdown: '', files: [] };
     }
 
-    // Get all files belonging to this active version
+    // Get all files belonging to this active version (without contents for speed)
     const files = await db
       .select({
         id: skillFiles.id,
@@ -79,15 +79,17 @@ async function getSkillWithMarkdown(slug, userId = null) {
       .where(eq(skillFiles.skillVersionId, version.id));
 
     // Get the markdown content of SKILL.md if it exists
-    const skillMdFile = files.find(f => f.path === 'SKILL.md');
     let markdown = '';
+    const skillMdFile = files.find(f => f.path === 'SKILL.md');
     if (skillMdFile) {
-      const mdContentRow = await db
+      const mdContentRows = await db
         .select({ content: skillFiles.content })
         .from(skillFiles)
         .where(eq(skillFiles.id, skillMdFile.id))
         .limit(1);
-      markdown = mdContentRow[0]?.content || '';
+      if (mdContentRows.length > 0) {
+        markdown = mdContentRows[0].content;
+      }
     }
 
     return {

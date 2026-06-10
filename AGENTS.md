@@ -1,10 +1,15 @@
 Precaution of errors:
 run tests like npm run build to test
 
+SKILLS:
+when told to read the skills,read the full that particular skill not only skill.md and also implement it strictly
+
 Github:
 do not add and commit and push files to github until unless user says that 
 
-
+CLI:
+-if there is any cli packages ,do not link (npm link)
+-also remind the user to publish the package
 
 Instructions:
 -When updating the DB or used code to edit something ,put them in .env file

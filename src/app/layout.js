@@ -56,11 +56,6 @@ export default function RootLayout({ children }) {
             <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.3 0" in="noise" result="coloredNoise" />
             {/* Displace the pixels underneath very slightly based on the noise map */}
             <feDisplacementMap in="SourceGraphic" in2="coloredNoise" scale="3" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-            {/* Add optical blur to mimic frosted glass */}
-            <feGaussianBlur in="displaced" stdDeviation="12" result="blurred" />
-            <feMerge>
-              <feMergeNode in="blurred" />
-            </feMerge>
           </filter>
         </svg>
         {children}

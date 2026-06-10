@@ -50,7 +50,7 @@ export function CircleStack() {
     return (
       <div className="w-full flex flex-col items-center">
         {/* Small uppercase section tag */}
-        <div className="font-sans font-medium text-zinc-500 text-xs uppercase mb-12">
+        <div className="font-sans font-medium text-text-secondary/70 text-xs uppercase mb-12 tracking-wider">
           System Stack Architecture
         </div>
 
@@ -156,7 +156,7 @@ export function CircleStack() {
                       }`}
                   >
                     <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                      <span className="text-zinc-500 font-mono text-sm uppercase">
+                      <span className="text-text-secondary/80 font-mono text-sm uppercase">
                         {layer.id}
                       </span>
                     </div>

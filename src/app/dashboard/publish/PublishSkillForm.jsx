@@ -3,6 +3,7 @@
 import React, { useActionState, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Glass } from '@/components/ui/Glass';
+import { Loader2 } from 'lucide-react';
 import { createSkillAction } from '../actions';
 
 /**
@@ -254,8 +255,9 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
         <Button
           type="submit"
           disabled={isPending}
-          className="w-full rounded-lg py-3 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-lg py-3 disabled:cursor-not-allowed disabled:opacity-50 gap-2 flex"
         >
+          {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
           {isPending ? 'Publishing...' : isEditMode ? 'Publish new version' : 'Publish skill'}
         </Button>
       </form>

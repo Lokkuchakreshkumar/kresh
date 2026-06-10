@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import BlurText from '@/components/ui/BlurText';
 import { CircleStack } from '@/components/ui/CircleStack';
+import { InteractiveDemo } from '@/components/ui/InteractiveDemo';
 import MagicBento from '@/components/ui/MagicBento';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
@@ -146,7 +147,7 @@ export default function Home() {
 
         {/* WORKS WITH SECTION */}
         <section className="mb-32 flex flex-col items-center">
-          <p className="text-xs uppercase text-gray-500 font-semibold mb-10">Works with</p>
+          <p className="text-xs uppercase text-text-secondary/70 font-semibold mb-10 tracking-wider">Works with</p>
           <div className="w-full relative marquee-container py-4">
             {/* Left and right fade/blur overlays to blend the edges beautifully without sharp cuts */}
             <div
@@ -220,6 +221,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* INTERACTIVE DEMO */}
+        <section className="w-[88%] md:w-[85%] max-w-[1600px] mx-auto px-6 mb-32 relative z-10">
+          <InteractiveDemo />
+        </section>
+
         {/* SYSTEM STACK ARCHITECTURE */}
         <section className="max-w-7xl mx-auto px-6 mb-32 relative z-10">
           <CircleStack />
@@ -228,7 +234,7 @@ export default function Home() {
         {/* MAGIC BENTO SECTION */}
         <section className="max-w-7xl mx-auto px-6 mb-32 relative z-10 flex flex-col items-center">
           <div className="w-full flex flex-col items-center mb-10 text-center">
-            <span className="text-xs uppercase text-gray-500 font-semibold mb-3">Intelligence Schema</span>
+            <span className="text-xs uppercase text-text-secondary/70 font-semibold mb-3 tracking-wider">Intelligence Schema</span>
             <h2 className="text-3xl font-bold text-text-primary">The Ecosystem Structure</h2>
           </div>
           <MagicBento

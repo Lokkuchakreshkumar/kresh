@@ -5,16 +5,26 @@ import Image from 'next/image';
 import { Search } from 'lucide-react';
 import { Button } from '../ui/Button';
 import ThemeToggle from '../ui/ThemeToggle';
+import { MobileMenu } from './MobileMenu';
 
 export function Header() {
   const inputRef = useRef(null);
-  const [session, setSession] = React.useState(null);
+  const [session, setSession] = React.useState(undefined);
 
   useEffect(() => {
     import('@/app/(auth)/actions').then(m => {
-      m.getSessionAction().then(setSession);
+      m.getSessionAction().then(res => setSession(res || null));
     });
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { logoutAction } = await import('@/app/(auth)/actions');
+      await logoutAction();
+    } catch (err) {
+      console.error('Failed to log out:', err);
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -54,17 +64,22 @@ export function Header() {
             <span className="ml-auto text-[10px] bg-text-primary/10 px-1.5 py-0.5 rounded border border-border-color">Ctrl+K</span>
           </div>
           
-          <div className="hidden sm:flex items-center gap-4">
-            {session ? (
-              <div className="flex items-center gap-4">
-                <a href={`/@${session.username}`} className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
-                  @{session.username}
-                </a>
-                <a href="/dashboard/publish">
-                  <Button variant="glass">Publish Skill</Button>
-                </a>
-              </div>
+          <div className="flex items-center gap-4">
+            {session === undefined ? (
+              <div className="w-20 h-9 bg-white/5 animate-pulse rounded-md" />
+            ) : session ? (
+              <>
+                <div className="hidden md:flex items-center gap-4">
+                  <a href={`/@${session.username}`} className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
+                    @{session.username}
+                  </a>
+                  <a href="/dashboard/publish">
+                    <Button variant="glass">Publish Skill</Button>
+                  </a>
+                </div>
+                <MobileMenu session={session} onLogout={handleLogout} />
+              </>
             ) : (
               <a href="/signin">
                 <Button variant="outline">Sign in</Button>
@@ -72,8 +87,6 @@ export function Header() {
             )}
           </div>
 
-          {/* 3D Glass theme toggle */}
-          <ThemeToggle />
         </div>
       </div>
     </header>

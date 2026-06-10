@@ -39,59 +39,62 @@ export default async function UserProfilePage({ params }) {
     username = username.substring(1);
   }
 
-  // 1. Fetch user by username
-  const userRows = await db
-    .select()
-    .from(users)
-    .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
-    .limit(1);
+  // 1 & 6. Fetch user and verify session in parallel
+  const [userRows, session] = await Promise.all([
+    db
+      .select()
+      .from(users)
+      .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
+      .limit(1),
+    verifySession()
+  ]);
 
   const userRecord = userRows[0];
   if (!userRecord) {
     notFound();
   }
 
-  // 6. Check if logged-in user is the profile owner
-  const session = await verifySession();
   const isOwner = session && session.userId === userRecord.id;
 
-  // 2. Fetch user's published skills
-  const userSkills = await db
-    .select({
-      id: skills.id,
-      slug: skills.slug,
-      name: skills.name,
-      description: skills.description,
-      category: skills.category,
-      currentVersion: skills.currentVersion,
-      installsCount: skills.installsCount,
-      starsCount: skills.starsCount,
-      createdAt: skills.createdAt,
-      ownerUsername: users.username,
-      visibility: skills.visibility
-    })
-    .from(skills)
-    .leftJoin(users, eq(skills.ownerId, users.id))
-    .where(
-      isOwner
-        ? eq(skills.ownerId, userRecord.id)
-        : and(eq(skills.ownerId, userRecord.id), eq(skills.visibility, 'public'))
-    )
-    .orderBy(desc(skills.createdAt));
-
-  // 3. Fetch user's received stars for the activity timeline
-  const receivedStars = await db
-    .select({
-      id: skillStars.id,
-      createdAt: skillStars.createdAt,
-      skillName: skills.name,
-      username: users.username
-    })
-    .from(skillStars)
-    .innerJoin(skills, eq(skillStars.skillId, skills.id))
-    .innerJoin(users, eq(skillStars.userId, users.id))
-    .where(eq(skills.ownerId, userRecord.id))
-    .orderBy(desc(skillStars.createdAt));
+  // 2 & 3. Fetch user's skills and received stars in parallel
+  const [userSkills, receivedStars] = await Promise.all([
+    db
+      .select({
+        id: skills.id,
+        slug: skills.slug,
+        name: skills.name,
+        description: skills.description,
+        category: skills.category,
+        currentVersion: skills.currentVersion,
+        installsCount: skills.installsCount,
+        starsCount: skills.starsCount,
+        createdAt: skills.createdAt,
+        ownerUsername: users.username,
+        visibility: skills.visibility
+      })
+      .from(skills)
+      .leftJoin(users, eq(skills.ownerId, users.id))
+      .where(
+        isOwner
+          ? eq(skills.ownerId, userRecord.id)
+          : and(eq(skills.ownerId, userRecord.id), eq(skills.visibility, 'public'))
+      )
+      .orderBy(desc(skills.createdAt)),
+      
+    db
+      .select({
+        id: skillStars.id,
+        createdAt: skillStars.createdAt,
+        skillName: skills.name,
+        username: users.username
+      })
+      .from(skillStars)
+      .innerJoin(skills, eq(skillStars.skillId, skills.id))
+      .innerJoin(users, eq(skillStars.userId, users.id))
+      .where(eq(skills.ownerId, userRecord.id))
+      .orderBy(desc(skillStars.createdAt))
+      .limit(20) // CRITICAL FIX: Limit the number of stars fetched to prevent massive data transfer
+  ]);
 
   // 4. Construct recent activities timeline events
   const publications = userSkills.map(s => ({
