@@ -76,13 +76,18 @@ export async function GET(request, { params }) {
     if (version) {
       const fileRows = await db
         .select({
-          content: skillFiles.content
+          path: skillFiles.path,
+          content: skillFiles.content,
+          fileType: skillFiles.fileType
         })
         .from(skillFiles)
-        .where(and(eq(skillFiles.skillVersionId, version.id), eq(skillFiles.path, 'SKILL.md')))
-        .limit(1);
+        .where(eq(skillFiles.skillVersionId, version.id));
 
-      skillContent = fileRows[0]?.content || '';
+      const skillMdFile = fileRows.find(f => f.path === 'SKILL.md');
+      skillContent = skillMdFile?.content || '';
+      
+      // We attach the whole array so the CLI can download the full folder structure
+      version.files = fileRows;
     }
 
     return NextResponse.json({
@@ -95,7 +100,8 @@ export async function GET(request, { params }) {
       createdAt: skill.createdAt,
       starsCount: skill.starsCount,
       installsCount: skill.installsCount + 1, // Return the incremented install count
-      skillContent
+      skillContent,
+      files: version?.files || []
     });
   } catch (error) {
     console.error('Failed to retrieve skill JSON details:', error);
