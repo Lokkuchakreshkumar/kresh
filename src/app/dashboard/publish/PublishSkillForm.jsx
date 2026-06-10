@@ -91,13 +91,7 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
               className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors focus:border-text-primary/30 [&>option]:bg-background [&>option]:text-text-primary"
             >
               <option value="Skills">Skills</option>
-              <option value="Agents">Agents</option>
-              <option value="Workflows">Workflows</option>
-              <option value="Design Systems">Design Systems</option>
-              <option value="Thinking Styles">Thinking Styles</option>
-              <option value="Writing Styles">Writing Styles</option>
-              <option value="Engineering Practices">Engineering Practices</option>
-              <option value="Personalities">Personalities</option>
+              <option value="AGENT.md/CLAUDE.md">AGENT.md/CLAUDE.md</option>
             </select>
           </div>
 

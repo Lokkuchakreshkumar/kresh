@@ -4,7 +4,7 @@ import path from 'path';
 /**
  * Helper to find the workspace or project root directory by scanning up.
  */
-async function getWorkspaceRoot(startDir = process.cwd()) {
+export async function getWorkspaceRoot(startDir = process.cwd()) {
   let currentDir = startDir;
   while (true) {
     try {
