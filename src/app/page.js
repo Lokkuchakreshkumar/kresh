@@ -121,12 +121,14 @@ export default function Home() {
                 alt="Arrow pointing to installation command"
                 className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85 [html.light_&]:invert [html.light_&]:opacity-70"
               />
-              <Glass className="p-4 flex items-center justify-between group cursor-text w-full">
-                <div className="flex items-center gap-3 iosevka-charon-bold text-base">
-                  <span className="text-kresh-green">$</span>
-                  <span className="text-text-secondary font-bold">npm i -g @chakresh/kresh</span>
+              <Glass className="w-full">
+                <div className="p-4 flex items-center justify-between group cursor-text w-full min-w-0 gap-3">
+                  <div className="flex items-center gap-3 iosevka-charon-bold text-base min-w-0">
+                    <span className="text-kresh-green shrink-0">$</span>
+                    <span className="text-text-secondary font-bold truncate">npm i -g @chakresh/kresh</span>
+                  </div>
+                  <CopyButton text="npm i -g @chakresh/kresh" />
                 </div>
-                <CopyButton text="npm i -g @chakresh/kresh" />
               </Glass>
             </div>
 

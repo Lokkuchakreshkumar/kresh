@@ -121,14 +121,25 @@ export function MobileMenu({ session, onLogout }) {
               )}
 
               {/* Search section */}
-              <div className="flex items-center glass rounded-lg px-3 py-2 text-sm text-text-secondary w-full focus-within:ring-1 focus-within:ring-kresh-green/40 transition-all">
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const q = e.target.elements.search.value.trim();
+                  if (q) {
+                    window.location.href = `/skills?search=${encodeURIComponent(q)}`;
+                    setIsOpen(false);
+                  }
+                }}
+                className="flex items-center glass rounded-lg px-3 py-2 text-sm text-text-secondary w-full focus-within:ring-1 focus-within:ring-kresh-green/40 transition-all"
+              >
                 <Search className="w-4 h-4 mr-2.5 shrink-0 text-text-secondary/60" />
                 <input 
+                  name="search"
                   type="text" 
                   placeholder="Search skills..." 
                   className="bg-transparent border-none outline-none w-full text-text-primary placeholder-text-secondary/50 text-xs font-medium"
                 />
-              </div>
+              </form>
 
               {/* Nav Links */}
               <nav className="flex flex-col gap-1.5 text-sm text-text-primary font-bold">

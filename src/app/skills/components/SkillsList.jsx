@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Search, Code, Feather, Brain, Network, Terminal, CheckCircle2, 
@@ -149,11 +149,17 @@ function CopyCommandLine({ slug }) {
   );
 }
 
-export function SkillsList({ skills }) {
-  const [search, setSearch] = useState('');
+export function SkillsList({ skills, initialSearch = '' }) {
+  const [search, setSearch] = useState(initialSearch);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'popular', 'recent', 'most-installed'
   const [authorFilter, setAuthorFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Sync initialSearch if it changes (e.g. searching from the Header while on the page)
+  useEffect(() => {
+    setSearch(initialSearch || '');
+    setCurrentPage(1);
+  }, [initialSearch]);
 
   const itemsPerPage = 5;
 

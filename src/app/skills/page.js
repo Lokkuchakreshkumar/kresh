@@ -36,7 +36,9 @@ async function getPublicSkills() {
   }
 }
 
-export default async function SkillsPage() {
+export default async function SkillsPage({ searchParams }) {
+  const resolvedParams = searchParams ? (searchParams.then ? await searchParams : searchParams) : {};
+  const initialSearch = resolvedParams.search || resolvedParams.q || '';
   const publicSkills = await getPublicSkills();
 
   return (
@@ -60,7 +62,7 @@ export default async function SkillsPage() {
         {publicSkills.length === 0 ? (
           <EmptySkills />
         ) : (
-          <SkillsList skills={publicSkills} />
+          <SkillsList skills={publicSkills} initialSearch={initialSearch} />
         )}
       </main>
       <Footer />

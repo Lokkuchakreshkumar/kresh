@@ -7,6 +7,9 @@ const nextConfig = {
       bodySizeLimit: '10mb',
     },
   },
+  turbopack: {
+    root: '/home/chakresh/projects/Kresh',
+  },
 };
 
 export default nextConfig;
