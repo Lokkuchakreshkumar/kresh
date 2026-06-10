@@ -18,13 +18,13 @@ export async function installSkill(skillSlug, isRetry = false) {
     const { skillContent, ...metadata } = response.data;
     spinner.stop();
 
-    if (metadata.category === 'AGENT.md/CLAUDE.md' || metadata.category === 'Agents') {
+    if (metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'Agents') {
       const { fileName } = await inquirer.prompt([
         {
           type: 'list',
           name: 'fileName',
           message: 'This is an Agent or Claude config. Where would you like to save it?',
-          choices: ['AGENT.md', 'CLAUDE.md', 'Standard skills folder']
+          choices: ['AGENTS.md', 'CLAUDE.md', 'Standard skills folder']
         }
       ]);
 
