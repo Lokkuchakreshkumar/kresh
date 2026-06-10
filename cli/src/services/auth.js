@@ -34,6 +34,18 @@ export function setToken(token) {
   }
 }
 
+export function clearToken() {
+  try {
+    if (fs.existsSync(CONFIG_FILE)) {
+      const config = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
+      delete config.token;
+      fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+    }
+  } catch (err) {
+    logger.error('Failed to clear config: ' + err.message);
+  }
+}
+
 function openBrowser(url) {
   const startCmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
   exec(`${startCmd} "${url}"`, (err) => {

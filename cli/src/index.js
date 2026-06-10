@@ -6,6 +6,7 @@ import { searchSkills } from './commands/search.js';
 import { listInstalledSkills } from './commands/ls.js';
 import { removeSkill } from './commands/remove.js';
 import { publishSkill } from './commands/publish.js';
+import { loginCommand } from './commands/login.js';
 
 const program = new Command();
 
@@ -51,6 +52,13 @@ program
   .description('Publish a skill')
   .action(async () => {
     await publishSkill();
+  });
+
+program
+  .command('login [action]')
+  .description('Authenticate with the Kresh registry. Use "kresh login flush" to clear your session.')
+  .action(async (action) => {
+    await loginCommand({ flush: action === 'flush' });
   });
 
 program.parse();
