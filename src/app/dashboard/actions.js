@@ -89,6 +89,12 @@ async function getPublishedFiles(formData) {
           normalizedPath = 'SKILL.md';
           skillMdFound = true;
         }
+
+        // Ignore common unnecessary directories and files
+        const parts = normalizedPath.split(/[/\\]/);
+        if (parts.some(p => p === '.git' || p === 'node_modules' || p === '.next' || p.startsWith('.env'))) {
+          continue;
+        }
         
         if (seenPaths.has(normalizedPath)) {
           continue;
@@ -96,7 +102,7 @@ async function getPublishedFiles(formData) {
         seenPaths.add(normalizedPath);
         
         const ext = normalizedPath.split('.').pop().toLowerCase();
-        const binaryExts = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'pdf', 'mp4', 'webm', 'mp3', 'wav', 'ogg'];
+        const binaryExts = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'pdf', 'mp4', 'webm', 'mp3', 'wav', 'ogg', 'zip', 'tar', 'gz'];
         const isBinary = file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/') || binaryExts.includes(ext);
 
         let content;
@@ -107,6 +113,8 @@ async function getPublishedFiles(formData) {
           content = `data:${mimeType};base64,${buffer.toString('base64')}`;
         } else {
           content = await file.text();
+          // Remove null bytes which cause PostgreSQL to throw an error
+          content = content.replace(/\0/g, '');
         }
         
         let finalFileType = 'text';
