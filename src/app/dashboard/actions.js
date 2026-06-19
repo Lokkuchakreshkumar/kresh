@@ -70,6 +70,29 @@ async function getPublishedFiles(formData) {
       let skillMdFound = false;
       const uploadedPaths = formData.getAll('skillFolderPaths');
       
+      // Find the best candidate for the main SKILL.md file (closest to root)
+      let bestSkillMdIndex = -1;
+      let minSkillMdDepth = Infinity;
+      for (let i = 0; i < uploadedFiles.length; i++) {
+        const file = uploadedFiles[i];
+        if (!file || file.size === 0) continue;
+        const filePath = uploadedPaths[i] || file.name;
+        let normalizedPath = filePath;
+        const pathParts = normalizedPath.split(/[/\\]/);
+        if (pathParts.length > 1) {
+          pathParts.shift();
+          normalizedPath = pathParts.join('/');
+        }
+        const parts = normalizedPath.split(/[/\\]/);
+        if (parts[parts.length - 1].toLowerCase() === 'skill.md') {
+          const depth = parts.length;
+          if (depth < minSkillMdDepth) {
+            minSkillMdDepth = depth;
+            bestSkillMdIndex = i;
+          }
+        }
+      }
+
       for (let i = 0; i < uploadedFiles.length; i++) {
         const file = uploadedFiles[i];
         if (!file || file.size === 0) continue;
@@ -88,7 +111,7 @@ async function getPublishedFiles(formData) {
           normalizedPath = pathParts.join('/');
         }
         
-        if (normalizedPath.toLowerCase() === 'skill.md') {
+        if (i === bestSkillMdIndex) {
           normalizedPath = 'SKILL.md';
           skillMdFound = true;
         }
@@ -133,7 +156,7 @@ async function getPublishedFiles(formData) {
       }
       
       if (!skillMdFound) {
-        return { error: 'Folder must contain a SKILL.md file at its root.' };
+        return { error: 'Folder must contain a SKILL.md file.' };
       }
     }
 
