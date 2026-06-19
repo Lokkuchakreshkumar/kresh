@@ -105,6 +105,7 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
             >
               <option value="Skills">Skills</option>
               <option value="AGENTS.md/CLAUDE.md">AGENTS.md/CLAUDE.md</option>
+              <option value="Design.md">Design.md</option>
             </select>
           </div>
 

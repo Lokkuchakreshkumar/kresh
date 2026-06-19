@@ -79,6 +79,15 @@ export async function writeLocalSkill(slug, skillContent, metadata, baseDir = 's
     }
     
     await fs.writeFile(path.join(targetDir, 'metadata.json'), JSON.stringify(metadata, null, 2), 'utf8');
+    
+    // Touch the workspace root to trigger IDE file watchers (like VS Code) to refresh their file explorers
+    try {
+      const now = new Date();
+      await fs.utimes(rootDir, now, now);
+    } catch (e) {
+      // Ignore if we can't touch the root directory
+    }
+    
     return targetDir;
   } catch (error) {
     console.error(`Failed to write skill files in the ${baseDir} directory:`, error);

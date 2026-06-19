@@ -1,6 +1,6 @@
 {
   "name": "@chakresh/kresh",
-  "version": "0.1.20",
+  "version": "0.1.23",
   "bin": {
     "kresh": "./src/index.js"
   },

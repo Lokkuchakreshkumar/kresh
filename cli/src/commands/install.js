@@ -18,15 +18,33 @@ export async function installSkill(skillSlug, isRetry = false, options = {}) {
     const { skillContent, files, ...metadata } = response.data;
     spinner.stop();
 
-    if (metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'AGENT.md/CLAUDE.md' || metadata.category === 'Agents') {
-      const { fileName } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'fileName',
-          message: 'This is an Agent or Claude config. Where would you like to save it?',
-          choices: ['AGENTS.md', 'CLAUDE.md', 'Standard skills folder']
-        }
-      ]);
+    const isAgent = metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'AGENT.md/CLAUDE.md' || metadata.category === 'Agents';
+    const isDesign = metadata.category === 'Design.md';
+
+    if (isAgent || isDesign) {
+      let fileName;
+      if (isDesign) {
+        const answer = await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'fileName',
+            message: 'This is a Design document. What would you like to name the file?',
+            default: 'Design.md'
+          }
+        ]);
+        fileName = answer.fileName;
+        if (!fileName.endsWith('.md')) fileName += '.md';
+      } else {
+        const answer = await inquirer.prompt([
+          {
+            type: 'list',
+            name: 'fileName',
+            message: 'This is an Agent or Claude config. Where would you like to save it?',
+            choices: ['AGENTS.md', 'CLAUDE.md', 'Standard skills folder']
+          }
+        ]);
+        fileName = answer.fileName;
+      }
 
       if (fileName !== 'Standard skills folder') {
         const rootDir = await getWorkspaceRoot();
