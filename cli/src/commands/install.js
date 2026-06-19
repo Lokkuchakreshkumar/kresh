@@ -24,16 +24,10 @@ export async function installSkill(skillSlug, isRetry = false, options = {}) {
     if (isAgent || isDesign) {
       let fileName;
       if (isDesign) {
-        const answer = await inquirer.prompt([
-          {
-            type: 'input',
-            name: 'fileName',
-            message: 'This is a Design document. What would you like to name the file?',
-            default: 'Design.md'
-          }
-        ]);
-        fileName = answer.fileName;
-        if (!fileName.endsWith('.md')) fileName += '.md';
+        fileName = metadata.name;
+        if (!fileName.toLowerCase().endsWith('.md')) {
+          fileName += '.md';
+        }
       } else {
         const answer = await inquirer.prompt([
           {
