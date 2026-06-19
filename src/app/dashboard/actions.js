@@ -68,13 +68,16 @@ async function getPublishedFiles(formData) {
       
       const seenPaths = new Set();
       let skillMdFound = false;
-      for (const file of uploadedFiles) {
+      const uploadedPaths = formData.getAll('skillFolderPaths');
+      
+      for (let i = 0; i < uploadedFiles.length; i++) {
+        const file = uploadedFiles[i];
         if (!file || file.size === 0) continue;
         if (file.size > MAX_SKILL_FILE_BYTES) {
           return { error: `File ${file.name} exceeds the size limit of 10MB.` };
         }
         
-        const filePath = file.name;
+        const filePath = uploadedPaths[i] || file.name;
         let normalizedPath = filePath;
         
         // Browsers prefix file.name with the root folder name when using webkitdirectory

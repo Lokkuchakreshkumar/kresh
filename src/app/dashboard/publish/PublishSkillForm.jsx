@@ -52,8 +52,8 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
             formData.delete('skillFolder');
             for (let i = 0; i < input.files.length; i++) {
               const file = input.files[i];
-              // Use webkitRelativePath to preserve the folder structure
-              formData.append('skillFolder', file, file.webkitRelativePath || file.name);
+              formData.append('skillFolder', file);
+              formData.append('skillFolderPaths', file.webkitRelativePath || file.name);
             }
           }
         }
