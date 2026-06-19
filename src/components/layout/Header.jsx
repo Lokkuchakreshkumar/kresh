@@ -329,6 +329,7 @@ export function Header() {
           </button>
           
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {session === undefined ? (
               <div className="w-20 h-9 bg-white/5 animate-pulse rounded-md" />
             ) : session ? (

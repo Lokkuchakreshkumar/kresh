@@ -386,7 +386,7 @@ export async function createSkillAction(prevState, formData) {
     }
   } catch (error) {
     console.error("Failed to process skill action:", error);
-    return { error: 'An error occurred while publishing.' };
+    return { error: `An error occurred while publishing: ${error.message}` };
   }
 }
 

@@ -39,7 +39,7 @@ export function DocsSidebar() {
     <nav className="h-full overflow-y-auto pb-10 pr-4 custom-scrollbar">
       {DOCS_NAV.map((section, idx) => (
         <div key={idx} className="mb-8">
-          <h3 className="text-[11px] font-bold text-text-secondary/70 uppercase tracking-widest mb-3 px-3">
+          <h3 className="text-[12px] font-medium text-geist-gray-900 tracking-normal mb-3 px-3">
             {section.group}
           </h3>
           <ul className="space-y-0.5">
@@ -50,19 +50,15 @@ export function DocsSidebar() {
                   <Link
                     href={item.href}
                     className={`
-                      flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                      flex items-center gap-3 px-3 py-2 rounded-[6px] text-[14px] leading-[20px] transition-colors
                       ${isActive 
-                        ? 'bg-white/10 text-text-primary' 
-                        : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                        ? 'bg-geist-gray-100 text-geist-gray-1000 font-medium' 
+                        : 'text-geist-gray-900 hover:text-geist-gray-1000 hover:bg-geist-gray-100 font-normal'
                       }
                     `}
                   >
-                    <div className={`w-4 h-4 flex items-center justify-center rounded-full border ${isActive ? 'border-kresh-green text-kresh-green' : 'border-transparent text-text-secondary/70'}`}>
-                      {isActive ? (
-                        <div className="w-1.5 h-1.5 rounded-full bg-kresh-green" />
-                      ) : (
-                        <item.icon className="w-3.5 h-3.5" />
-                      )}
+                    <div className="flex items-center justify-center shrink-0">
+                      <item.icon className={`w-4 h-4 ${isActive ? 'text-geist-gray-1000' : 'text-geist-gray-700'}`} />
                     </div>
                     {item.name}
                   </Link>

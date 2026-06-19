@@ -29,18 +29,18 @@ export function DocsCodeBlock({ code, language = "bash", tabs = [] }) {
   }
 
   return (
-    <div className="bg-[#0f1115] border border-white/10 rounded-2xl overflow-hidden my-6 not-prose">
+    <div className="bg-[#111111] border border-geist-gray-200 rounded-[12px] overflow-hidden my-6 not-prose">
       {tabs.length > 0 && (
-        <div className="flex items-center border-b border-white/10 px-4 bg-black/40">
+        <div className="flex items-center px-4 bg-[#111111] border-b border-[#333]">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`
-                px-4 py-3 text-sm font-medium border-b-2 transition-colors
+                px-4 py-3 text-[14px] leading-[20px] font-medium border-b-2 transition-colors -mb-[1px]
                 ${activeTab === tab 
-                  ? 'border-kresh-green text-kresh-green' 
-                  : 'border-transparent text-text-secondary hover:text-text-primary'
+                  ? 'border-white text-white' 
+                  : 'border-transparent text-[#888] hover:text-[#ccc]'
                 }
               `}
             >
@@ -50,16 +50,16 @@ export function DocsCodeBlock({ code, language = "bash", tabs = [] }) {
         </div>
       )}
       
-      <div className="flex items-start justify-between p-4">
-        <pre className={`language-${language} m-0 bg-transparent p-0 border-none text-sm`}>
-          <code className="text-kresh-green">{displayCode}</code>
+      <div className="flex items-start justify-between p-4 bg-[#111111]">
+        <pre className={`language-${language} m-0 bg-transparent p-0 border-none text-[13px] leading-[20px] font-mono`}>
+          <code className="text-zinc-100">{displayCode}</code>
         </pre>
         
         <button 
           onClick={handleCopy}
-          className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors ml-4 shrink-0"
+          className="p-2 rounded-[6px] bg-transparent hover:bg-white/10 text-[#888] hover:text-white transition-colors ml-4 shrink-0"
         >
-          {copied ? <Check className="w-4 h-4 text-kresh-green" /> : <Copy className="w-4 h-4" />}
+          {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
         </button>
       </div>
     </div>

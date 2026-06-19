@@ -19,6 +19,21 @@
   --text-secondary: #9ca3af;
   --border-color: rgba(255, 255, 255, 0.1);
   --glow-color: 255, 255, 255;
+
+  /* Geist Dark Theme Tokens */
+  --geist-bg-100: #000000;
+  --geist-bg-200: #0a0a0a;
+  --geist-gray-100: #111111;
+  --geist-gray-200: #333333;
+  --geist-gray-300: #444444;
+  --geist-gray-400: #666666;
+  --geist-gray-500: #888888;
+  --geist-gray-600: #999999;
+  --geist-gray-700: #a0a0a0;
+  --geist-gray-800: #cccccc;
+  --geist-gray-900: #eaeaea;
+  --geist-gray-1000: #ffffff;
+  --geist-blue-700: #0070f3;
 }
 
 .light {
@@ -34,6 +49,21 @@
   --text-secondary: #566156;
   --border-color: rgba(22, 30, 22, 0.14);
   --glow-color: 22, 30, 22;
+
+  /* Geist Light Theme Tokens */
+  --geist-bg-100: #ffffff;
+  --geist-bg-200: #fafafa;
+  --geist-gray-100: #f2f2f2;
+  --geist-gray-200: #ebebeb;
+  --geist-gray-300: #e6e6e6;
+  --geist-gray-400: #eaeaea;
+  --geist-gray-500: #c9c9c9;
+  --geist-gray-600: #a8a8a8;
+  --geist-gray-700: #8f8f8f;
+  --geist-gray-800: #7d7d7d;
+  --geist-gray-900: #4d4d4d;
+  --geist-gray-1000: #171717;
+  --geist-blue-700: #006bff;
 }
 
 @theme inline {
@@ -50,6 +80,21 @@
   --font-serif-display: 'Playfair Display', Georgia, serif;
   --font-schibsted: 'Schibsted Grotesk', sans-serif;
   --font-playwrite: 'Playwrite GB J', cursive;
+
+  /* Geist Theme Tokens (Dynamic) */
+  --color-geist-bg-100: var(--geist-bg-100);
+  --color-geist-bg-200: var(--geist-bg-200);
+  --color-geist-gray-100: var(--geist-gray-100);
+  --color-geist-gray-200: var(--geist-gray-200);
+  --color-geist-gray-300: var(--geist-gray-300);
+  --color-geist-gray-400: var(--geist-gray-400);
+  --color-geist-gray-500: var(--geist-gray-500);
+  --color-geist-gray-600: var(--geist-gray-600);
+  --color-geist-gray-700: var(--geist-gray-700);
+  --color-geist-gray-800: var(--geist-gray-800);
+  --color-geist-gray-900: var(--geist-gray-900);
+  --color-geist-gray-1000: var(--geist-gray-1000);
+  --color-geist-blue-700: var(--geist-blue-700);
 }
 
 body {

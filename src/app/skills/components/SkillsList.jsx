@@ -153,6 +153,7 @@ export function SkillsList({ skills, initialSearch = '' }) {
   const [search, setSearch] = useState(initialSearch);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'popular', 'recent', 'most-installed'
   const [authorFilter, setAuthorFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
 
   // Sync initialSearch if it changes (e.g. searching from the Header while on the page)
@@ -170,6 +171,15 @@ export function SkillsList({ skills, initialSearch = '' }) {
       if (s.ownerUsername) authors.add(s.ownerUsername);
     });
     return Array.from(authors).sort();
+  }, [skills]);
+
+  // Extract unique categories for filtering dropdown
+  const uniqueCategories = useMemo(() => {
+    const categories = new Set();
+    skills.forEach(s => {
+      if (s.category) categories.add(s.category);
+    });
+    return Array.from(categories).sort();
   }, [skills]);
 
   // Handle filtering and sorting
@@ -191,6 +201,11 @@ export function SkillsList({ skills, initialSearch = '' }) {
       result = result.filter(s => s.ownerUsername === authorFilter);
     }
 
+    // 3. Category Filter
+    if (categoryFilter !== 'all') {
+      result = result.filter(s => s.category === categoryFilter);
+    }
+
     // 3. Tab Sorting
     if (activeTab === 'popular') {
       result.sort((a, b) => (b.starsCount || 0) - (a.starsCount || 0));
@@ -204,7 +219,7 @@ export function SkillsList({ skills, initialSearch = '' }) {
     }
 
     return result;
-  }, [skills, search, activeTab, authorFilter]);
+  }, [skills, search, activeTab, authorFilter, categoryFilter]);
 
   // Calculate paginated index
   const totalPages = Math.ceil(filteredAndSortedSkills.length / itemsPerPage) || 1;
@@ -335,6 +350,25 @@ export function SkillsList({ skills, initialSearch = '' }) {
               {uniqueAuthors.map((author) => (
                 <option key={author} value={author}>
                   @{author}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Category filter dropdown */}
+          <div className="flex items-center gap-2">
+            <select
+              value={categoryFilter}
+              onChange={(e) => {
+                setCategoryFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="rounded-lg border border-border-color bg-white/[0.01] px-3 py-2 text-xs text-text-primary outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-background [&>option]:text-text-primary cursor-pointer uppercase"
+            >
+              <option value="all">ALL CATEGORIES</option>
+              {uniqueCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat.toUpperCase()}
                 </option>
               ))}
             </select>

@@ -49,17 +49,17 @@ export function DocsRightSidebar() {
   return (
     <aside className="hidden xl:block w-64 shrink-0 pl-8 pb-10">
       <div className="sticky top-32">
-        <h4 className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-4">On this page</h4>
-        <ul className="space-y-2.5 mb-10 border-l border-white/10 relative">
+        <h4 className="text-[12px] font-medium text-geist-gray-1000 tracking-normal mb-4">On this page</h4>
+        <ul className="space-y-2.5 mb-10 border-l border-geist-gray-200 relative">
           {headings.map(heading => (
             <li key={heading.id}>
               <a
                 href={`#${heading.id}`}
                 className={`
-                  block pl-4 text-sm transition-colors border-l-2 -ml-[1px]
+                  block pl-4 text-[14px] leading-[20px] transition-colors border-l-2 -ml-[1px]
                   ${activeId === heading.id 
-                    ? 'text-kresh-green border-kresh-green font-medium' 
-                    : 'text-text-secondary hover:text-text-primary border-transparent'
+                    ? 'text-geist-gray-1000 border-geist-gray-1000 font-medium' 
+                    : 'text-geist-gray-900 hover:text-geist-gray-1000 border-transparent font-normal'
                   }
                 `}
               >
@@ -72,12 +72,12 @@ export function DocsRightSidebar() {
 
 
         <div className="mt-10">
-          <p className="text-sm text-text-secondary mb-3">Was this helpful?</p>
+          <p className="text-[14px] leading-[20px] text-geist-gray-900 mb-3">Was this helpful?</p>
           <div className="flex items-center gap-2">
-            <button className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors">
+            <button className="p-2 rounded-[6px] bg-geist-bg-100 border border-geist-gray-200 hover:bg-geist-gray-100 text-geist-gray-900 hover:text-geist-gray-1000 transition-colors">
               <ThumbsUp className="w-4 h-4" />
             </button>
-            <button className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-text-secondary hover:text-text-primary transition-colors">
+            <button className="p-2 rounded-[6px] bg-geist-bg-100 border border-geist-gray-200 hover:bg-geist-gray-100 text-geist-gray-900 hover:text-geist-gray-1000 transition-colors">
               <ThumbsDown className="w-4 h-4" />
             </button>
           </div>

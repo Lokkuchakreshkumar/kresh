@@ -48,9 +48,9 @@ export default async function SkillsPage({ searchParams }) {
         <section className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="font-mono text-xs text-text-secondary">$ kresh skills</div>
-            <h1 className="mt-4 text-4xl font-black text-text-primary">Skills</h1>
+            <h1 className="mt-4 text-4xl font-black text-text-primary">Skills & Modules</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
-              Browse every public installable skill on Kresh. Each module is versioned, reusable, and built for AI systems.
+              Browse every public installable module on Kresh, including Skills, Agent.md, and Design.md. Each module is versioned, reusable, and built for AI systems.
             </p>
           </div>
 

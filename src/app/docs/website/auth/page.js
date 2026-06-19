@@ -11,8 +11,8 @@ export const metadata = {
 export default function AuthPage() {
   return (
     <div className="animate-fade-in-up">
-      <div className="text-sm font-medium text-text-secondary/70 mb-4 flex items-center gap-2">
-        Website Features <span className="text-white/20">&gt;</span> Authentication
+      <div className="text-[14px] font-medium text-geist-gray-700 mb-6 flex items-center gap-2 tracking-[-0.28px]">
+        Website Features <span className="text-geist-gray-400">&gt;</span> Authentication
       </div>
       
       <h1>Authentication</h1>
@@ -32,30 +32,30 @@ export default function AuthPage() {
         <li>Authenticate the Kresh CLI for local command-line operations.</li>
       </ul>
 
-      <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 md:p-8 my-8 not-prose">
-        <h4 className="text-white font-bold mb-6 text-lg flex items-center gap-2">
+      <div className="bg-geist-bg-200 border border-geist-gray-200 rounded-[12px] p-6 md:p-8 my-8 not-prose">
+        <h4 className="text-geist-gray-1000 font-bold mb-6 text-lg flex items-center gap-2">
           <UserPlus className="w-5 h-5 text-kresh-green" /> The Registration Flow
         </h4>
         <div className="space-y-6">
           <div className="flex gap-4">
-            <div className="w-10 h-10 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-text-secondary text-sm">1</div>
+            <div className="w-10 h-10 shrink-0 rounded-full bg-geist-bg-100 border border-geist-gray-200 flex items-center justify-center font-bold text-geist-gray-1000 text-sm">1</div>
             <div>
-              <strong className="text-white block mb-1">Choose a Username</strong>
-              <p className="text-xs text-text-secondary leading-relaxed m-0">Your username is permanent and serves as the namespace for all your skills (e.g., <code>@username/my-skill</code>).</p>
+              <strong className="text-geist-gray-1000 block mb-1">Choose a Username</strong>
+              <p className="text-xs text-geist-gray-900 leading-relaxed m-0">Your username is permanent and serves as the namespace for all your skills (e.g., <code>@username/my-skill</code>).</p>
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="w-10 h-10 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-text-secondary text-sm">2</div>
+            <div className="w-10 h-10 shrink-0 rounded-full bg-geist-bg-100 border border-geist-gray-200 flex items-center justify-center font-bold text-geist-gray-1000 text-sm">2</div>
             <div>
-              <strong className="text-white block mb-1">Secure Password</strong>
-              <p className="text-xs text-text-secondary leading-relaxed m-0">We use bcrypt for secure password hashing. Kresh never stores your password in plain text.</p>
+              <strong className="text-geist-gray-1000 block mb-1">Secure Password</strong>
+              <p className="text-xs text-geist-gray-900 leading-relaxed m-0">We use bcrypt for secure password hashing. Kresh never stores your password in plain text.</p>
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="w-10 h-10 shrink-0 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-text-secondary text-sm">3</div>
+            <div className="w-10 h-10 shrink-0 rounded-full bg-geist-bg-100 border border-geist-gray-200 flex items-center justify-center font-bold text-geist-gray-1000 text-sm">3</div>
             <div>
-              <strong className="text-white block mb-1">Session Management</strong>
-              <p className="text-xs text-text-secondary leading-relaxed m-0">Upon signing in, an HTTP-only JWT (JSON Web Token) cookie is securely stored in your browser to maintain your session.</p>
+              <strong className="text-geist-gray-1000 block mb-1">Session Management</strong>
+              <p className="text-xs text-geist-gray-900 leading-relaxed m-0">Upon signing in, an HTTP-only JWT (JSON Web Token) cookie is securely stored in your browser to maintain your session.</p>
             </div>
           </div>
         </div>
