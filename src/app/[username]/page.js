@@ -10,7 +10,69 @@ import { ProfileHero } from '../dashboard/components/ProfileHero';
 import { ProfileSidebar } from '../dashboard/components/ProfileSidebar';
 import { ProfileSkillsList } from '../dashboard/components/ProfileSkillsList';
 
-export const dynamic = 'force-dynamic';
+import { unstable_cache } from 'next/cache';
+
+const getCachedUser = unstable_cache(
+  async (username) => {
+    const userRows = await db
+      .select()
+      .from(users)
+      .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
+      .limit(1);
+    return userRows[0] || null;
+  },
+  ['user-profile'],
+  { revalidate: 60, tags: ['user'] }
+);
+
+const getCachedUserSkills = unstable_cache(
+  async (userId, isOwner) => {
+    return await db
+      .select({
+        id: skills.id,
+        slug: skills.slug,
+        name: skills.name,
+        description: skills.description,
+        category: skills.category,
+        currentVersion: skills.currentVersion,
+        installsCount: skills.installsCount,
+        starsCount: skills.starsCount,
+        createdAt: skills.createdAt,
+        ownerUsername: users.username,
+        visibility: skills.visibility
+      })
+      .from(skills)
+      .leftJoin(users, eq(skills.ownerId, users.id))
+      .where(
+        isOwner
+          ? eq(skills.ownerId, userId)
+          : and(eq(skills.ownerId, userId), eq(skills.visibility, 'public'))
+      )
+      .orderBy(desc(skills.createdAt));
+  },
+  ['user-skills'],
+  { revalidate: 60, tags: ['skills'] }
+);
+
+const getCachedReceivedStars = unstable_cache(
+  async (userId) => {
+    return await db
+      .select({
+        id: skillStars.id,
+        createdAt: skillStars.createdAt,
+        skillName: skills.name,
+        username: users.username
+      })
+      .from(skillStars)
+      .innerJoin(skills, eq(skillStars.skillId, skills.id))
+      .innerJoin(users, eq(skillStars.userId, users.id))
+      .where(eq(skills.ownerId, userId))
+      .orderBy(desc(skillStars.createdAt))
+      .limit(20);
+  },
+  ['user-received-stars'],
+  { revalidate: 60, tags: ['stars'] }
+);
 
 /**
  * Formats a Date object into "Month Day, Year"
@@ -40,16 +102,11 @@ export default async function UserProfilePage({ params }) {
   }
 
   // 1 & 6. Fetch user and verify session in parallel
-  const [userRows, session] = await Promise.all([
-    db
-      .select()
-      .from(users)
-      .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
-      .limit(1),
+  const [userRecord, session] = await Promise.all([
+    getCachedUser(username),
     verifySession()
   ]);
 
-  const userRecord = userRows[0];
   if (!userRecord) {
     notFound();
   }
@@ -58,42 +115,8 @@ export default async function UserProfilePage({ params }) {
 
   // 2 & 3. Fetch user's skills and received stars in parallel
   const [userSkills, receivedStars] = await Promise.all([
-    db
-      .select({
-        id: skills.id,
-        slug: skills.slug,
-        name: skills.name,
-        description: skills.description,
-        category: skills.category,
-        currentVersion: skills.currentVersion,
-        installsCount: skills.installsCount,
-        starsCount: skills.starsCount,
-        createdAt: skills.createdAt,
-        ownerUsername: users.username,
-        visibility: skills.visibility
-      })
-      .from(skills)
-      .leftJoin(users, eq(skills.ownerId, users.id))
-      .where(
-        isOwner
-          ? eq(skills.ownerId, userRecord.id)
-          : and(eq(skills.ownerId, userRecord.id), eq(skills.visibility, 'public'))
-      )
-      .orderBy(desc(skills.createdAt)),
-      
-    db
-      .select({
-        id: skillStars.id,
-        createdAt: skillStars.createdAt,
-        skillName: skills.name,
-        username: users.username
-      })
-      .from(skillStars)
-      .innerJoin(skills, eq(skillStars.skillId, skills.id))
-      .innerJoin(users, eq(skillStars.userId, users.id))
-      .where(eq(skills.ownerId, userRecord.id))
-      .orderBy(desc(skillStars.createdAt))
-      .limit(20) // CRITICAL FIX: Limit the number of stars fetched to prevent massive data transfer
+    getCachedUserSkills(userRecord.id, isOwner),
+    getCachedReceivedStars(userRecord.id)
   ]);
 
   // 4. Construct recent activities timeline events

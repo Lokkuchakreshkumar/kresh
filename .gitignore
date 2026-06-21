@@ -22,7 +22,8 @@ vercel_design.md
 
 # production
 /build
-
+/.agents
+.agents
 # misc
 .DS_Store
 *.pem

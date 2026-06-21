@@ -6,7 +6,18 @@ const BASE_DIRS = ['skills', '.agents/skills', '.claude/skills', '.codex/skills'
 /**
  * Helper to find the workspace or project root directory by scanning up.
  */
-export async function getWorkspaceRoot(startDir = process.cwd()) {
+export async function getWorkspaceRoot(startDir) {
+  if (!startDir) {
+    try {
+      startDir = process.cwd();
+    } catch (e) {
+      if (process.env.PWD) {
+        startDir = process.env.PWD;
+      } else {
+        startDir = '/';
+      }
+    }
+  }
   let currentDir = startDir;
   while (true) {
     try {

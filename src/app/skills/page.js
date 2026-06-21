@@ -9,32 +9,38 @@ import { Button } from '@/components/ui/Button';
 import { EmptySkills } from './components/EmptySkills';
 import { SkillsList } from './components/SkillsList';
 
-export const dynamic = 'force-dynamic';
+import { unstable_cache } from 'next/cache';
 
-async function getPublicSkills() {
-  try {
-    return await db
-      .select({
-        id: skills.id,
-        slug: skills.slug,
-        name: skills.name,
-        description: skills.description,
-        category: skills.category,
-        currentVersion: skills.currentVersion,
-        installsCount: skills.installsCount,
-        starsCount: skills.starsCount,
-        createdAt: skills.createdAt,
-        ownerUsername: users.username
-      })
-      .from(skills)
-      .leftJoin(users, eq(skills.ownerId, users.id))
-      .where(eq(skills.visibility, 'public'))
-      .orderBy(desc(skills.createdAt));
-  } catch (error) {
-    console.error('Failed to load public skills:', error);
-    return [];
-  }
-}
+export const revalidate = 60;
+
+const getPublicSkills = unstable_cache(
+  async () => {
+    try {
+      return await db
+        .select({
+          id: skills.id,
+          slug: skills.slug,
+          name: skills.name,
+          description: skills.description,
+          category: skills.category,
+          currentVersion: skills.currentVersion,
+          installsCount: skills.installsCount,
+          starsCount: skills.starsCount,
+          createdAt: skills.createdAt,
+          ownerUsername: users.username
+        })
+        .from(skills)
+        .leftJoin(users, eq(skills.ownerId, users.id))
+        .where(eq(skills.visibility, 'public'))
+        .orderBy(desc(skills.createdAt));
+    } catch (error) {
+      console.error('Failed to load public skills:', error);
+      return [];
+    }
+  },
+  ['public-skills'],
+  { revalidate: 60, tags: ['skills'] }
+);
 
 export default async function SkillsPage({ searchParams }) {
   const resolvedParams = searchParams ? (searchParams.then ? await searchParams : searchParams) : {};
