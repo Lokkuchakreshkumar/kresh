@@ -32,8 +32,8 @@ export default function CliCommandsPage() {
       />
       <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-4 text-sm mt-4 not-prose">
         <strong className="text-white block mb-2">Example:</strong>
-        <code className="text-kresh-green block mb-1">$ kresh search "react component"</code>
-        <span className="text-text-secondary text-xs">Returns a list of skills matching "react component" along with their author and version.</span>
+        <code className="text-kresh-green block mb-1">$ kresh search &quot;react component&quot;</code>
+        <span className="text-text-secondary text-xs">Returns a list of skills matching &quot;react component&quot; along with their author and version.</span>
       </div>
 
       {/* INSTALL COMMAND */}
@@ -93,7 +93,7 @@ export default function CliCommandsPage() {
       <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-4 text-sm mt-4 not-prose">
         <strong className="text-white block mb-2">Details:</strong>
         <p className="text-text-secondary text-xs m-0">
-          The CLI will interactively ask you for the skill's name, description, and visibility setting before uploading the files. It supports single files (like <code>AGENTS.md</code>) or entire folders.
+          The CLI will interactively ask you for the skill&apos;s name, description, and visibility setting before uploading the files. It supports single files (like <code>AGENTS.md</code>) or entire folders.
         </p>
       </div>
 

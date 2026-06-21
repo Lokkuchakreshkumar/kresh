@@ -94,7 +94,7 @@ export default function Signin() {
 
           {/* Switch page */}
           <p className="text-center text-xs text-gray-400 mt-6">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-white underline font-medium hover:text-gray-200 transition-colors">
               Sign up
             </Link>

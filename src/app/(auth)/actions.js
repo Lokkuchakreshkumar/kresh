@@ -12,6 +12,7 @@ export async function signupAction(prevState, formData) {
     const rawUsername = formData.get('username');
     const rawEmail = formData.get('email');
     const password = formData.get('password');
+    console.log("Signup action started", { rawUsername, rawEmail, password: !!password });
 
     if (!rawUsername || !rawEmail || !password) {
       return { error: 'All fields are required.' };
@@ -44,6 +45,7 @@ export async function signupAction(prevState, formData) {
       .limit(1);
 
     if (existingUser.length > 0) {
+      console.log("Signup action error: User already exists", email);
       return { error: 'User already exists.' };
     }
 
@@ -55,6 +57,7 @@ export async function signupAction(prevState, formData) {
       .limit(1);
 
     if (existingUsername.length > 0) {
+      console.log("Signup action error: Username is taken", username);
       return { error: 'Username is taken.' };
     }
 

@@ -91,7 +91,7 @@ export default function PublishingPage() {
             <span className="text-kresh-green/70">✦</span>
             <div>
               <strong className="text-white block text-sm mb-1">Version (SemVer)</strong> 
-              <span className="text-text-secondary text-xs block">Kresh highly encourages Semantic Versioning (e.g., <code>1.0.0</code>). This ensures that users relying on your skill don't experience breaking changes unexpectedly.</span>
+              <span className="text-text-secondary text-xs block">Kresh highly encourages Semantic Versioning (e.g., <code>1.0.0</code>). This ensures that users relying on your skill don&apos;t experience breaking changes unexpectedly.</span>
             </div>
           </li>
         </ul>

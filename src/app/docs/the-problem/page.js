@@ -18,7 +18,7 @@ export default function TheProblemPage() {
       <h1>The Problem</h1>
       
       <p>
-        AI coding systems are powerful, but they are not automatically grounded in your project's real rules. Most projects still do not treat knowledge as a first-class asset.
+        AI coding systems are powerful, but they are not automatically grounded in your project&apos;s real rules. Most projects still do not treat knowledge as a first-class asset.
       </p>
 
       <h2>The Six Core Problems</h2>
@@ -36,7 +36,7 @@ export default function TheProblemPage() {
 
         <div className="bg-geist-bg-100 border border-geist-gray-200 rounded-[12px] p-6 shadow-[0_2px_2px_rgba(0,0,0,0.04)]">
           <h4 className="text-geist-gray-1000 font-bold mb-2">3. Teams depend too much on tribal knowledge</h4>
-          <p className="text-[14px] leading-[20px] text-geist-gray-900 m-0">Most real project knowledge is not in code—it's what people assume others "just know" (how to run the project, what style to follow). Kresh turns tribal knowledge into documented system knowledge.</p>
+          <p className="text-[14px] leading-[20px] text-geist-gray-900 m-0">Most real project knowledge is not in code—it&apos;s what people assume others &quot;just know&quot; (how to run the project, what style to follow). Kresh turns tribal knowledge into documented system knowledge.</p>
         </div>
 
         <div className="bg-geist-bg-100 border border-geist-gray-200 rounded-[12px] p-6 shadow-[0_2px_2px_rgba(0,0,0,0.04)]">
@@ -67,7 +67,7 @@ export default function TheProblemPage() {
         <ul className="space-y-6 text-geist-gray-900 relative z-10">
           <li>
             <strong className="text-geist-gray-1000 block mb-1">Knowledge must live with the code</strong>
-            <span className="text-sm">Not in memory. Not in chat history. Not in someone's head.</span>
+            <span className="text-sm">Not in memory. Not in chat history. Not in someone&apos;s head.</span>
           </li>
           <li>
             <strong className="text-geist-gray-1000 block mb-1">Instructions must be local</strong>

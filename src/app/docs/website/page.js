@@ -24,7 +24,7 @@ export default function WebsiteOverviewPage() {
           <span className="w-2 h-2 rounded-full bg-kresh-green"></span> What is a Skill?
         </h3>
         <p className="text-geist-gray-900">
-          A "Skill" is a reusable, composable intelligence module. At its core, it is a <code>SKILL.md</code> file that contains specific instructions, context, workflows, or rules for an AI agent to follow. Think of it like an npm package, but for AI reasoning and behavior.
+          A &quot;Skill&quot; is a reusable, composable intelligence module. At its core, it is a <code>SKILL.md</code> file that contains specific instructions, context, workflows, or rules for an AI agent to follow. Think of it like an npm package, but for AI reasoning and behavior.
         </p>
       </div>
 

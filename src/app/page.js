@@ -84,23 +84,21 @@ export default function Home() {
 
       <main className="pb-16">
         {/* HERO SECTION */}
-        <section className="relative w-full overflow-hidden mb-32 flex flex-col items-center justify-center min-h-screen pt-[70px] pb-[70px] border-b border-border-color bg-black/10">
-          <video
-            className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
-            src="/hero_video/ascii-magic-2.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
+        <section className="relative w-full overflow-hidden mb-32 flex flex-col items-center justify-center min-h-screen pt-[70px] pb-[70px] border-b border-border-color">
+          {/* Ambient background glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(46,204,113,0.07)_0%,transparent_70%)] pointer-events-none z-0" />
+          
+          {/* Subtle grid pattern overlay */}
+          <div 
+            className="absolute inset-0 opacity-70 pointer-events-none z-0" 
+            style={{
+              backgroundImage: 'radial-gradient(var(--border-color) 1.5px, transparent 1.5px)',
+              backgroundSize: '32px 32px'
+            }}
           />
-          {/* Subtle gradient overlay to blend into the background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background z-10 pointer-events-none" />
           
           <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center w-full">
-            <h1 
-              className="text-white mb-8 flex flex-row flex-wrap lg:flex-nowrap justify-center gap-x-3 gap-y-4 items-center whitespace-nowrap"
-              style={{ textShadow: '0 2px 4px rgba(0,0,0,0.95), 0 4px 16px rgba(0,0,0,0.95)' }}
-            >
+            <h1 className="text-text-primary mb-8 flex flex-row flex-wrap lg:flex-nowrap justify-center gap-x-3 gap-y-4 items-center whitespace-nowrap">
               {[
                 { word: "Install", type: "grotsek" },
                 { word: "Skills", type: "playwrite" },
@@ -109,8 +107,8 @@ export default function Home() {
                 { word: "Skills.", type: "playwrite" }
               ].map((item, i) => {
                 const fontClass = item.type === "playwrite"
-                  ? "playwrite-gb-j-hero text-4xl sm:text-5xl text-white"
-                  : "schibsted-grotesk-hero text-5xl sm:text-6xl text-white";
+                  ? "playwrite-gb-j-hero text-4xl sm:text-5xl text-text-primary"
+                  : "schibsted-grotesk-hero text-5xl sm:text-6xl text-text-primary";
                 return (
                   <BlurText
                     key={i}
@@ -124,10 +122,7 @@ export default function Home() {
               })}
             </h1>
 
-            <p 
-              className="text-lg text-white font-semibold max-w-xl leading-relaxed mb-8 mx-auto"
-              style={{ textShadow: '0 2px 4px rgba(0,0,0,0.95), 0 4px 10px rgba(0,0,0,0.95)' }}
-            >
+            <p className="text-lg text-text-secondary font-medium max-w-xl leading-relaxed mb-8 mx-auto">
               AI Knows More With Kresh.
             </p>
 
@@ -135,13 +130,13 @@ export default function Home() {
               <img
                 src="/arrow.png"
                 alt="Arrow pointing to installation command"
-                className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85"
+                className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85 invert dark:invert-0"
               />
-              <Glass className="w-full backdrop-blur-md bg-black/40 border border-white/10 shadow-lg">
+              <Glass className="w-full shadow-lg">
                 <div className="p-4 flex items-center justify-between group cursor-text w-full min-w-0 gap-3">
                   <div className="flex items-center gap-3 iosevka-charon-bold text-base min-w-0">
                     <span className="text-kresh-green shrink-0">$</span>
-                    <span className="text-gray-200 font-bold truncate">npm i -g @chakresh/kresh</span>
+                    <span className="text-text-primary font-bold truncate">npm i -g @chakresh/kresh</span>
                   </div>
                   <CopyButton text="npm i -g @chakresh/kresh" />
                 </div>
@@ -151,13 +146,13 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <a 
                 href={session ? `/@${session.username}` : "/signup"}
-                className="font-semibold px-6 py-3 bg-white text-black hover:opacity-90 rounded-full text-sm inline-flex items-center justify-center shadow-md transition-all duration-200"
+                className="font-semibold px-6 py-3 bg-text-primary text-background hover:opacity-90 rounded-full text-sm inline-flex items-center justify-center shadow-md transition-all duration-200"
               >
                 {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
               </a>
               <a 
                 href={session ? `/skills` : "/signin"}
-                className="font-semibold px-6 py-3 bg-black/35 hover:bg-black/50 text-white border border-white/20 rounded-full text-sm inline-flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+                className="font-semibold px-6 py-3 bg-text-primary/10 hover:bg-text-primary/15 text-text-primary border border-border-color rounded-full text-sm inline-flex items-center justify-center backdrop-blur-sm transition-all duration-200"
               >
                 {session ? "Explore Skills" : "Sign In"}
               </a>

@@ -39,7 +39,7 @@ export default function DiscoveryPage() {
             <Star className="w-5 h-5 text-amber-500" />
           </div>
           <h4 className="text-geist-gray-1000 font-bold mb-2 text-sm">Popularity</h4>
-          <p className="text-xs text-geist-gray-900 leading-relaxed">Gauge a skill's quality by looking at its <strong>Stars</strong>. Highly starred skills are often battle-tested by the community.</p>
+          <p className="text-xs text-geist-gray-900 leading-relaxed">Gauge a skill&apos;s quality by looking at its <strong>Stars</strong>. Highly starred skills are often battle-tested by the community.</p>
         </div>
         <div className="bg-geist-bg-100 border border-geist-gray-200 rounded-[12px] p-5 shadow-[0_2px_2px_rgba(0,0,0,0.04)]">
           <div className="w-10 h-10 rounded-[6px] bg-geist-gray-100 border border-geist-gray-200 flex items-center justify-center mb-3">
@@ -56,7 +56,7 @@ export default function DiscoveryPage() {
       </p>
       
       <div className="bg-geist-bg-200 border border-geist-gray-200 rounded-[12px] p-6 md:p-8 my-8 not-prose">
-        <h4 className="text-geist-gray-1000 font-bold mb-6 text-lg">What you'll find on a Skill Page:</h4>
+        <h4 className="text-geist-gray-1000 font-bold mb-6 text-lg">What you&apos;ll find on a Skill Page:</h4>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-geist-bg-100 p-5 rounded-[12px] border border-geist-gray-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
             <h5 className="text-kresh-green font-bold mb-2 flex items-center gap-2 text-sm">
@@ -80,7 +80,7 @@ export default function DiscoveryPage() {
             <h5 className="text-kresh-green font-bold mb-2 flex items-center gap-2 text-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-kresh-green"></span> Author Profile
             </h5>
-            <p className="text-geist-gray-900 text-xs m-0 leading-relaxed">Link to the creator's profile to discover other modules they have built.</p>
+            <p className="text-geist-gray-900 text-xs m-0 leading-relaxed">Link to the creator&apos;s profile to discover other modules they have built.</p>
           </div>
         </div>
       </div>
