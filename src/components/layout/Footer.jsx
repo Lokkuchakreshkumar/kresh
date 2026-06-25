@@ -19,44 +19,23 @@ export function Footer() {
           </p>
         </div>
         
-        <div>
-          <h4 className="text-text-primary font-medium mb-4 text-sm">Product</h4>
-          <ul className="space-y-3 text-sm text-text-secondary">
-            <li><a href="/skills" className="hover:text-text-primary transition-colors">Skills</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">CLI</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Pricing</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Changelog</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-text-primary font-medium mb-4 text-sm">Resources</h4>
-          <ul className="space-y-3 text-sm text-text-secondary">
-            <li><a href="#" className="hover:text-text-primary transition-colors">Docs</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Examples</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">API</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Templates</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-text-primary font-medium mb-4 text-sm">Community</h4>
-          <ul className="space-y-3 text-sm text-text-secondary">
-            <li><a href="#" className="hover:text-text-primary transition-colors">GitHub</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Discord</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Blog</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Contribute</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-text-primary font-medium mb-4 text-sm">Company</h4>
-          <ul className="space-y-3 text-sm text-text-secondary">
-            <li><a href="#" className="hover:text-text-primary transition-colors">About</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Careers</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Privacy</a></li>
-            <li><a href="#" className="hover:text-text-primary transition-colors">Terms</a></li>
-          </ul>
+        <div className="col-span-1 md:col-span-2 flex flex-col sm:flex-row gap-12 lg:gap-24">
+          <div>
+            <h4 className="text-text-primary font-medium mb-4 text-sm">Platform</h4>
+            <ul className="space-y-3 text-sm text-text-secondary">
+              <li><a href="/skills" className="hover:text-text-primary transition-colors">Skills Registry</a></li>
+              <li><a href="/docs" className="hover:text-text-primary transition-colors">Documentation</a></li>
+              <li><a href="/docs/cli" className="hover:text-text-primary transition-colors">CLI Reference</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-text-primary font-medium mb-4 text-sm">Legal & Connect</h4>
+            <ul className="space-y-3 text-sm text-text-secondary">
+              <li><a href="#" className="hover:text-text-primary transition-colors">GitHub</a></li>
+              <li><a href="#" className="hover:text-text-primary transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-text-primary transition-colors">Privacy Policy</a></li>
+            </ul>
+          </div>
         </div>
 
         <div className="col-span-1 md:col-span-2 lg:col-span-1">

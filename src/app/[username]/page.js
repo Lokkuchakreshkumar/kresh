@@ -3,76 +3,67 @@ import { notFound } from 'next/navigation';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { users, skills, skillStars } from '@/db/schema';
-import { verifySession } from '@/lib/auth';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { ProfileHero } from '../dashboard/components/ProfileHero';
-import { ProfileSidebar } from '../dashboard/components/ProfileSidebar';
-import { ProfileSkillsList } from '../dashboard/components/ProfileSkillsList';
+import ProfileClientWrapper from './ProfileClientWrapper';
 
-import { unstable_cache } from 'next/cache';
+import { getCachedData, setCachedData } from '@/lib/memoryCache';
 
-const getCachedUser = unstable_cache(
-  async (username) => {
-    const userRows = await db
-      .select()
-      .from(users)
-      .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
-      .limit(1);
-    return userRows[0] || null;
-  },
-  ['user-profile'],
-  { revalidate: 60, tags: ['user'] }
-);
+export const revalidate = 60; // Cache this page at the server/ISR level for 60 seconds
 
-const getCachedUserSkills = unstable_cache(
-  async (userId, isOwner) => {
-    return await db
-      .select({
-        id: skills.id,
-        slug: skills.slug,
-        name: skills.name,
-        description: skills.description,
-        category: skills.category,
-        currentVersion: skills.currentVersion,
-        installsCount: skills.installsCount,
-        starsCount: skills.starsCount,
-        createdAt: skills.createdAt,
-        ownerUsername: users.username,
-        visibility: skills.visibility
-      })
-      .from(skills)
-      .leftJoin(users, eq(skills.ownerId, users.id))
-      .where(
-        isOwner
-          ? eq(skills.ownerId, userId)
-          : and(eq(skills.ownerId, userId), eq(skills.visibility, 'public'))
-      )
-      .orderBy(desc(skills.createdAt));
-  },
-  ['user-skills'],
-  { revalidate: 60, tags: ['skills'] }
-);
+export async function generateStaticParams() {
+  return [
+    { username: 'chakresh' }
+  ];
+}
 
-const getCachedReceivedStars = unstable_cache(
-  async (userId) => {
-    return await db
-      .select({
-        id: skillStars.id,
-        createdAt: skillStars.createdAt,
-        skillName: skills.name,
-        username: users.username
-      })
-      .from(skillStars)
-      .innerJoin(skills, eq(skillStars.skillId, skills.id))
-      .innerJoin(users, eq(skillStars.userId, users.id))
-      .where(eq(skills.ownerId, userId))
-      .orderBy(desc(skillStars.createdAt))
-      .limit(20);
-  },
-  ['user-received-stars'],
-  { revalidate: 60, tags: ['stars'] }
-);
+async function fetchUser(username) {
+  const userRows = await db
+    .select()
+    .from(users)
+    .where(eq(sql`lower(${users.username})`, username.toLowerCase()))
+    .limit(1);
+  return userRows[0] || null;
+}
+
+async function fetchUserSkills(userId) {
+  return await db
+    .select({
+      id: skills.id,
+      slug: skills.slug,
+      name: skills.name,
+      description: skills.description,
+      category: skills.category,
+      currentVersion: skills.currentVersion,
+      installsCount: skills.installsCount,
+      starsCount: skills.starsCount,
+      createdAt: skills.createdAt,
+      ownerUsername: users.username,
+      visibility: skills.visibility
+    })
+    .from(skills)
+    .leftJoin(users, eq(skills.ownerId, users.id))
+    .where(
+      and(eq(skills.ownerId, userId), eq(skills.visibility, 'public'))
+    )
+    .orderBy(desc(skills.createdAt));
+}
+
+async function fetchReceivedStars(userId) {
+  return await db
+    .select({
+      id: skillStars.id,
+      createdAt: skillStars.createdAt,
+      skillName: skills.name,
+      username: users.username
+    })
+    .from(skillStars)
+    .innerJoin(skills, eq(skillStars.skillId, skills.id))
+    .innerJoin(users, eq(skillStars.userId, users.id))
+    .where(eq(skills.ownerId, userId))
+    .orderBy(desc(skillStars.createdAt))
+    .limit(20);
+}
 
 /**
  * Formats a Date object into "Month Day, Year"
@@ -101,23 +92,40 @@ export default async function UserProfilePage({ params }) {
     username = username.substring(1);
   }
 
-  // 1 & 6. Fetch user and verify session in parallel
-  const [userRecord, session] = await Promise.all([
-    getCachedUser(username),
-    verifySession()
-  ]);
+  // 1 & 6. Fetch user from cache/DB
+  let userRecord = getCachedData(`user:${username.toLowerCase()}`);
+  if (!userRecord) {
+    userRecord = await fetchUser(username);
+    if (userRecord) {
+      setCachedData(`user:${username.toLowerCase()}`, userRecord, 60);
+    }
+  }
 
   if (!userRecord) {
     notFound();
   }
 
-  const isOwner = session && session.userId === userRecord.id;
-
-  // 2 & 3. Fetch user's skills and received stars in parallel
-  const [userSkills, receivedStars] = await Promise.all([
-    getCachedUserSkills(userRecord.id, isOwner),
-    getCachedReceivedStars(userRecord.id)
-  ]);
+  // 2 & 3. Fetch user's skills and received stars
+  const cacheKeySkills = `user-skills:${userRecord.id}`;
+  const cacheKeyStars = `user-stars:${userRecord.id}`;
+  
+  let userSkills = getCachedData(cacheKeySkills);
+  let receivedStars = getCachedData(cacheKeyStars);
+  
+  if (!userSkills || !receivedStars) {
+    const [_skills, _stars] = await Promise.all([
+      userSkills ? null : fetchUserSkills(userRecord.id),
+      receivedStars ? null : fetchReceivedStars(userRecord.id)
+    ]);
+    if (!userSkills) {
+      userSkills = _skills;
+      setCachedData(cacheKeySkills, userSkills, 60);
+    }
+    if (!receivedStars) {
+      receivedStars = _stars;
+      setCachedData(cacheKeyStars, receivedStars, 60);
+    }
+  }
 
   // 4. Construct recent activities timeline events
   const publications = userSkills.map(s => ({
@@ -143,37 +151,23 @@ export default async function UserProfilePage({ params }) {
   const totalStars = userSkills.reduce((acc, skill) => acc + (skill.starsCount || 0), 0);
   const formattedDate = formatMemberDate(userRecord.createdAt);
 
-
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-kresh-green/30">
       <Header />
       
       <main className="pt-32 pb-16 max-w-7xl mx-auto px-6">
-        <section className="mb-10">
-          <ProfileHero
-            user={userRecord}
-            formattedDate={formattedDate}
-            stats={{
-              skills: totalSkills,
-              installs: totalInstalls,
-              stars: totalStars
-            }}
-          />
-        </section>
-
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
-          <div className="space-y-8">
-            <ProfileSkillsList skills={userSkills} isOwner={isOwner} />
-          </div>
-
-          <div className="space-y-8">
-            <ProfileSidebar 
-              username={userRecord.username} 
-              isOwner={isOwner} 
-              activities={activities} 
-            />
-          </div>
-        </div>
+        <ProfileClientWrapper
+          userRecord={userRecord}
+          userSkills={userSkills}
+          activities={activities}
+          stats={{
+            skills: totalSkills,
+            installs: totalInstalls,
+            stars: totalStars
+          }}
+          formattedDate={formattedDate}
+          username={username}
+        />
       </main>
       
       <Footer />

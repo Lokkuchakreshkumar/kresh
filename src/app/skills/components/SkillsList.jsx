@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { 
   Search, Code, Feather, Brain, Network, Terminal, CheckCircle2, 
   Copy, Check, Eye, Download, ChevronLeft, ChevronRight 
@@ -149,7 +150,9 @@ function CopyCommandLine({ slug }) {
   );
 }
 
-export function SkillsList({ skills, initialSearch = '' }) {
+function SkillsListContent({ skills }) {
+  const searchParams = useSearchParams();
+  const initialSearch = searchParams.get('search') || searchParams.get('q') || '';
   const [search, setSearch] = useState(initialSearch);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'popular', 'recent', 'most-installed'
   const [authorFilter, setAuthorFilter] = useState('all');
@@ -534,5 +537,13 @@ export function SkillsList({ skills, initialSearch = '' }) {
       )}
 
     </div>
+  );
+}
+
+export function SkillsList({ skills }) {
+  return (
+    <Suspense fallback={<div className="text-center py-12 text-sm text-text-secondary">Loading search...</div>}>
+      <SkillsListContent skills={skills} />
+    </Suspense>
   );
 }

@@ -7,64 +7,69 @@ const testPassword = 'Password123!';
 test.describe('Kresh Major Capabilities Scenarios', () => {
   // Scenario 1: User Registration
   test('Scenario 1: User can sign up successfully', async ({ page }) => {
+    const testUsername = `user1_${Date.now()}`;
+    const testEmail = `${testUsername}@example.com`;
+    const testPassword = 'Password123!';
+
     await page.goto('/signup');
     await page.fill('input[name="username"]', testUsername);
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
     
-    // We expect it to redirect to home page or dashboard
-    await Promise.all([
-      page.waitForNavigation().catch(() => {}),
-      page.click('button[type="submit"]')
-    ]);
-
-    // Check for error messages
-    const errorLocator = page.locator('.text-red-400');
-    if (await errorLocator.isVisible()) {
-      const errorText = await errorLocator.textContent();
-      throw new Error(`Signup failed with UI error: ${errorText}`);
-    }
-
-    // Should be redirected to home or dashboard, wait for URL to change
-    expect(page.url()).not.toContain('/signup');
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL('http://localhost:3000/');
   });
 
   // Scenario 2: User Login
   test('Scenario 2: User can log in successfully', async ({ page }) => {
+    const testUsername = `user2_${Date.now()}`;
+    const testEmail = `${testUsername}@example.com`;
+    const testPassword = 'Password123!';
+
+    // Sign up first
+    await page.goto('/signup');
+    await page.fill('input[name="username"]', testUsername);
+    await page.fill('input[name="email"]', testEmail);
+    await page.fill('input[name="password"]', testPassword);
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL('http://localhost:3000/');
+
+    // Log out (optional, we can just clear cookies or rely on isolated context)
+    await page.context().clearCookies();
+
+    // Now Sign in
     await page.goto('/signin');
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL('http://localhost:3000/');
     
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click('button[type="submit"]')
-    ]);
-
-    expect(page.url()).not.toContain('/signin');
     // Verify user is authenticated by visiting the dashboard
     await page.goto('/dashboard');
-    expect(page.url()).toContain('/dashboard');
+    // The dashboard page redirects to /@username
+    await expect(page).toHaveURL(new RegExp(`http://localhost:3000/@${testUsername}`));
   });
 
   // Scenario 3: Publishing a Skill
   test('Scenario 3: User can publish a new skill from dashboard', async ({ page }) => {
-    // First, login
-    await page.goto('/signin');
+    const testUsername = `user3_${Date.now()}`;
+    const testEmail = `${testUsername}@example.com`;
+    const testPassword = 'Password123!';
+
+    // Sign up
+    await page.goto('/signup');
+    await page.fill('input[name="username"]', testUsername);
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click('button[type="submit"]')
-    ]);
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL('http://localhost:3000/');
 
     // Go to publish
     await page.goto('/dashboard/publish');
     
-    // Assuming there are fields for name, description, category, and markdown editor
     const skillName = `Test Skill ${Date.now()}`;
     await page.fill('input[name="name"]', skillName);
     
-    // Fill description if exists
     const descInput = await page.$('input[name="description"]');
     if (descInput) {
       await descInput.fill('A cool test skill.');
@@ -73,35 +78,31 @@ test.describe('Kresh Major Capabilities Scenarios', () => {
       if (descTextarea) await descTextarea.fill('A cool test skill.');
     }
 
-    // Since we don't know the exact UI for the skill markdown, we might need to adjust this
-    // We'll try to find a textarea named skillMarkdown or similar
     const markdownInput = await page.$('textarea[name="skillMarkdown"]');
     if (markdownInput) {
       await markdownInput.fill('# Test Skill\n\nThis is a test.');
     }
 
-    // Submit
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: 'networkidle' }).catch(() => {}),
-      page.click('button[type="submit"]')
-    ]);
+    await page.click('button[type="submit"]');
     
-    // After publishing, usually redirects to dashboard or the skill page
-    expect(page.url()).not.toContain('/dashboard/publish');
+    // Check for error messages
+    const errorLocator = page.locator('.text-red-300');
+    if (await errorLocator.isVisible({ timeout: 1000 }).catch(() => false)) {
+      const errorText = await errorLocator.textContent();
+      throw new Error(`Publish failed with UI error: ${errorText}`);
+    }
+
+    // Since it doesn't redirect on publish, look for success message
+    await expect(page.locator('text=Skill published successfully.')).toBeVisible({ timeout: 10000 });
     
     // Check if the skill name appears on the dashboard
     await page.goto('/dashboard');
-    await expect(page.locator(`text=${skillName}`)).toBeVisible();
+    await expect(page.locator(`text=${skillName}`).first()).toBeVisible();
   });
 
   // Scenario 4: Skills API response
   test('Scenario 4: Skills API returns valid data', async ({ request }) => {
-    // Assuming there's a public or authenticated API. Let's try to hit a public API first.
-    // E.g. /api/skills
     const response = await request.get('/api/skills');
-    
-    // Note: This endpoint might not exist as a pure list API, or might return 404
-    // Wait, the API structure had `[...slug]`, so it expects a slug.
     expect(response.ok()).toBeTruthy();
   });
 });

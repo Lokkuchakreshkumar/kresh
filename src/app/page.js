@@ -98,28 +98,14 @@ export default function Home() {
           />
           
           <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center w-full">
-            <h1 className="text-text-primary mb-8 flex flex-row flex-wrap lg:flex-nowrap justify-center gap-x-3 gap-y-4 items-center whitespace-nowrap">
-              {[
-                { word: "Install", type: "grotsek" },
-                { word: "Skills", type: "playwrite" },
-                { word: "and", type: "grotsek" },
-                { word: "Publish", type: "grotsek" },
-                { word: "Skills.", type: "playwrite" }
-              ].map((item, i) => {
-                const fontClass = item.type === "playwrite"
-                  ? "playwrite-gb-j-hero text-4xl sm:text-5xl text-text-primary"
-                  : "schibsted-grotesk-hero text-5xl sm:text-6xl text-text-primary";
-                return (
-                  <BlurText
-                    key={i}
-                    text={item.word}
-                    delay={i * 60 + 50}
-                    animateBy="letters"
-                    direction="bottom"
-                    className={`${fontClass} leading-none inline-flex shrink-0`}
-                  />
-                );
-              })}
+            <h1 className="text-text-primary mb-8 flex flex-row flex-wrap justify-center items-center text-center max-w-4xl tracking-tight font-bold">
+              <BlurText
+                text="Install Skills and Publish Skills."
+                delay={50}
+                animateBy="words"
+                direction="bottom"
+                className="text-5xl sm:text-7xl leading-[1.1] inline-flex flex-wrap justify-center shrink-0"
+              />
             </h1>
 
             <p className="text-lg text-text-secondary font-medium max-w-xl leading-relaxed mb-8 mx-auto">
@@ -143,16 +129,16 @@ export default function Home() {
               </Glass>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-4">
               <a 
                 href={session ? `/@${session.username}` : "/signup"}
-                className="font-semibold px-6 py-3 bg-text-primary text-background hover:opacity-90 rounded-full text-sm inline-flex items-center justify-center shadow-md transition-all duration-200"
+                className="font-semibold px-6 py-3 bg-text-primary text-background hover:bg-gray-200 active:scale-[0.98] rounded-xl text-sm inline-flex items-center justify-center shadow-lg transition-all duration-200"
               >
                 {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
               </a>
               <a 
                 href={session ? `/skills` : "/signin"}
-                className="font-semibold px-6 py-3 bg-text-primary/10 hover:bg-text-primary/15 text-text-primary border border-border-color rounded-full text-sm inline-flex items-center justify-center backdrop-blur-sm transition-all duration-200"
+                className="font-medium text-text-secondary hover:text-text-primary text-sm inline-flex items-center justify-center transition-colors duration-200 underline-offset-4 hover:underline"
               >
                 {session ? "Explore Skills" : "Sign In"}
               </a>

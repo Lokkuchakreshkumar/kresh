@@ -9,43 +9,39 @@ import { Button } from '@/components/ui/Button';
 import { EmptySkills } from './components/EmptySkills';
 import { SkillsList } from './components/SkillsList';
 
-import { unstable_cache } from 'next/cache';
+import { getCachedData, setCachedData } from '@/lib/memoryCache';
 
-export const revalidate = 60;
+async function fetchPublicSkills() {
+  try {
+    return await db
+      .select({
+        id: skills.id,
+        slug: skills.slug,
+        name: skills.name,
+        description: skills.description,
+        category: skills.category,
+        currentVersion: skills.currentVersion,
+        installsCount: skills.installsCount,
+        starsCount: skills.starsCount,
+        createdAt: skills.createdAt,
+        ownerUsername: users.username
+      })
+      .from(skills)
+      .leftJoin(users, eq(skills.ownerId, users.id))
+      .where(eq(skills.visibility, 'public'))
+      .orderBy(desc(skills.createdAt));
+  } catch (error) {
+    console.error('Failed to load public skills:', error);
+    return [];
+  }
+}
 
-const getPublicSkills = unstable_cache(
-  async () => {
-    try {
-      return await db
-        .select({
-          id: skills.id,
-          slug: skills.slug,
-          name: skills.name,
-          description: skills.description,
-          category: skills.category,
-          currentVersion: skills.currentVersion,
-          installsCount: skills.installsCount,
-          starsCount: skills.starsCount,
-          createdAt: skills.createdAt,
-          ownerUsername: users.username
-        })
-        .from(skills)
-        .leftJoin(users, eq(skills.ownerId, users.id))
-        .where(eq(skills.visibility, 'public'))
-        .orderBy(desc(skills.createdAt));
-    } catch (error) {
-      console.error('Failed to load public skills:', error);
-      return [];
-    }
-  },
-  ['public-skills'],
-  { revalidate: 60, tags: ['skills'] }
-);
-
-export default async function SkillsPage({ searchParams }) {
-  const resolvedParams = searchParams ? (searchParams.then ? await searchParams : searchParams) : {};
-  const initialSearch = resolvedParams.search || resolvedParams.q || '';
-  const publicSkills = await getPublicSkills();
+export default async function SkillsPage() {
+  let publicSkills = getCachedData('public-skills');
+  if (!publicSkills) {
+    publicSkills = await fetchPublicSkills();
+    setCachedData('public-skills', publicSkills, 60);
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-white/20">
@@ -68,7 +64,7 @@ export default async function SkillsPage({ searchParams }) {
         {publicSkills.length === 0 ? (
           <EmptySkills />
         ) : (
-          <SkillsList skills={publicSkills} initialSearch={initialSearch} />
+          <SkillsList skills={publicSkills} />
         )}
       </main>
       <Footer />
