@@ -214,16 +214,16 @@ export function InteractiveDemo() {
         }
       `}} />
 
-      <div className="w-full flex flex-col mb-8 px-4 sm:px-0 z-10">
-        <h2 className="text-3xl sm:text-4xl schibsted-grotesk-hero text-text-primary mt-1">
+      <div className="w-full flex flex-col mb-8 px-4 sm:px-0 z-10 text-left">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl tracking-tight font-bold text-text-primary mt-1">
           Install and Manage Skills
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full px-4 sm:px-0 mb-16 z-10">
-        {/* LEFT PANEL: VS CODE MOCKUP (lg:col-span-7) */}
+      <div className="relative w-full px-4 sm:px-0 mb-32 z-10">
+        {/* LEFT PANEL: VS CODE MOCKUP */}
         <div 
-          className={`lg:col-span-7 rounded-xl border bg-[#0d0e12] overflow-hidden flex flex-col h-[580px] shadow-2xl relative transition-all duration-500 ${
+          className={`w-full lg:w-[80%] rounded-xl border bg-[#0d0e12] overflow-hidden flex flex-col h-[580px] shadow-2xl relative transition-all duration-500 z-10 ${
             vscodePulse 
               ? 'border-kresh-green/60 shadow-[0_0_35px_rgba(46,204,113,0.15)] ring-1 ring-kresh-green/30' 
               : 'border-white/10'
@@ -377,8 +377,8 @@ export function InteractiveDemo() {
           </div>
         </div>
 
-        {/* RIGHT PANEL: TERMINAL MOCKUP (lg:col-span-5) */}
-        <div className="lg:col-span-5 rounded-xl border border-white/10 bg-[#0c0d12] overflow-hidden flex flex-col h-[580px] shadow-2xl relative">
+        {/* RIGHT PANEL: TERMINAL MOCKUP */}
+        <div className="w-full lg:w-[45%] lg:absolute lg:-bottom-12 lg:-right-4 mt-6 lg:mt-0 rounded-xl border border-white/10 bg-[#0c0d12] overflow-hidden flex flex-col h-[400px] lg:h-[500px] shadow-[0_30px_60px_rgba(0,0,0,0.6),0_0_40px_rgba(46,204,113,0.08)] z-20">
           {/* Header Bar */}
           <div className="h-10 border-b border-white/10 bg-[#08090c] flex items-center px-4 justify-between">
             <div className="flex items-center space-x-2">

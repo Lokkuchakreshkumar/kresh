@@ -152,7 +152,7 @@ export function MobileMenu({ session, onLogout }) {
                   <span>Skills</span>
                 </a>
                 <a 
-                  href="#" 
+                  href="/docs" 
                   onClick={handleLinkClick}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-text-primary/10 hover:text-text-primary transition-all duration-200"
                 >
@@ -173,21 +173,31 @@ export function MobileMenu({ session, onLogout }) {
 
               {/* Action buttons */}
               <div className="flex flex-col gap-2.5 pt-4 border-t border-border-color/60">
-                <a href="/dashboard/publish" onClick={handleLinkClick} className="w-full">
-                  <Button variant="glass" className="w-full justify-start gap-2.5 text-xs py-2.5 px-4 font-bold border border-border-color hover:border-kresh-green/35">
-                    <Plus className="w-4 h-4 text-kresh-green shrink-0" />
-                    Publish Skill
-                  </Button>
-                </a>
+                {!session ? (
+                  <a href="/signin" onClick={handleLinkClick} className="w-full">
+                    <Button variant="outline" className="w-full justify-center text-xs py-2.5 px-4 font-bold">
+                      Sign In
+                    </Button>
+                  </a>
+                ) : (
+                  <>
+                    <a href="/dashboard/publish" onClick={handleLinkClick} className="w-full">
+                      <Button variant="glass" className="w-full justify-start gap-2.5 text-xs py-2.5 px-4 font-bold border border-border-color hover:border-kresh-green/35">
+                        <Plus className="w-4 h-4 text-kresh-green shrink-0" />
+                        Publish Skill
+                      </Button>
+                    </a>
 
-                <button 
-                  type="button"
-                  onClick={handleLogoutClick}
-                  className="w-full flex items-center justify-between px-4 py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer font-bold mt-1"
-                >
-                  <span>Logout</span>
-                  <LogOut className="w-4 h-4 text-red-400/70" />
-                </button>
+                    <button 
+                      type="button"
+                      onClick={handleLogoutClick}
+                      className="w-full flex items-center justify-between px-4 py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-200 cursor-pointer font-bold mt-1"
+                    >
+                      <span>Logout</span>
+                      <LogOut className="w-4 h-4 text-red-400/70" />
+                    </button>
+                  </>
+                )}
               </div>
             </>
           ) : (

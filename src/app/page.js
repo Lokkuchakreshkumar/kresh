@@ -98,13 +98,13 @@ export default function Home() {
           />
           
           <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center w-full">
-            <h1 className="text-text-primary mb-8 flex flex-row flex-wrap justify-center items-center text-center max-w-4xl tracking-tight font-bold">
+            <h1 className="text-text-primary mb-8 flex flex-wrap justify-center text-center max-w-4xl tracking-tight font-bold w-full">
               <BlurText
                 text="Install Skills and Publish Skills."
                 delay={50}
                 animateBy="words"
                 direction="bottom"
-                className="text-5xl sm:text-7xl leading-[1.1] inline-flex flex-wrap justify-center shrink-0"
+                className="text-5xl sm:text-7xl leading-[1.1] flex flex-wrap justify-center w-full"
               />
             </h1>
 

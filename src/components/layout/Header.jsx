@@ -333,22 +333,24 @@ export function Header() {
             {session === undefined ? (
               <div className="w-20 h-9 bg-white/5 animate-pulse rounded-md" />
             ) : session ? (
-              <>
-                <div className="hidden md:flex items-center gap-4">
-                  <a href={`/@${session.username}`} className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
-                    @{session.username}
-                  </a>
-                  <a href="/dashboard/publish">
-                    <Button variant="glass">Publish Skill</Button>
-                  </a>
-                </div>
-                <MobileMenu session={session} onLogout={handleLogout} />
-              </>
+              <div className="hidden md:flex items-center gap-4">
+                <a href={`/@${session.username}`} className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
+                  @{session.username}
+                </a>
+                <a href="/dashboard/publish">
+                  <Button variant="glass">Publish Skill</Button>
+                </a>
+              </div>
             ) : (
-              <a href="/signin">
-                <Button variant="outline">Sign in</Button>
-              </a>
+              <div className="hidden md:flex items-center gap-4">
+                <a href="/signin">
+                  <Button variant="outline">Sign in</Button>
+                </a>
+              </div>
+            )}
+            {session !== undefined && (
+              <MobileMenu session={session} onLogout={handleLogout} />
             )}
           </div>
 
