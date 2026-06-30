@@ -1,8 +1,11 @@
 import { and, desc, eq, or, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { getVercelOidcToken } from '@vercel/oidc';
 import { db } from '@/db';
-import { externalSkills, skillFiles, skills, skillVersions, users } from '@/db/schema';
+import { skillFiles, skills, skillVersions, users } from '@/db/schema';
 import { decrypt } from '@/lib/auth';
+import { externalIdFromKreshSlug, toExternalInstallPayload } from '@/lib/externalSkills';
+import { fetchLiveExternalSkill } from '@/lib/skillsShClient';
 
 export async function GET(request, { params }) {
   try {
@@ -10,35 +13,12 @@ export async function GET(request, { params }) {
     const slug = decodeURIComponent(Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug || '');
 
     if (slug.startsWith('external/')) {
-      const externalRows = await db.select().from(externalSkills)
-        .where(and(eq(externalSkills.kreshSlug, slug), eq(externalSkills.isAvailable, true)))
-        .limit(1);
-      const external = externalRows[0];
-      if (!external) {
+      const externalId = externalIdFromKreshSlug(slug);
+      const live = await fetchLiveExternalSkill(externalId, getVercelOidcToken);
+      if (!live) {
         return NextResponse.json({ error: 'Imported skill not found.' }, { status: 404 });
       }
-      return NextResponse.json({
-        name: external.name,
-        slug: external.kreshSlug,
-        description: external.description,
-        category: 'Imported skill',
-        currentVersion: 'upstream',
-        ownerUsername: external.sourceOwner || 'upstream',
-        installsCount: external.upstreamInstalls,
-        skillContent: '',
-        files: [],
-        installStrategy: external.isInstallable ? 'external-npx' : 'unsupported-external',
-        source: external.isInstallable ? {
-          type: 'github',
-          url: external.sourceUrl,
-          skillSelector: external.skillSelector
-        } : null,
-        attribution: {
-          owner: external.sourceOwner,
-          repository: external.sourceRepository,
-          skillsShUrl: external.upstreamUrl
-        }
-      });
+      return NextResponse.json(toExternalInstallPayload(live.metadata, live));
     }
 
     // Extract optional CLI token

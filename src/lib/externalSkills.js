@@ -52,9 +52,59 @@ export function normalizeSkillsShSkill(raw, fallbackRank) {
   }
 }
 
+export function mapSkillsShFiles(detailFiles) {
+  return (detailFiles || [])
+    .map((file) => ({
+      path: String(file.path || ''),
+      content: String(file.contents ?? file.content ?? ''),
+      fileType: /\.(png|jpe?g|gif|webp|svg)$/i.test(String(file.path || '')) ? 'image' : 'text'
+    }))
+    .filter((file) => file.path && file.content);
+}
+
+export function parseSkillsShListPayload(payload, page, perPage) {
+  const entries = Array.isArray(payload) ? payload : payload.skills || payload.data || payload.items || [];
+  const explicitHasMore = payload.has_more ?? payload.hasMore;
+  const hasMore = typeof explicitHasMore === 'boolean'
+    ? explicitHasMore
+    : Boolean(payload.next_page ?? payload.nextPage) || entries.length === perPage;
+  const total = Number(payload.total ?? payload.total_count ?? payload.totalCount ?? 0) || null;
+  const nextPage = hasMore && entries.length > 0 ? page + 1 : null;
+  return { entries, hasMore, total, nextPage };
+}
+
+export function externalIdFromKreshSlug(slug) {
+  return String(slug || '').replace(/^external\//, '').replace(/^\/+|\/+$/g, '');
+}
+
+export function toExternalInstallPayload(metadata, upstream) {
+  return {
+    name: metadata.name,
+    slug: metadata.kreshSlug,
+    description: upstream.description || metadata.description,
+    category: 'Imported skill',
+    currentVersion: 'upstream',
+    ownerUsername: metadata.sourceOwner || 'upstream',
+    installsCount: metadata.upstreamInstalls,
+    skillContent: upstream.markdown,
+    files: upstream.files,
+    installStrategy: metadata.isInstallable ? 'external-npx' : 'unsupported-external',
+    source: metadata.isInstallable ? {
+      type: 'github',
+      url: metadata.sourceUrl,
+      skillSelector: metadata.skillSelector
+    } : null,
+    attribution: {
+      owner: metadata.sourceOwner,
+      repository: metadata.sourceRepository,
+      skillsShUrl: metadata.upstreamUrl
+    }
+  };
+}
+
 export function toExternalSkillDto(skill) {
   return {
-    id: skill.id,
+    id: skill.id || skill.externalId,
     slug: skill.kreshSlug,
     name: skill.name,
     description: skill.description,
@@ -62,7 +112,7 @@ export function toExternalSkillDto(skill) {
     currentVersion: 'upstream',
     installsCount: skill.upstreamInstalls,
     starsCount: 0,
-    createdAt: skill.firstSeenAt,
+    createdAt: skill.firstSeenAt || skill.lastSeenAt || null,
     ownerUsername: skill.sourceOwner || 'upstream',
     external: true,
     upstreamRank: skill.upstreamRank,

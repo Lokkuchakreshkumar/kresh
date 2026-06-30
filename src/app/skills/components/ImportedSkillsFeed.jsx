@@ -60,7 +60,11 @@ function ImportedSkillsFeedContent({ query }) {
     <section className="mb-14" aria-labelledby="imported-skills-heading">
       <div className="mb-5">
         <h2 id="imported-skills-heading" className="text-2xl font-bold text-[var(--primary)]">Kresh community catalog</h2>
-        <p className="mt-2 text-sm text-[var(--gray-700)]">{total.toLocaleString()} community skills ordered by popularity and installed securely through Kresh.</p>
+        <p className="mt-2 text-sm text-[var(--gray-700)]">
+          {total > 0
+            ? `${total.toLocaleString()} community skills ordered by popularity and installed securely through Kresh.`
+            : 'Community skills ordered by popularity and installed securely through Kresh.'}
+        </p>
       </div>
       <div className="space-y-4">
         <div className="hidden gap-4 px-6 text-[10px] font-bold uppercase text-[var(--gray-700)]/70 lg:grid lg:grid-cols-12">

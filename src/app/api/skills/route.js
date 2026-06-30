@@ -1,8 +1,10 @@
-import { and, asc, desc, eq, ilike, like, or, sql } from 'drizzle-orm';
+import { and, desc, eq, like, or, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { getVercelOidcToken } from '@vercel/oidc';
 import { db } from '@/db';
-import { externalSkills, skills, users } from '@/db/schema';
+import { skills, users } from '@/db/schema';
 import { toExternalSkillDto } from '@/lib/externalSkills';
+import { fetchSkillsShSkillList } from '@/lib/skillsShClient';
 
 export async function GET(request) {
   try {
@@ -41,19 +43,10 @@ export async function GET(request) {
 
     const results = await dbQuery.orderBy(desc(skills.createdAt)).limit(50);
 
-    const externalWhere = query
-      ? and(eq(externalSkills.isAvailable, true), or(
-          ilike(externalSkills.name, `%${query}%`),
-          ilike(externalSkills.description, `%${query}%`),
-          ilike(externalSkills.externalId, `%${query}%`)
-        ))
-      : eq(externalSkills.isAvailable, true);
-    const imported = await db.select().from(externalSkills)
-      .where(externalWhere)
-      .orderBy(asc(externalSkills.upstreamRank))
-      .limit(50);
+    const live = await fetchSkillsShSkillList({ page: 0, perPage: 50, query }, getVercelOidcToken);
+    const imported = (live?.items || []).map(toExternalSkillDto);
 
-    return NextResponse.json([...imported.map(toExternalSkillDto), ...results].slice(0, 50));
+    return NextResponse.json([...imported, ...results].slice(0, 50));
   } catch (error) {
     console.error('Failed to query search skills:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

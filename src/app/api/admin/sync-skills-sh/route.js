@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { externalSkills, externalSkillSyncState } from '@/db/schema';
 import { normalizeSkillsShSkill } from '@/lib/externalSkills';
+import { readFrontmatterDescription } from '@/lib/skillFrontmatter';
+import { fetchSkillsShSkillDetail } from '@/lib/skillsShClient';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -24,47 +26,16 @@ async function getOidcToken() {
   return getVercelOidcToken();
 }
 
-function readFrontmatterDescription(contents) {
-  try {
-    if (typeof contents !== 'string' || !contents.startsWith('---')) return null;
-    const frontmatter = contents.split(/^---\s*$/m)[1] || '';
-    const match = frontmatter.match(/^description:\s*(.*)$/m);
-    if (!match) return null;
-    const inline = match[1].trim();
-    if (inline && !/^[>|][+-]?$/.test(inline)) return inline.replace(/^['"]|['"]$/g, '').slice(0, 4000) || null;
-    const remainder = frontmatter.slice((match.index || 0) + match[0].length).split(/\r?\n/);
-    const folded = [];
-    for (const line of remainder) {
-      if (!line.trim()) {
-        if (folded.length) folded.push('');
-        continue;
-      }
-      if (!/^\s+/.test(line)) break;
-      folded.push(line.trim());
-    }
-    return folded.join(' ').replace(/\s+/g, ' ').trim().slice(0, 4000) || null;
-  } catch (error) {
-    return null;
-  }
-}
-
-async function fetchDescriptions(entries, oidcToken) {
+async function fetchDescriptions(entries, getOidcToken) {
   const descriptions = new Map();
   for (let offset = 0; offset < entries.length; offset += DETAIL_CONCURRENCY) {
     const chunk = entries.slice(offset, offset + DETAIL_CONCURRENCY);
     const results = await Promise.allSettled(chunk.map(async (entry) => {
       const externalId = String(entry.id || '').replace(/^\/+|\/+$/g, '');
       if (!externalId) return null;
-      const idPath = externalId.split('/').map(encodeURIComponent).join('/');
-      const response = await fetch(`https://skills.sh/api/v1/skills/${idPath}`, {
-        headers: { Authorization: `Bearer ${oidcToken}`, Accept: 'application/json' },
-        cache: 'no-store',
-        signal: AbortSignal.timeout(15000)
-      });
-      if (!response.ok) return null;
-      const detail = await response.json();
-      const skillFile = (detail.files || []).find((file) => String(file.path || '').toLowerCase() === 'skill.md');
-      return { externalId, description: readFrontmatterDescription(skillFile?.contents) };
+      const detail = await fetchSkillsShSkillDetail(externalId, getOidcToken);
+      const description = detail.description || readFrontmatterDescription(detail.markdown);
+      return description ? { externalId, description } : null;
     }));
     results.forEach((result) => {
       if (result.status === 'fulfilled' && result.value?.description) descriptions.set(result.value.externalId, result.value.description);
@@ -103,9 +74,15 @@ export async function POST(request) {
     const hasMore = typeof explicitHasMore === 'boolean'
       ? explicitHasMore
       : Boolean(payload.next_page || payload.nextPage) || entries.length === PAGE_SIZE;
-    const descriptions = enrich ? await fetchDescriptions(entries, oidcToken) : new Map();
+    const descriptions = enrich ? await fetchDescriptions(entries, getOidcToken) : new Map();
     const normalized = entries
-      .map((entry, index) => normalizeSkillsShSkill({ ...entry, description: descriptions.get(entry.id) || entry.description }, (page * PAGE_SIZE) + index + 1))
+      .map((entry, index) => {
+        const externalId = String(entry.id || '').replace(/^\/+|\/+$/g, '');
+        return normalizeSkillsShSkill({
+          ...entry,
+          description: descriptions.get(externalId) || entry.description
+        }, (page * PAGE_SIZE) + index + 1);
+      })
       .filter(Boolean);
 
     await db.transaction(async (tx) => {
@@ -115,7 +92,7 @@ export async function POST(request) {
           set: {
             kreshSlug: sql`excluded.kresh_slug`,
             name: sql`excluded.name`,
-            description: sql`excluded.description`,
+            description: sql`COALESCE(excluded.description, external_skills.description)`,
             sourceOwner: sql`excluded.source_owner`,
             sourceRepository: sql`excluded.source_repository`,
             sourceUrl: sql`excluded.source_url`,
