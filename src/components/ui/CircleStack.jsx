@@ -50,7 +50,7 @@ export function CircleStack() {
     return (
       <div className="w-full flex flex-col items-center">
         {/* Small uppercase section tag */}
-        <div className="font-sans font-medium text-text-secondary/70 text-xs uppercase mb-12 tracking-wider">
+        <div className="font-outfit font-semibold text-text-secondary/70 text-xs uppercase mb-12">
           System Stack Architecture
         </div>
 
@@ -130,7 +130,7 @@ export function CircleStack() {
                           <span className={`text-[10px] sm:text-xs font-mono uppercase font-bold ${layer.textColor} opacity-90 drop-shadow-sm`}>
                             {layer.id}
                           </span>
-                          <span className={`text-xl sm:text-2xl md:text-3xl playwrite-gb-j-hero font-bold mt-1 ${layer.textColor} drop-shadow-md`}>
+                          <span className={`text-xl sm:text-2xl md:text-3xl font-outfit font-extrabold mt-1 ${layer.textColor} drop-shadow-md`}>
                             {layer.title}
                           </span>
                         </div>
@@ -160,7 +160,7 @@ export function CircleStack() {
                         {layer.id}
                       </span>
                     </div>
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl playwrite-gb-j-hero font-bold text-white mb-6 leading-tight text-center md:text-left">
+                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-outfit font-extrabold text-white mb-6 leading-tight text-center md:text-left">
                       {layer.title}
                     </h3>
                     <p className="text-zinc-400 font-sans text-base sm:text-lg leading-relaxed max-w-md mx-auto md:mx-0 text-center md:text-left">

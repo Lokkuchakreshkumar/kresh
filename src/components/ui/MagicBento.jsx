@@ -15,42 +15,42 @@ const cardData = [
     label: 'Discover',
     title: 'Templates',
     description: 'Community',
-    image: '/Bento/discover.png'
+    body: 'Browse pre-built instruction sets and agent workflows curated by the Kresh community. Fork and integrate them into your own agents in seconds.'
   },
   {
     color: '#030303',
     label: 'Knowledge',
     title: 'Docs & Context',
     description: '',
-    image: '/Bento/knowledge.png'
+    body: 'Inject vast amounts of domain-specific context directly into your agents. Kresh automatically optimizes markdown documentation for optimal LLM context consumption.'
   },
   {
     color: '#030303',
     label: 'DESIGN.md',
     title: 'Teach AI your product',
     description: 'Components • UX • Flows',
-    image: '/Bento/design.png'
+    body: 'Establish rigid design systems and UX rules. Enforce styling standards, typography, and component structures so your AI never hallucinates UI.'
   },
   {
     color: '#030303',
     label: 'SKILLS',
-    title: 'APIs • MCPs • Tools • Capabilities',
+    title: 'APIs • MCPs • Tools',
     description: 'Extend what AI can do',
-    image: '/Bento/skill.png'
+    body: 'Connect your AI to the outside world. Seamlessly integrate external APIs, databases, and Model Context Protocols (MCPs) to give your agents superpowers.'
   },
   {
     color: '#030303',
     label: 'AGENTS.md',
     title: 'Workflows & behaviors',
     description: '',
-    image: '/Bento/agents.png'
+    body: 'Define complex multi-agent workflows. Specify exact state machines, decision trees, and delegation patterns for autonomous execution.'
   },
   {
     color: '#030303',
     label: 'Prompts',
     title: 'Reusable instructions',
     description: 'Personality • Tone & style',
-    image: '/Bento/prompt.png'
+    body: 'Maintain a centralized repository of your core prompts. Control tone, style, and brand voice across all your AI interactions with simple markdown.'
   }
 ];
 
@@ -583,8 +583,10 @@ export const MagicBento = ({
                 <div className="magic-bento-card__header">
                   <div className="magic-bento-card__label">{card.label}</div>
                 </div>
-                {card.image && (
-                  <img src={card.image} alt="" className="magic-bento-card__image object-cover" />
+                {card.body && (
+                  <div className="magic-bento-card__body mt-6 mb-auto flex-1">
+                    <p className="text-[13px] md:text-sm text-zinc-400 leading-relaxed font-sans font-medium">{card.body}</p>
+                  </div>
                 )}
                 <div className="magic-bento-card__content">
                   <h2 className="magic-bento-card__title">{card.title}</h2>
@@ -725,8 +727,10 @@ export const MagicBento = ({
               <div className="magic-bento-card__header">
                 <div className="magic-bento-card__label">{card.label}</div>
               </div>
-              {card.image && (
-                <img src={card.image} alt="" className="magic-bento-card__image object-cover" />
+              {card.body && (
+                <div className="magic-bento-card__body mt-6 mb-auto flex-1">
+                  <p className="text-[13px] md:text-sm text-zinc-400 leading-relaxed font-sans font-medium">{card.body}</p>
+                </div>
               )}
               <div className="magic-bento-card__content">
                 <h2 className="magic-bento-card__title">{card.title}</h2>

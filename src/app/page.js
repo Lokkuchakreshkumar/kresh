@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import BlurText from '@/components/ui/BlurText';
+import { TextRotator } from '@/components/ui/TextRotator';
 import { CircleStack } from '@/components/ui/CircleStack';
 import { InteractiveDemo } from '@/components/ui/InteractiveDemo';
 import MagicBento from '@/components/ui/MagicBento';
@@ -85,40 +86,47 @@ export default function Home() {
       <main className="pb-16">
         {/* HERO SECTION */}
         <section className="relative w-full overflow-hidden mb-32 flex flex-col items-center justify-center min-h-screen pt-[70px] pb-[70px] border-b border-border-color">
-          {/* Ambient background glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(46,204,113,0.07)_0%,transparent_70%)] pointer-events-none z-0" />
+          {/* Premium mesh background gradient */}
+          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+            <div className="absolute -top-[45%] -left-[15%] w-[75%] h-[75%] rounded-full bg-[radial-gradient(circle,rgba(161,159,141,0.11)_0%,transparent_70%)] blur-[120px]" />
+            <div className="absolute -bottom-[35%] -right-[5%] w-[65%] h-[65%] rounded-full bg-[radial-gradient(circle,rgba(161,159,141,0.07)_0%,transparent_60%)] blur-[100px]" />
+          </div>
           
           {/* Subtle grid pattern overlay */}
           <div 
-            className="absolute inset-0 opacity-70 pointer-events-none z-0" 
+            className="absolute inset-0 opacity-40 pointer-events-none z-0" 
             style={{
-              backgroundImage: 'radial-gradient(var(--border-color) 1.5px, transparent 1.5px)',
-              backgroundSize: '32px 32px'
+              backgroundImage: 'radial-gradient(var(--border-color) 1px, transparent 1px)',
+              backgroundSize: '24px 24px'
             }}
           />
           
           <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center w-full">
-            <h1 className="text-text-primary mb-8 flex flex-wrap justify-center text-center max-w-4xl tracking-tight font-bold w-full">
-              <BlurText
-                text="Install Skills and Publish Skills."
-                delay={50}
-                animateBy="words"
-                direction="bottom"
-                className="text-5xl sm:text-7xl leading-[1.1] flex flex-wrap justify-center w-full"
+            {/* Premium Release Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-kresh-green/20 bg-kresh-green/5 text-xs text-kresh-green font-medium mb-6 backdrop-blur-sm select-none animate-fade-in font-outfit">
+              <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
+              <span>Kresh v0.1.3 is now public</span>
+            </div>
+
+            <h1 className="text-text-primary mb-8 flex flex-wrap justify-center items-center text-center max-w-4xl font-bold w-full font-outfit text-5xl sm:text-7xl leading-[1.1]">
+              <span>Install </span>
+              <TextRotator 
+                words={['Intelligence.', 'Skills.', 'agent.md.', 'Design.md.', 'Loops.']} 
+                className="text-[#a19f8d]" 
               />
             </h1>
 
-            <p className="text-lg text-text-secondary font-medium max-w-xl leading-relaxed mb-8 mx-auto">
+            <p className="text-lg sm:text-xl text-text-secondary font-medium max-w-xl leading-relaxed mb-10 mx-auto">
               AI Knows More With Kresh.
             </p>
 
-            <div className="relative w-full max-w-sm mb-6 mx-auto">
+            <div className="relative w-full max-w-sm mb-8 mx-auto">
               <img
                 src="/arrow.png"
                 alt="Arrow pointing to installation command"
                 className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85 invert dark:invert-0"
               />
-              <Glass className="w-full shadow-lg">
+              <Glass className="w-full shadow-2xl border border-white/5 hover:border-kresh-green/30 hover:shadow-[0_0_30px_rgba(46,204,113,0.15)] transition-all duration-300">
                 <div className="p-4 flex items-center justify-between group cursor-text w-full min-w-0 gap-3">
                   <div className="flex items-center gap-3 iosevka-charon-bold text-base min-w-0">
                     <span className="text-kresh-green shrink-0">$</span>
@@ -132,13 +140,13 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-center gap-6 mt-4">
               <a 
                 href={session ? `/@${session.username}` : "/signup"}
-                className="font-semibold px-6 py-3 bg-text-primary text-background hover:bg-gray-200 active:scale-[0.98] rounded-xl text-sm inline-flex items-center justify-center shadow-lg transition-all duration-200"
+                className="font-semibold px-6 py-3.5 bg-text-primary text-background hover:bg-white active:scale-[0.97] hover:-translate-y-[1px] rounded-xl text-sm inline-flex items-center justify-center shadow-lg transition-all duration-200 font-outfit"
               >
                 {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
               </a>
               <a 
                 href={session ? `/skills` : "/signin"}
-                className="font-medium text-text-secondary hover:text-text-primary text-sm inline-flex items-center justify-center transition-colors duration-200 underline-offset-4 hover:underline"
+                className="font-medium text-text-secondary hover:text-text-primary active:scale-[0.98] text-sm inline-flex items-center justify-center transition-all duration-200 underline-offset-4 hover:underline font-outfit"
               >
                 {session ? "Explore Skills" : "Sign In"}
               </a>
@@ -148,7 +156,7 @@ export default function Home() {
 
         {/* WORKS WITH SECTION */}
         <section className="mb-32 flex flex-col items-center">
-          <p className="text-xs uppercase text-text-secondary/70 font-semibold mb-10 tracking-wider">Works with</p>
+          <p className="text-xs uppercase text-text-secondary/70 font-semibold mb-10 font-outfit">Works with</p>
           <div className="w-full relative marquee-container py-4">
             {/* Left and right fade/blur overlays to blend the edges beautifully without sharp cuts */}
             <div
@@ -235,8 +243,8 @@ export default function Home() {
         {/* MAGIC BENTO SECTION */}
         <section className="max-w-7xl mx-auto px-6 mb-32 relative z-10 flex flex-col items-center">
           <div className="w-full flex flex-col items-center mb-10 text-center">
-            <span className="text-xs uppercase text-text-secondary/70 font-semibold mb-3 tracking-wider">Intelligence Schema</span>
-            <h2 className="text-3xl font-bold text-text-primary">The Ecosystem Structure</h2>
+            <span className="text-xs uppercase text-text-secondary/70 font-semibold mb-3 font-outfit">Intelligence Schema</span>
+            <h2 className="text-3xl font-bold text-text-primary font-outfit">The Ecosystem Structure</h2>
           </div>
           <MagicBento
             textAutoHide={true}

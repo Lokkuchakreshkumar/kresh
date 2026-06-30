@@ -92,7 +92,7 @@ export default function BlurText({
             >
               {segment === ' ' ? '\u00A0' : segment}
             </motion.span>
-            {animateBy === 'words' && index < elements.length - 1 && ' '}
+            {animateBy === 'words' && index < elements.length - 1 && '\u00A0'}
           </Fragment>
         );
       })}
