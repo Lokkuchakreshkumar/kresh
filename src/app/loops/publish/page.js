@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ChevronLeft, CloudUpload, AlertCircle, Terminal } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -15,7 +16,7 @@ export default function PublishLoopPage() {
   const [loopText, setLoopText] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState(undefined);
 
   useEffect(() => {
     import('@/app/(auth)/actions').then(m => {
@@ -26,6 +27,11 @@ export default function PublishLoopPage() {
   const handlePublish = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!session) {
+      setError('You must be signed in to publish a loop. Anonymous submissions are not permitted.');
+      return;
+    }
 
     if (!name.trim()) {
       setError('Loop name is required.');
@@ -52,7 +58,7 @@ export default function PublishLoopPage() {
         description: description.trim() || 'No description provided.',
         text: loopText,
         createdAt: new Date().toISOString(),
-        ownerUsername: session?.username || 'anonymous'
+        ownerUsername: session.username
       };
 
       // Save to localStorage
@@ -70,40 +76,42 @@ export default function PublishLoopPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--background-100)] text-[var(--primary)] flex flex-col relative overflow-hidden">
       <Header />
       
-      {/* Decorative background glows */}
-      <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-kresh-green/3 blur-[100px] pointer-events-none z-0" />
-
       <main className="flex-1 max-w-3xl mx-auto w-full px-6 pt-32 pb-24 z-10">
         
         {/* Back Link */}
         <div className="mb-6">
           <button 
             onClick={() => router.back()}
-            className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--gray-700)] hover:text-[var(--primary)] transition-colors group cursor-pointer"
           >
             <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
             <span>Back</span>
           </button>
         </div>
 
-        {/* Publish form glass panel */}
+        {/* Publish form flat panel */}
         <div 
-          className="w-full p-6 md:p-10 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md"
-          style={{
-            backgroundColor: 'rgba(10, 10, 10, 0.4)',
-            backgroundImage: 'radial-gradient(circle at top, rgba(255, 255, 255, 0.03), transparent)'
-          }}
+          className="w-full p-6 md:p-10 rounded-[12px] border border-[var(--gray-400)] bg-[var(--background-100)] shadow-card"
         >
           <div className="flex items-center gap-2 mb-6">
-            <Terminal className="w-5 h-5 text-kresh-green" />
-            <h1 className="text-xl md:text-2xl font-bold text-text-primary">Publish a Loop</h1>
+            <Terminal className="w-5 h-5 text-[var(--blue-700)]" />
+            <h1 className="text-xl md:text-2xl font-bold text-[var(--primary)]">Publish a Loop</h1>
           </div>
 
+          {session === null && (
+            <div className="mb-6 flex items-start gap-2.5 p-4 rounded-lg border border-[var(--red-300)] bg-[var(--red-100)] text-xs text-[var(--red-700)]">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <div>
+                <span className="font-bold">Access Denied:</span> You must be signed in to publish a loop workflow. Please <Link href="/signin" className="underline font-semibold hover:text-[var(--red-800)]">Sign In</Link> to write to the registry.
+              </div>
+            </div>
+          )}
+
           {error && (
-            <div className="mb-6 flex items-start gap-2.5 p-3.5 rounded-lg border border-red-500/20 bg-red-500/10 text-xs text-red-400">
+            <div className="mb-6 flex items-start gap-2.5 p-3.5 rounded-lg border border-[var(--red-300)] bg-[var(--red-100)] text-xs text-[var(--red-700)]">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -114,54 +122,54 @@ export default function PublishLoopPage() {
               
               {/* Loop Name */}
               <div className="md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-text-secondary/70">Loop Name</label>
+                <label className="text-xs font-semibold text-[var(--gray-700)]/70">Loop Name</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. pr-patcher"
-                  className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-text-primary placeholder-text-secondary/30 outline-none transition-all duration-150 focus:border-kresh-green/20 focus:bg-white/[0.08]"
-                  disabled={loading}
+                  className="rounded-lg border border-[var(--gray-400)] bg-[var(--gray-100)] px-3 py-2 text-xs text-[var(--primary)] placeholder-[var(--gray-500)] outline-none transition-all duration-150 focus:border-[var(--blue-300)] focus:bg-[var(--gray-200)] disabled:opacity-50"
+                  disabled={loading || session === null}
                 />
               </div>
 
               {/* Version */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-text-secondary/70">Version</label>
+                <label className="text-xs font-semibold text-[var(--gray-700)]/70">Version</label>
                 <input
                   type="text"
                   value={version}
                   onChange={(e) => setVersion(e.target.value)}
                   placeholder="1.0.0"
-                  className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-text-primary placeholder-text-secondary/30 outline-none transition-all duration-150 focus:border-kresh-green/20 focus:bg-white/[0.08]"
-                  disabled={loading}
+                  className="rounded-lg border border-[var(--gray-400)] bg-[var(--gray-100)] px-3 py-2 text-xs text-[var(--primary)] placeholder-[var(--gray-500)] outline-none transition-all duration-150 focus:border-[var(--blue-300)] focus:bg-[var(--gray-200)] disabled:opacity-50"
+                  disabled={loading || session === null}
                 />
               </div>
             </div>
 
             {/* Description */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-text-secondary/70">Description</label>
+              <label className="text-xs font-semibold text-[var(--gray-700)]/70">Description</label>
               <input
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="A short summary of what this loop does"
-                className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-text-primary placeholder-text-secondary/30 outline-none transition-all duration-150 focus:border-kresh-green/20 focus:bg-white/[0.08]"
-                disabled={loading}
+                className="rounded-lg border border-[var(--gray-400)] bg-[var(--gray-100)] px-3 py-2 text-xs text-[var(--primary)] placeholder-[var(--gray-500)] outline-none transition-all duration-150 focus:border-[var(--blue-300)] focus:bg-[var(--gray-200)] disabled:opacity-50"
+                disabled={loading || session === null}
               />
             </div>
 
             {/* Textarea Configuration ("add text") */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-text-secondary/70">Loop Configuration / Markdown / YAML</label>
+              <label className="text-xs font-semibold text-[var(--gray-700)]/70">Loop Configuration / Markdown / YAML</label>
               <textarea
                 value={loopText}
                 onChange={(e) => setLoopText(e.target.value)}
                 placeholder={`name: pr-patcher\ntriggers:\n  - github_pull_request\nsteps:\n  - run: verify-build\n  - run: security-audit`}
                 rows={10}
-                className="rounded-lg border border-white/10 bg-white/5 p-4 text-xs font-mono text-text-primary placeholder-text-secondary/20 outline-none transition-all duration-150 focus:border-kresh-green/20 focus:bg-white/[0.08] resize-y"
-                disabled={loading}
+                className="rounded-lg border border-[var(--gray-400)] bg-[var(--gray-100)] p-4 text-xs font-mono text-[var(--primary)] placeholder-[var(--gray-500)] outline-none transition-all duration-150 focus:border-[var(--blue-300)] focus:bg-[var(--gray-200)] resize-y disabled:opacity-50"
+                disabled={loading || session === null}
               />
             </div>
 
@@ -170,15 +178,15 @@ export default function PublishLoopPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="px-4 py-2 border border-white/5 bg-white/5 hover:bg-white/10 text-xs font-semibold rounded-lg text-text-secondary hover:text-text-primary transition-all duration-150 active:scale-[0.98]"
+                className="px-4 py-2 border border-[var(--gray-200)] bg-[var(--gray-100)] hover:bg-[var(--gray-200)] text-xs font-semibold rounded-lg text-[var(--gray-700)] hover:text-[var(--primary)] transition-all duration-150 active:scale-[0.98]"
                 disabled={loading}
               >
                 Cancel
               </button>
               <Button
                 type="submit"
-                disabled={loading}
-                className="rounded-lg bg-text-primary text-background hover:opacity-95 px-5 py-2 font-bold text-xs flex items-center gap-1.5 active:scale-[0.98] transition-all"
+                disabled={loading || session === null}
+                className="rounded-lg bg-[var(--gray-1000)] text-[var(--background-100)] hover:opacity-95 px-5 py-2 font-bold text-xs flex items-center gap-1.5 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <CloudUpload className="w-3.5 h-3.5" />
                 <span>{loading ? 'Publishing...' : 'Publish Loop'}</span>

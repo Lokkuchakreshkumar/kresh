@@ -15,7 +15,6 @@ node_modules
 /skills
 # testing
 /coverage
-vercel_design.md
 # next.js
 /.next/
 /out/

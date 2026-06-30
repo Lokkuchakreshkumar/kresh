@@ -44,7 +44,7 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
   const suggestedVersion = isEditMode ? getSuggestedVersion(initialSkill.version) : '1.0.0';
 
   return (
-    <Glass className="border-white/10 bg-white/[0.02] p-6 sm:p-8">
+    <div className="border-[var(--gray-200)] bg-[var(--gray-100)] p-6 sm:p-8">
       <form action={(formData) => {
         if (source === 'folder') {
           const input = document.querySelector('input[name="skillFolder"]');
@@ -64,7 +64,7 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Skill name</label>
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Skill name</label>
             <input
               name="name"
               type="text"
@@ -72,36 +72,36 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
               maxLength={120}
               placeholder="senior-engineer"
               defaultValue={initialSkill ? initialSkill.name : ''}
-              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors placeholder:text-text-secondary/50 focus:border-text-primary/30"
+              className="w-full rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-3 text-sm text-[var(--primary)] outline-none transition-colors placeholder:text-[var(--gray-700)]/50 focus:border-[var(--gray-1000)]/30"
             />
             {isEditMode && (
-              <p className="text-[10px] text-text-secondary/80">Title can be updated, but the slug remains unchanged.</p>
+              <p className="text-[10px] text-[var(--gray-700)]/80">Title can be updated, but the slug remains unchanged.</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Version</label>
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Version</label>
             <input
               name="version"
               type="text"
               defaultValue={suggestedVersion}
               required
               placeholder="1.0.0"
-              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 font-mono text-sm text-text-primary outline-none transition-colors placeholder:text-text-secondary/50 focus:border-text-primary/30"
+              className="w-full rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-3 font-mono text-sm text-[var(--primary)] outline-none transition-colors placeholder:text-[var(--gray-700)]/50 focus:border-[var(--gray-1000)]/30"
             />
             {isEditMode && (
-              <p className="text-[10px] text-text-secondary/80">Current version in registry is v{initialSkill.version}</p>
+              <p className="text-[10px] text-[var(--gray-700)]/80">Current version in registry is v{initialSkill.version}</p>
             )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Category</label>
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Category</label>
             <select
               name="category"
               defaultValue={initialSkill ? initialSkill.category : 'Skills'}
-              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors focus:border-text-primary/30 [&>option]:bg-background [&>option]:text-text-primary"
+              className="w-full rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-3 text-sm text-[var(--primary)] outline-none transition-colors focus:border-[var(--gray-1000)]/30 [&>option]:bg-[var(--background-100)] [&>option]:text-[var(--primary)]"
             >
               <option value="Skills">Skills</option>
               <option value="AGENTS.md/CLAUDE.md">AGENTS.md/CLAUDE.md</option>
@@ -110,23 +110,23 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Changelog</label>
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Changelog</label>
             <input
               name="changelog"
               type="text"
               placeholder={isEditMode ? 'Describe what changed in this version' : 'Initial publish'}
-              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors placeholder:text-text-secondary/50 focus:border-text-primary/30"
+              className="w-full rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-3 text-sm text-[var(--primary)] outline-none transition-colors placeholder:text-[var(--gray-700)]/50 focus:border-[var(--gray-1000)]/30"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Visibility</label>
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Visibility</label>
             <select
               name="visibility"
               defaultValue={initialSkill ? initialSkill.visibility : 'public'}
-              className="w-full rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm text-text-primary outline-none transition-colors focus:border-text-primary/30 [&>option]:bg-background [&>option]:text-text-primary"
+              className="w-full rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-3 text-sm text-[var(--primary)] outline-none transition-colors focus:border-[var(--gray-1000)]/30 [&>option]:bg-[var(--background-100)] [&>option]:text-[var(--primary)]"
             >
               <option value="public">Public</option>
               <option value="private">Private</option>
@@ -135,26 +135,26 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-semibold uppercase text-text-secondary">Description</label>
+          <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Description</label>
           <textarea
             name="description"
             rows="3"
             defaultValue={initialSkill ? initialSkill.description : ''}
             placeholder="What capability does this skill install?"
-            className="w-full resize-none rounded-lg border border-border-color bg-text-primary/5 px-4 py-3 text-sm leading-6 text-text-primary outline-none transition-colors placeholder:text-text-secondary/50 focus:border-text-primary/30"
+            className="w-full resize-none rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-3 text-sm leading-6 text-[var(--primary)] outline-none transition-colors placeholder:text-[var(--gray-700)]/50 focus:border-[var(--gray-1000)]/30"
           />
         </div>
 
         <fieldset className="space-y-4">
-          <legend className="text-xs font-semibold uppercase text-text-secondary">Publish Method</legend>
+          <legend className="text-xs font-semibold uppercase text-[var(--gray-700)]">Publish Method</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border p-5 text-center transition-all duration-200 ${
               source === 'editor'
-                ? 'border-white bg-white/10 text-text-primary shadow-lg shadow-white/5'
-                : 'border-border-color bg-text-primary/5 text-text-secondary hover:border-white/10'
+                ? 'border-white bg-[var(--gray-200)] text-[var(--primary)] shadow-lg shadow-white/5'
+                : 'border-[var(--gray-400)] bg-[var(--gray-1000)]/5 text-[var(--gray-700)] hover:border-[var(--gray-200)]'
             }`}>
               <span className="text-sm font-bold">Write SKILL.md</span>
-              <span className="mt-1 text-[10px] text-text-secondary/80">Use the built-in editor</span>
+              <span className="mt-1 text-[10px] text-[var(--gray-700)]/80">Use the built-in editor</span>
               <input
                 type="radio"
                 name="source"
@@ -166,11 +166,11 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
             </label>
             <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border p-5 text-center transition-all duration-200 ${
               source === 'upload'
-                ? 'border-white bg-white/10 text-text-primary shadow-lg shadow-white/5'
-                : 'border-border-color bg-text-primary/5 text-text-secondary hover:border-white/10'
+                ? 'border-white bg-[var(--gray-200)] text-[var(--primary)] shadow-lg shadow-white/5'
+                : 'border-[var(--gray-400)] bg-[var(--gray-1000)]/5 text-[var(--gray-700)] hover:border-[var(--gray-200)]'
             }`}>
               <span className="text-sm font-bold">Upload SKILL.md File</span>
-              <span className="mt-1 text-[10px] text-text-secondary/80">Select a single markdown file</span>
+              <span className="mt-1 text-[10px] text-[var(--gray-700)]/80">Select a single markdown file</span>
               <input
                 type="radio"
                 name="source"
@@ -182,11 +182,11 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
             </label>
             <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border p-5 text-center transition-all duration-200 ${
               source === 'folder'
-                ? 'border-white bg-white/10 text-text-primary shadow-lg shadow-white/5'
-                : 'border-border-color bg-text-primary/5 text-text-secondary hover:border-white/10'
+                ? 'border-white bg-[var(--gray-200)] text-[var(--primary)] shadow-lg shadow-white/5'
+                : 'border-[var(--gray-400)] bg-[var(--gray-1000)]/5 text-[var(--gray-700)] hover:border-[var(--gray-200)]'
             }`}>
               <span className="text-sm font-bold">Upload Skill Folder</span>
-              <span className="mt-1 text-[10px] text-text-secondary/80">Select a folder with multiple files</span>
+              <span className="mt-1 text-[10px] text-[var(--gray-700)]/80">Select a folder with multiple files</span>
               <input
                 type="radio"
                 name="source"
@@ -201,43 +201,43 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
 
         {source === 'editor' && (
           <div className="space-y-2">
-            <label className="text-xs font-semibold uppercase text-text-secondary">SKILL.md</label>
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">SKILL.md</label>
             <textarea
               name="skillMarkdown"
               rows="18"
               defaultValue={initialSkill ? initialSkill.markdown : defaultMarkdown}
-              className="min-h-[420px] w-full resize-y rounded-lg border border-border-color bg-text-primary/5 px-4 py-4 font-mono text-sm leading-6 text-text-primary outline-none transition-colors focus:border-text-primary/30"
+              className="min-h-[420px] w-full resize-y rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 px-4 py-4 font-mono text-sm leading-6 text-[var(--primary)] outline-none transition-colors focus:border-[var(--gray-1000)]/30"
             />
           </div>
         )}
 
         {source === 'upload' && (
-          <div className="space-y-2 rounded-lg border border-border-color bg-text-primary/5 p-4">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Upload markdown</label>
+          <div className="space-y-2 rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 p-4">
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Upload markdown</label>
             <input
               name="skillFile"
               type="file"
               accept=".md,text/markdown,text/plain"
-              className="block w-full cursor-pointer rounded-lg border border-border-color bg-text-primary/5 text-sm text-text-secondary file:mr-4 file:border-0 file:bg-text-primary file:px-4 file:py-3 file:text-sm file:font-semibold file:text-background"
+              className="block w-full cursor-pointer rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 text-sm text-[var(--gray-700)] file:mr-4 file:border-0 file:bg-[var(--gray-1000)] file:px-4 file:py-3 file:text-sm file:font-semibold file:text-[var(--background-100)]"
             />
-            <p className="text-xs leading-5 text-text-secondary mt-1">
+            <p className="text-xs leading-5 text-[var(--gray-700)] mt-1">
               Upload the skill instructions as Markdown. The registry stores it as `SKILL.md`.
             </p>
           </div>
         )}
 
         {source === 'folder' && (
-          <div className="space-y-2 rounded-lg border border-border-color bg-text-primary/5 p-4">
-            <label className="text-xs font-semibold uppercase text-text-secondary">Upload skill folder</label>
+          <div className="space-y-2 rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 p-4">
+            <label className="text-xs font-semibold uppercase text-[var(--gray-700)]">Upload skill folder</label>
             <input
               name="skillFolder"
               type="file"
               webkitdirectory=""
               directory=""
               multiple
-              className="block w-full cursor-pointer rounded-lg border border-border-color bg-text-primary/5 text-sm text-text-secondary file:mr-4 file:border-0 file:bg-text-primary file:px-4 file:py-3 file:text-sm file:font-semibold file:text-background"
+              className="block w-full cursor-pointer rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 text-sm text-[var(--gray-700)] file:mr-4 file:border-0 file:bg-[var(--gray-1000)] file:px-4 file:py-3 file:text-sm file:font-semibold file:text-[var(--background-100)]"
             />
-            <p className="text-xs leading-5 text-text-secondary mt-1">
+            <p className="text-xs leading-5 text-[var(--gray-700)] mt-1">
               Select a folder. The registry will upload all files inside it. A `SKILL.md` file is required.
             </p>
           </div>
@@ -250,10 +250,10 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
         )}
 
         {state?.success && (
-          <div className="rounded-lg border border-border-color bg-text-primary/5 p-3 text-sm text-text-primary">
+          <div className="rounded-lg border border-[var(--gray-400)] bg-[var(--gray-1000)]/5 p-3 text-sm text-[var(--primary)]">
             <div>{state.success}</div>
             {state.installCommand && (
-              <div className="mt-2 select-all font-mono text-xs text-text-secondary">
+              <div className="mt-2 select-all font-mono text-xs text-[var(--gray-700)]">
                 {state.installCommand}
               </div>
             )}
@@ -269,6 +269,6 @@ export function PublishSkillForm({ defaultMarkdown, initialSkill }) {
           {isPending ? 'Publishing...' : isEditMode ? 'Publish new version' : 'Publish skill'}
         </Button>
       </form>
-    </Glass>
+    </div>
   );
 }

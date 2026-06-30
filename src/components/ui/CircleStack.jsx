@@ -50,7 +50,7 @@ export function CircleStack() {
     return (
       <div className="w-full flex flex-col items-center">
         {/* Small uppercase section tag */}
-        <div className="font-outfit font-semibold text-text-secondary/70 text-xs uppercase mb-12">
+        <div className=" font-semibold text-[var(--gray-700)]/70 text-xs uppercase mb-12">
           System Stack Architecture
         </div>
 
@@ -101,7 +101,7 @@ export function CircleStack() {
                         <div className={`absolute inset-0 pointer-events-none mix-blend-color-dodge transition-opacity duration-700 ${isActive ? 'opacity-100' : 'opacity-0'}`} style={{ backgroundImage: GRAIN_URL }} />
 
                         {/* Shading */}
-                        <div className={`absolute inset-0 bg-black/40 transition-opacity duration-700 ${isActive ? 'opacity-100' : 'opacity-0'}`} />
+                        <div className={`absolute inset-0 bg-[var(--background-100)] transition-opacity duration-700 ${isActive ? 'opacity-100' : 'opacity-0'}`} />
                       </div>
 
                       {/* TOP OVAL (Face) */}
@@ -130,7 +130,7 @@ export function CircleStack() {
                           <span className={`text-[10px] sm:text-xs font-mono uppercase font-bold ${layer.textColor} opacity-90 drop-shadow-sm`}>
                             {layer.id}
                           </span>
-                          <span className={`text-xl sm:text-2xl md:text-3xl font-outfit font-extrabold mt-1 ${layer.textColor} drop-shadow-md`}>
+                          <span className={`text-xl sm:text-2xl md:text-3xl  font-extrabold mt-1 ${layer.textColor} drop-shadow-md`}>
                             {layer.title}
                           </span>
                         </div>
@@ -156,14 +156,14 @@ export function CircleStack() {
                       }`}
                   >
                     <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                      <span className="text-text-secondary/80 font-mono text-sm uppercase">
+                      <span className="text-[var(--gray-700)]/80 font-mono text-sm uppercase">
                         {layer.id}
                       </span>
                     </div>
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-outfit font-extrabold text-white mb-6 leading-tight text-center md:text-left">
+                    <h3 className="text-3xl sm:text-4xl md:text-5xl  font-extrabold text-white mb-6 leading-tight text-center md:text-left">
                       {layer.title}
                     </h3>
-                    <p className="text-zinc-400 font-sans text-base sm:text-lg leading-relaxed max-w-md mx-auto md:mx-0 text-center md:text-left">
+                    <p className="text-[var(--gray-600)] font-sans text-base sm:text-lg leading-relaxed max-w-md mx-auto md:mx-0 text-center md:text-left">
                       {layer.desc}
                     </p>
                   </div>
@@ -179,7 +179,7 @@ export function CircleStack() {
                   onClick={() => setActiveIndex(idx)}
                   className={`h-1.5 rounded-full transition-all duration-500 ${idx === activeIndex
                     ? 'w-8 bg-white/80 shadow-[0_0_10px_rgba(255,255,255,0.5)]'
-                    : 'w-2 bg-white/20 hover:bg-white/40'
+                    : 'w-2 bg-[var(--gray-300)] hover:bg-white/40'
                     }`}
                   aria-label={`Go to layer ${idx + 1}`}
                 />
@@ -192,7 +192,7 @@ export function CircleStack() {
   } catch (error) {
     console.error('CircleStack rendering error caught:', error);
     return (
-      <div className="text-zinc-500 p-8 text-center">
+      <div className="text-[var(--gray-700)] p-8 text-center">
         System Stack Architecture details are temporarily unavailable.
       </div>
     );

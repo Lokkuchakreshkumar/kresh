@@ -19,8 +19,8 @@ function CopyButton({ text }) {
   return (
     <button
       onClick={handleCopy}
-      className={`transition-all duration-200 p-1.5 rounded-md hover:bg-white/10 ${
-        copied ? 'text-white' : 'text-zinc-400 hover:text-white'
+      className={`transition-all duration-200 p-1.5 rounded-md hover:bg-[var(--gray-200)] ${
+        copied ? 'text-white' : 'text-[var(--gray-600)] hover:text-white'
       }`}
       aria-label="Copy to clipboard"
     >
@@ -148,17 +148,17 @@ export function InteractiveDemo() {
   }, [phase === 'restart' ? Math.random() : null]);
 
   return (
-    <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-20 py-10 selection:bg-white/20">
+    <div className="w-full flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-20 py-10 selection:bg-[var(--gray-300)]">
       {/* Left Column: Typography & Install Box */}
       <div className="flex-1 text-left flex flex-col items-start max-w-xl">
-        <h2 className="text-3xl md:text-[40px] font-semibold text-[#efefef] font-outfit leading-[1.1] mb-6">
+        <h2 className="text-3xl md:text-[40px] font-semibold text-[var(--primary)]  leading-[1.1] mb-6">
           Run skills, anywhere.
           <br />
-          <span className="text-[#a1a1aa]">Plug into your setup anywhere.</span>
+          <span className="text-[var(--gray-700)]">Plug into your setup anywhere.</span>
         </h2>
         
-        <div className="flex items-center space-x-4 bg-[#18181b] border border-white/5 rounded-lg px-4 py-3 w-full max-w-md group hover:border-white/10 transition-colors">
-          <code className="text-[#e4e4e7] font-mono text-sm flex-1 iosevka-charon-regular">
+        <div className="flex items-center space-x-4 bg-[var(--background-200)] border border-[var(--gray-200)] rounded-lg px-4 py-3 w-full max-w-md group hover:border-[var(--gray-200)] transition-colors">
+          <code className="text-[var(--primary)] font-mono text-sm flex-1 font-mono">
             npm i -g @chakresh/kresh
           </code>
           <CopyButton text="npm i -g @chakresh/kresh" />
@@ -180,19 +180,19 @@ export function InteractiveDemo() {
           </div>
 
           {/* Floating Terminal Window */}
-          <div className="relative z-10 w-[95%] bg-[#0f0f0f] rounded-[10px] border border-[#2a2a2a] shadow-[0_30px_60px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col text-left h-[94%] max-h-[550px]">
+          <div className="relative z-10 w-[95%] bg-[var(--background-100)] rounded-[10px] border border-[var(--gray-400)] shadow-[0_30px_60px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col text-left h-[94%] max-h-[550px]">
             
             {/* Terminal Header */}
-            <div className="h-9 w-full flex items-center justify-between px-3 border-b border-[#222]">
+            <div className="h-9 w-full flex items-center justify-between px-3 border-b border-[var(--gray-400)]">
               <div className="flex space-x-2 items-center w-16">
                 <div className="w-3 h-3 rounded-full bg-[#ed6a5f]" />
                 <div className="w-3 h-3 rounded-full bg-[#f4bf4f]" />
                 <div className="w-3 h-3 rounded-full bg-[#61c554]" />
               </div>
-              <div className="flex-1 text-center text-[#737373] font-mono text-[11px] font-medium tracking-normal">
+              <div className="flex-1 text-center text-[var(--gray-700)] font-mono text-[11px] font-medium tracking-normal">
                 Terminal
               </div>
-              <div className="w-16 flex justify-end text-[#737373] font-mono text-[10px] cursor-pointer hover:text-white transition-colors tracking-normal">
+              <div className="w-16 flex justify-end text-[var(--gray-700)] font-mono text-[10px] cursor-pointer hover:text-white transition-colors tracking-normal">
                 Get Kresh
               </div>
             </div>
@@ -200,7 +200,7 @@ export function InteractiveDemo() {
             {/* Terminal Body */}
             <div 
               ref={terminalBodyRef}
-              className="flex-1 p-5 font-mono text-[12px] leading-[1.8] tracking-normal text-[#d4d4d4] iosevka-charon-medium overflow-y-auto"
+              className="flex-1 p-5 font-mono text-[12px] leading-[1.8] tracking-normal text-[var(--primary)] font-mono overflow-y-auto"
             >
               <div className="space-y-1">
                 {terminalLines.map((line, i) => (
@@ -212,7 +212,7 @@ export function InteractiveDemo() {
                       </div>
                     )}
                     {line.type === 'info' && (
-                      <div className="text-[#a1a1aa] py-0.5">{line.text}</div>
+                      <div className="text-[var(--gray-700)] py-0.5">{line.text}</div>
                     )}
                     {line.type === 'success' && (
                       <div className="text-[#61c554] py-0.5">{line.text}</div>

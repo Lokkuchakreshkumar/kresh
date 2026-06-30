@@ -11,8 +11,8 @@ export const metadata = {
 export default function DocsPage() {
   return (
     <div className="animate-fade-in-up">
-      <div className="text-[14px] font-medium text-geist-gray-700 mb-6 flex items-center gap-2 tracking-[-0.28px]">
-        Getting Started <span className="text-geist-gray-400">&gt;</span> Introduction
+      <div className="text-[14px] font-medium text-[var(--gray-700)] mb-6 flex items-center gap-2 tracking-[-0.28px]">
+        Getting Started <span className="text-[var(--gray-400)]">&gt;</span> Introduction
       </div>
       
       <h1>Introduction</h1>
@@ -36,19 +36,19 @@ export default function DocsPage() {
       </p>
 
       <div className="grid sm:grid-cols-2 gap-4 my-8 not-prose">
-        <div className="bg-geist-bg-100 border border-geist-gray-200 p-6 rounded-[12px] shadow-[0_2px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_8px_-4px_rgba(0,0,0,0.04),0_16px_24px_-8px_rgba(0,0,0,0.06)] transition-shadow">
-          <div className="w-10 h-10 rounded-[6px] bg-geist-gray-100 border border-geist-gray-200 flex items-center justify-center mb-4">
+        <div className="bg-[var(--background-100)] border border-[var(--gray-400)] p-6 rounded-[12px] shadow-[0_2px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_8px_-4px_rgba(0,0,0,0.04),0_16px_24px_-8px_rgba(0,0,0,0.06)] transition-shadow">
+          <div className="w-10 h-10 rounded-[6px] bg-[var(--gray-100)] border border-[var(--gray-400)] flex items-center justify-center mb-4">
             <span className="text-xl">🌐</span>
           </div>
-          <h4 className="text-geist-gray-1000 font-semibold text-[16px] mb-2 leading-[24px] tracking-[-0.32px]">Global Registry</h4>
-          <p className="text-[14px] text-geist-gray-900 m-0 leading-[20px]">A centralized hub to discover and publish skills as reusable modules. Define once, version once, improve once, and reuse everywhere.</p>
+          <h4 className="text-[var(--primary)] font-semibold text-[16px] mb-2 leading-[24px] tracking-[-0.32px]">Global Registry</h4>
+          <p className="text-[14px] text-[var(--gray-900)] m-0 leading-[20px]">A centralized hub to discover and publish skills as reusable modules. Define once, version once, improve once, and reuse everywhere.</p>
         </div>
-        <div className="bg-geist-bg-100 border border-geist-gray-200 p-6 rounded-[12px] shadow-[0_2px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_8px_-4px_rgba(0,0,0,0.04),0_16px_24px_-8px_rgba(0,0,0,0.06)] transition-shadow">
-          <div className="w-10 h-10 rounded-[6px] bg-geist-gray-100 border border-geist-gray-200 flex items-center justify-center mb-4">
+        <div className="bg-[var(--background-100)] border border-[var(--gray-400)] p-6 rounded-[12px] shadow-[0_2px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_8px_-4px_rgba(0,0,0,0.04),0_16px_24px_-8px_rgba(0,0,0,0.06)] transition-shadow">
+          <div className="w-10 h-10 rounded-[6px] bg-[var(--gray-100)] border border-[var(--gray-400)] flex items-center justify-center mb-4">
             <span className="text-xl">💻</span>
           </div>
-          <h4 className="text-geist-gray-1000 font-semibold text-[16px] mb-2 leading-[24px] tracking-[-0.32px]">Local Development</h4>
-          <p className="text-[14px] text-geist-gray-900 m-0 leading-[20px]">Seamlessly integrate intelligence into your projects using the CLI. The right behavior travels with the code wherever it goes.</p>
+          <h4 className="text-[var(--primary)] font-semibold text-[16px] mb-2 leading-[24px] tracking-[-0.32px]">Local Development</h4>
+          <p className="text-[14px] text-[var(--gray-900)] m-0 leading-[20px]">Seamlessly integrate intelligence into your projects using the CLI. The right behavior travels with the code wherever it goes.</p>
         </div>
       </div>
 

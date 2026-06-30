@@ -138,22 +138,22 @@ export default async function SkillMarkdownPage({ params }) {
   const publishTimestamp = version?.publishedAt || skill.createdAt;
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-kresh-green/30">
+    <div className="min-h-screen bg-[var(--background-100)] text-[var(--primary)] selection:bg-[var(--blue-200)]">
       <Header />
       
       <main className="mx-auto max-w-7xl px-6 pb-16 pt-32">
         {/* GitHub Repository Breadcrumbs & Action Bar */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-white/5 pb-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-[var(--gray-200)] pb-5">
           <div className="flex flex-wrap items-center gap-2.5 text-lg md:text-xl font-medium">
-            <FolderGit className="w-5 h-5 text-text-secondary" />
-            <Link href="/skills" className="text-text-secondary hover:text-text-primary transition-colors font-mono">
+            <FolderGit className="w-5 h-5 text-[var(--gray-700)]" />
+            <Link href="/skills" className="text-[var(--gray-700)] hover:text-[var(--primary)] transition-colors font-mono">
               skills
             </Link>
-            <span className="text-text-secondary/50 font-mono">/</span>
-            <span className="font-bold text-text-primary font-mono select-all">
+            <span className="text-[var(--gray-700)]/50 font-mono">/</span>
+            <span className="font-bold text-[var(--primary)] font-mono select-all">
               {skill.slug}
             </span>
-            <span className="ml-1.5 rounded-full border border-border-color bg-white/[0.02] px-2 py-0.5 text-[10px] font-semibold text-text-secondary capitalize">
+            <span className="ml-1.5 rounded-full border border-[var(--gray-400)] bg-[var(--gray-100)] px-2 py-0.5 text-[10px] font-semibold text-[var(--gray-700)] capitalize">
               {skill.visibility || 'public'}
             </span>
           </div>
@@ -167,7 +167,7 @@ export default async function SkillMarkdownPage({ params }) {
         </div>
 
         {/* GitHub Tabs Bar */}
-        <div className="mt-4 flex items-center gap-1 border-b border-border-color overflow-x-auto no-scrollbar">
+        <div className="mt-4 flex items-center gap-1 border-b border-[var(--gray-400)] overflow-x-auto no-scrollbar">
           {[
             { id: 'code', label: 'Code', icon: Code, active: true },
           ].map((tab) => {
@@ -179,14 +179,14 @@ export default async function SkillMarkdownPage({ params }) {
                 disabled={!tab.active}
                 className={`flex items-center gap-2 border-b-2 px-4 py-3 text-xs font-semibold transition-all duration-150 whitespace-nowrap outline-none ${
                   tab.active
-                    ? 'border-kresh-green text-text-primary bg-white/[0.01]'
-                    : 'border-transparent text-text-secondary/50 hover:text-text-secondary/80 hover:border-white/10 cursor-not-allowed'
+                    ? 'border-[var(--blue-700)] text-[var(--primary)] bg-[var(--background-100)]'
+                    : 'border-transparent text-[var(--gray-700)]/50 hover:text-[var(--gray-700)]/80 hover:border-[var(--gray-400)] cursor-not-allowed'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5 text-text-secondary" />
+                <Icon className="w-3.5 h-3.5 text-[var(--gray-700)]" />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
-                  <span className="rounded-full bg-white/5 border border-white/10 px-1.5 py-0.5 text-[9px] text-text-secondary/75">
+                  <span className="rounded-full bg-[var(--gray-100)] border border-[var(--gray-400)] px-1.5 py-0.5 text-[9px] text-[var(--gray-700)]/75">
                     {tab.count}
                   </span>
                 )}

@@ -40,7 +40,7 @@ export default function Signin() {
           <div>
             <button
               type="button"
-              className="w-full flex items-center justify-center py-2.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm font-medium text-white transition-colors cursor-pointer"
+              className="w-full flex items-center justify-center py-2.5 px-4 bg-[var(--gray-100)] hover:bg-[var(--gray-200)] border border-[var(--gray-200)] rounded-lg text-sm font-medium text-white transition-colors cursor-pointer"
             >
               <GoogleIcon />
               Google
@@ -50,7 +50,7 @@ export default function Signin() {
           {/* Divider */}
           <div className="relative flex items-center justify-center">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10"></div>
+              <div className="w-full border-t border-[var(--gray-200)]"></div>
             </div>
             <span className="relative px-3 bg-[#09090b] text-xs text-gray-500 uppercase tracking-wider">Or</span>
           </div>
@@ -64,7 +64,7 @@ export default function Signin() {
                 type="email"
                 required
                 placeholder="eg. johnfrans@gmail.com"
-                className="w-full bg-[#18181b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-[#18181b] border border-[var(--gray-200)] rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30 transition-colors"
               />
             </div>
 
@@ -75,7 +75,7 @@ export default function Signin() {
                 type="password"
                 required
                 placeholder="Enter your password"
-                className="w-full bg-[#18181b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30 transition-colors"
+                className="w-full bg-[#18181b] border border-[var(--gray-200)] rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-white/30 transition-colors"
               />
             </div>
 
@@ -86,7 +86,7 @@ export default function Signin() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full bg-white text-black hover:bg-white/90 disabled:bg-white/50 disabled:cursor-not-allowed font-semibold text-sm py-3 rounded-lg transition-colors cursor-pointer mt-2"
+              className="w-full bg-white text-black hover:bg-white/90 disabled:bg-[var(--gray-100)] disabled:cursor-not-allowed font-semibold text-sm py-3 rounded-lg transition-colors cursor-pointer mt-2"
             >
               {isPending ? 'Signing in...' : 'Sign In'}
             </button>

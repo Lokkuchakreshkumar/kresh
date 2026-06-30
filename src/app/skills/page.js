@@ -44,14 +44,14 @@ export default async function SkillsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-white/20">
+    <div className="min-h-screen bg-[var(--background-100)] text-[var(--primary)] selection:bg-[var(--blue-200)]">
       <Header />
       <main className="mx-auto max-w-7xl px-6 pb-16 pt-32">
         <section className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <div className="font-mono text-xs text-text-secondary">$ kresh skills</div>
-            <h1 className="mt-4 text-4xl font-black text-text-primary">Skills & Modules</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+            <div className="font-mono text-xs text-[var(--gray-700)]">$ kresh skills</div>
+            <h1 className="mt-4 text-4xl font-bold text-[var(--primary)] tracking-tight">Skills & Modules</h1>
+            <p className="mt-3 max-w-2xl text-[14px] leading-5 text-[var(--gray-700)]">
               Browse every public installable module on Kresh, including Skills, Agent.md, and Design.md. Each module is versioned, reusable, and built for AI systems.
             </p>
           </div>

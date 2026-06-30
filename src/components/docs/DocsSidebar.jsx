@@ -39,7 +39,7 @@ export function DocsSidebar() {
     <nav className="h-full overflow-y-auto pb-10 pr-4 custom-scrollbar">
       {DOCS_NAV.map((section, idx) => (
         <div key={idx} className="mb-8">
-          <h3 className="text-[12px] font-medium text-geist-gray-900 tracking-normal mb-3 px-3">
+          <h3 className="text-[12px] font-medium text-[var(--gray-900)] tracking-normal mb-3 px-3">
             {section.group}
           </h3>
           <ul className="space-y-0.5">
@@ -52,13 +52,13 @@ export function DocsSidebar() {
                     className={`
                       flex items-center gap-3 px-3 py-2 rounded-[6px] text-[14px] leading-[20px] transition-colors
                       ${isActive 
-                        ? 'bg-geist-gray-100 text-geist-gray-1000 font-medium' 
-                        : 'text-geist-gray-900 hover:text-geist-gray-1000 hover:bg-geist-gray-100 font-normal'
+                        ? 'bg-[var(--gray-100)] text-[var(--primary)] font-medium' 
+                        : 'text-[var(--gray-900)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)] font-normal'
                       }
                     `}
                   >
                     <div className="flex items-center justify-center shrink-0">
-                      <item.icon className={`w-4 h-4 ${isActive ? 'text-geist-gray-1000' : 'text-geist-gray-700'}`} />
+                      <item.icon className={`w-4 h-4 ${isActive ? 'text-[var(--primary)]' : 'text-[var(--gray-700)]'}`} />
                     </div>
                     {item.name}
                   </Link>

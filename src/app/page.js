@@ -8,11 +8,7 @@ import { CircleStack } from '@/components/ui/CircleStack';
 import { InteractiveDemo } from '@/components/ui/InteractiveDemo';
 import MagicBento from '@/components/ui/MagicBento';
 import { Footer } from '@/components/layout/Footer';
-import { Button } from '@/components/ui/Button';
-import { Glass } from '@/components/ui/Glass';
-import {
-  Copy, Check, ChevronRight
-} from 'lucide-react';
+import { Copy, Check, ChevronRight } from 'lucide-react';
 
 
 
@@ -33,12 +29,12 @@ function CopyButton({ text }) {
   return (
     <button
       onClick={handleCopy}
-      className={`transition-all duration-200 p-1.5 rounded-md hover:bg-white/10 ${copied ? 'text-kresh-green' : 'text-gray-400 hover:text-white'
+      className={`transition-all duration-150 p-1.5 rounded-[6px] hover:bg-[var(--gray-100)] ${copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
         }`}
       aria-label="Copy to clipboard"
     >
       {copied ? (
-        <Check className="w-4 h-4 animate-scale-in" />
+        <Check className="w-4 h-4" />
       ) : (
         <Copy className="w-4 h-4" />
       )}
@@ -80,73 +76,55 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-kresh-green/30">
+    <div className="min-h-screen bg-[var(--background-100)] text-[var(--primary)]">
       <Header />
 
       <main className="pb-16">
         {/* HERO SECTION */}
-        <section className="relative w-full overflow-hidden mb-32 flex flex-col items-center justify-center min-h-screen pt-[70px] pb-[70px] border-b border-border-color">
-          {/* Premium mesh background gradient */}
-          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-            <div className="absolute -top-[45%] -left-[15%] w-[75%] h-[75%] rounded-full bg-[radial-gradient(circle,rgba(161,159,141,0.11)_0%,transparent_70%)] blur-[120px]" />
-            <div className="absolute -bottom-[35%] -right-[5%] w-[65%] h-[65%] rounded-full bg-[radial-gradient(circle,rgba(161,159,141,0.07)_0%,transparent_60%)] blur-[100px]" />
-          </div>
-          
-          {/* Subtle grid pattern overlay */}
-          <div 
-            className="absolute inset-0 opacity-40 pointer-events-none z-0" 
-            style={{
-              backgroundImage: 'radial-gradient(var(--border-color) 1px, transparent 1px)',
-              backgroundSize: '24px 24px'
-            }}
-          />
+        <section className="relative w-full overflow-hidden mb-32 flex flex-col items-center justify-center min-h-screen pt-[120px] pb-[70px] border-b border-[var(--gray-200)]">
+
           
           <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center w-full">
             {/* Premium Release Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-kresh-green/20 bg-kresh-green/5 text-xs text-kresh-green font-medium mb-6 backdrop-blur-sm select-none animate-fade-in font-outfit">
-              <span className="w-1.5 h-1.5 rounded-full bg-kresh-green animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--gray-200)] bg-[var(--background-200)] text-[12px] text-[var(--gray-900)] font-medium mb-6 select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--blue-700)] animate-pulse" />
               <span>Kresh v0.1.3 is now public</span>
             </div>
 
-            <h1 className="text-text-primary mb-8 flex flex-wrap justify-center items-center text-center max-w-4xl font-bold w-full font-outfit text-5xl sm:text-7xl leading-[1.1]">
+            <h1 className="text-[var(--primary)] mb-8 flex flex-wrap justify-center items-center text-center max-w-4xl font-bold w-full text-5xl sm:text-7xl leading-[1.1] tracking-tight">
               <span>Install </span>
               <TextRotator 
                 words={['Intelligence.', 'Skills.', 'agent.md.', 'Design.md.', 'Loops.']} 
-                className="text-[#a19f8d]" 
+                className="text-[var(--gray-700)]" 
               />
             </h1>
 
-            <p className="text-lg sm:text-xl text-text-secondary font-medium max-w-xl leading-relaxed mb-10 mx-auto">
+            <p className="text-[16px] sm:text-[20px] text-[var(--gray-700)] font-medium max-w-xl leading-relaxed mb-10 mx-auto">
               AI Knows More With Kresh.
             </p>
 
             <div className="relative w-full max-w-sm mb-8 mx-auto">
-              <img
-                src="/arrow.png"
-                alt="Arrow pointing to installation command"
-                className="absolute -left-32 -top-24 w-36 h-36 pointer-events-none hidden md:block select-none opacity-85 invert dark:invert-0"
-              />
-              <Glass className="w-full shadow-2xl border border-white/5 hover:border-kresh-green/30 hover:shadow-[0_0_30px_rgba(46,204,113,0.15)] transition-all duration-300">
+              <div className="w-full rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] shadow-card transition-colors duration-150">
                 <div className="p-4 flex items-center justify-between group cursor-text w-full min-w-0 gap-3">
-                  <div className="flex items-center gap-3 iosevka-charon-bold text-base min-w-0">
-                    <span className="text-kresh-green shrink-0">$</span>
-                    <span className="text-text-primary font-bold truncate">npm i -g @chakresh/kresh</span>
+                  <div className="flex items-center gap-3 font-mono text-base min-w-0">
+                    <span className="text-[var(--gray-700)] shrink-0">$</span>
+                    <span className="text-[var(--primary)] font-semibold truncate">npm i -g @chakresh/kresh</span>
                   </div>
                   <CopyButton text="npm i -g @chakresh/kresh" />
                 </div>
-              </Glass>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-6 mt-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
               <a 
                 href={session ? `/@${session.username}` : "/signup"}
-                className="font-semibold px-6 py-3.5 bg-text-primary text-background hover:bg-white active:scale-[0.97] hover:-translate-y-[1px] rounded-xl text-sm inline-flex items-center justify-center shadow-lg transition-all duration-200 font-outfit"
+                className="font-medium px-4 h-10 bg-[var(--gray-1000)] text-[var(--background-100)] hover:bg-[var(--gray-900)] rounded-[6px] text-[14px] inline-flex items-center justify-center transition-colors duration-150"
               >
                 {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
               </a>
               <a 
                 href={session ? `/skills` : "/signin"}
-                className="font-medium text-text-secondary hover:text-text-primary active:scale-[0.98] text-sm inline-flex items-center justify-center transition-all duration-200 underline-offset-4 hover:underline font-outfit"
+                className="font-medium px-4 h-10 border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--primary)] hover:bg-[var(--gray-100)] rounded-[6px] text-[14px] inline-flex items-center justify-center transition-colors duration-150"
               >
                 {session ? "Explore Skills" : "Sign In"}
               </a>
@@ -156,18 +134,18 @@ export default function Home() {
 
         {/* WORKS WITH SECTION */}
         <section className="mb-32 flex flex-col items-center">
-          <p className="text-xs uppercase text-text-secondary/70 font-semibold mb-10 font-outfit">Works with</p>
+          <p className="text-[12px] uppercase text-[var(--gray-700)] font-semibold mb-10 tracking-widest">Works with</p>
           <div className="w-full relative marquee-container py-4">
-            {/* Left and right fade/blur overlays to blend the edges beautifully without sharp cuts */}
+            {/* Left and right fade/blur overlays */}
             <div
-              className="absolute left-0 top-0 bottom-0 w-48 bg-background pointer-events-none z-20 backdrop-blur-md"
+              className="absolute left-0 top-0 bottom-0 w-48 bg-[var(--background-100)] pointer-events-none z-20"
               style={{
                 maskImage: 'linear-gradient(to right, black 20%, transparent)',
                 WebkitMaskImage: 'linear-gradient(to right, black 20%, transparent)'
               }}
             />
             <div
-              className="absolute right-0 top-0 bottom-0 w-48 bg-background pointer-events-none z-20 backdrop-blur-md"
+              className="absolute right-0 top-0 bottom-0 w-48 bg-[var(--background-100)] pointer-events-none z-20"
               style={{
                 maskImage: 'linear-gradient(to left, black 20%, transparent)',
                 WebkitMaskImage: 'linear-gradient(to left, black 20%, transparent)'
@@ -243,8 +221,8 @@ export default function Home() {
         {/* MAGIC BENTO SECTION */}
         <section className="max-w-7xl mx-auto px-6 mb-32 relative z-10 flex flex-col items-center">
           <div className="w-full flex flex-col items-center mb-10 text-center">
-            <span className="text-xs uppercase text-text-secondary/70 font-semibold mb-3 font-outfit">Intelligence Schema</span>
-            <h2 className="text-3xl font-bold text-text-primary font-outfit">The Ecosystem Structure</h2>
+            <span className="text-[12px] uppercase text-[var(--gray-700)] font-semibold mb-3 tracking-widest">Intelligence Schema</span>
+            <h2 className="text-[32px] font-bold text-[var(--primary)] tracking-tight">The Ecosystem Structure</h2>
           </div>
           <MagicBento
             textAutoHide={true}

@@ -152,7 +152,7 @@ export default async function UserProfilePage({ params }) {
   const formattedDate = formatMemberDate(userRecord.createdAt);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-kresh-green/30">
+    <div className="min-h-screen bg-[var(--background-100)] text-[var(--primary)] selection:bg-[var(--blue-200)]">
       <Header />
       
       <main className="pt-32 pb-16 max-w-7xl mx-auto px-6">

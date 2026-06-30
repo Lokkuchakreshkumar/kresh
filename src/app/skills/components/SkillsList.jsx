@@ -131,16 +131,16 @@ function CopyCommandLine({ slug }) {
   };
 
   return (
-    <div className="mt-2 flex items-center justify-between gap-2 rounded border border-border-color bg-white/[0.01] px-2.5 py-1 font-mono text-[11px] text-text-secondary w-full max-w-[280px] sm:max-w-xs shrink-0 select-all">
+    <div className="mt-2 flex items-center justify-between gap-2 rounded border border-[var(--gray-400)] bg-[var(--background-100)] px-2.5 py-1 font-mono text-[11px] text-[var(--gray-700)] w-full max-w-[280px] sm:max-w-xs shrink-0 select-all">
       <div className="flex items-center gap-1.5 truncate">
-        <span className="text-kresh-green">$</span>
+        <span className="text-[var(--blue-700)]">$</span>
         <span className="truncate">{command}</span>
       </div>
       <button
         type="button"
         onClick={handleCopy}
-        className={`transition-all duration-150 p-0.5 rounded hover:bg-white/10 shrink-0 outline-none ${
-          copied ? 'text-kresh-green' : 'text-text-secondary/70 hover:text-text-primary'
+        className={`transition-all duration-150 p-0.5 rounded hover:bg-[var(--gray-200)] shrink-0 outline-none ${
+          copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)]/70 hover:text-[var(--primary)]'
         }`}
         title="Copy install command"
       >
@@ -280,7 +280,7 @@ function SkillsListContent({ skills }) {
     return pages.map((p, idx) => {
       if (p === '...') {
         return (
-          <span key={`dots-${idx}`} className="px-2.5 py-1.5 text-xs text-text-secondary/60 font-mono">
+          <span key={`dots-${idx}`} className="px-2.5 py-1.5 text-xs text-[var(--gray-700)]/60 font-mono">
             ...
           </span>
         );
@@ -291,8 +291,8 @@ function SkillsListContent({ skills }) {
           onClick={() => handlePageChange(p)}
           className={`h-7 w-7 rounded-md text-xs font-semibold font-mono transition-all duration-150 ${
             currentPage === p
-              ? 'bg-kresh-green text-background border border-kresh-green/20'
-              : 'border border-border-color bg-white/[0.01] text-text-secondary hover:text-text-primary hover:bg-white/5'
+              ? 'bg-[var(--blue-700)] text-[var(--background-100)] border border-[var(--blue-200)]'
+              : 'border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)]'
           }`}
         >
           {p}
@@ -304,11 +304,11 @@ function SkillsListContent({ skills }) {
   return (
     <div className="space-y-6">
       {/* Filtering Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between border-b border-white/5 pb-6">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between border-b border-[var(--gray-200)] pb-6">
         
         {/* Search Input Box */}
-        <div className="flex items-center glass rounded-lg px-3 py-2 text-sm text-text-secondary w-full md:max-w-md">
-          <Search className="w-4 h-4 mr-2 text-text-secondary/60" />
+        <div className="flex items-center bg-[var(--background-100)] border border-[var(--gray-400)] shadow-card rounded-lg px-3 py-2 text-sm text-[var(--gray-700)] w-full md:max-w-md">
+          <Search className="w-4 h-4 mr-2 text-[var(--gray-700)]/60" />
           <input
             type="text"
             placeholder="Search skills by name, description, or author..."
@@ -317,14 +317,14 @@ function SkillsListContent({ skills }) {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            className="bg-transparent border-none outline-none w-full text-text-primary placeholder-text-secondary/50 text-xs"
+            className="bg-transparent border-none outline-none w-full text-[var(--primary)] placeholder-text-secondary/50 text-xs"
           />
         </div>
 
         {/* Action Toggle Filters */}
         <div className="flex flex-wrap items-center gap-3">
           {/* Sorting tabs */}
-          <div className="flex rounded-lg border border-border-color bg-white/[0.01] p-1 text-xs font-medium">
+          <div className="flex rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] p-1 text-xs font-medium">
             {[
               { id: 'all', label: 'All' },
               { id: 'popular', label: 'Popular' },
@@ -339,8 +339,8 @@ function SkillsListContent({ skills }) {
                 }}
                 className={`rounded px-3.5 py-1.5 transition-colors duration-150 ${
                   activeTab === tab.id
-                    ? 'bg-white/10 text-text-primary font-bold'
-                    : 'text-text-secondary hover:text-text-primary'
+                    ? 'bg-[var(--gray-200)] text-[var(--primary)] font-bold'
+                    : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
                 }`}
               >
                 {tab.label}
@@ -356,7 +356,7 @@ function SkillsListContent({ skills }) {
                 setAuthorFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="rounded-lg border border-border-color bg-white/[0.01] px-3 py-2 text-xs text-text-primary outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-background [&>option]:text-text-primary cursor-pointer"
+              className="rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] px-3 py-2 text-xs text-[var(--primary)] outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-[var(--background-100)] [&>option]:text-[var(--primary)] cursor-pointer"
             >
               <option value="all">All Authors</option>
               {uniqueAuthors.map((author) => (
@@ -375,7 +375,7 @@ function SkillsListContent({ skills }) {
                 setCategoryFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="rounded-lg border border-border-color bg-white/[0.01] px-3 py-2 text-xs text-text-primary outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-background [&>option]:text-text-primary cursor-pointer uppercase"
+              className="rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] px-3 py-2 text-xs text-[var(--primary)] outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-[var(--background-100)] [&>option]:text-[var(--primary)] cursor-pointer uppercase"
             >
               <option value="all">ALL CATEGORIES</option>
               {uniqueCategories.map((cat) => (
@@ -391,7 +391,7 @@ function SkillsListContent({ skills }) {
       </div>
 
       {/* Row count info */}
-      <div className="text-xs font-medium text-text-secondary">
+      <div className="text-xs font-medium text-[var(--gray-700)]">
         {filteredAndSortedSkills.length} public skills
       </div>
 
@@ -399,20 +399,20 @@ function SkillsListContent({ skills }) {
       <div className="space-y-4">
         
         {/* Table column headers (desktop only) */}
-        <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-6 text-[10px] font-bold uppercase tracking-wider text-text-secondary/70">
+        <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-6 text-[10px] font-bold uppercase tracking-wider text-[var(--gray-700)]/70">
           <div className="col-span-6">Skill</div>
           <div className="col-span-2 text-center">Author</div>
           <div className="col-span-1 text-center">Version</div>
           <div className="col-span-1 text-center">Installs</div>
-          <div className="col-span-1 text-center font-semibold text-kresh-green">Stars</div>
+          <div className="col-span-1 text-center font-semibold text-[var(--blue-700)]">Stars</div>
           <div className="col-span-1 text-right">Updated</div>
         </div>
 
         {/* Skills rows */}
         {paginatedSkills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 glass rounded-lg text-center">
-            <span className="font-mono text-xs text-text-secondary/50 mb-3">$ no skills found</span>
-            <p className="text-sm text-text-secondary">Try searching with another keyword or author.</p>
+          <div className="flex flex-col items-center justify-center py-12 bg-[var(--background-100)] border border-[var(--gray-400)] shadow-card rounded-lg text-center">
+            <span className="font-mono text-xs text-[var(--gray-700)]/50 mb-3">$ no skills found</span>
+            <p className="text-sm text-[var(--gray-700)]">Try searching with another keyword or author.</p>
           </div>
         ) : (
           paginatedSkills.map((skill) => {
@@ -423,7 +423,7 @@ function SkillsListContent({ skills }) {
             return (
               <div 
                 key={skill.id}
-                className="glass rounded-xl p-5 hover:border-white/20 hover:bg-white/[0.02] transition-all duration-200"
+                className="bg-[var(--background-100)] border border-[var(--gray-400)] shadow-card rounded-xl p-5 hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)] transition-all duration-200"
               >
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-5 items-start lg:items-center">
                   
@@ -438,14 +438,14 @@ function SkillsListContent({ skills }) {
                     {/* Details details */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <Link href={`/skills/${skill.slug}`} className="hover:text-kresh-green transition-colors duration-150">
-                          <h3 className="text-sm font-bold text-text-primary truncate">{skill.name}</h3>
+                        <Link href={`/skills/${skill.slug}`} className="hover:text-[var(--blue-700)] transition-colors duration-150">
+                          <h3 className="text-sm font-bold text-[var(--primary)] truncate">{skill.name}</h3>
                         </Link>
                         <Badge variant="default" className="text-[9px] px-1.5 py-0.5 lowercase tracking-normal font-semibold">
                           {skill.category}
                         </Badge>
                       </div>
-                      <p className="mt-1 text-xs text-text-secondary line-clamp-2 max-w-xl">
+                      <p className="mt-1 text-xs text-[var(--gray-700)] line-clamp-2 max-w-xl">
                         {skill.description || 'No description provided.'}
                       </p>
                       {/* Copy CLI CLI command box */}
@@ -454,48 +454,48 @@ function SkillsListContent({ skills }) {
                   </div>
 
                   {/* Author column (Col span 2) */}
-                  <div className="lg:col-span-2 flex items-center gap-1.5 text-xs text-text-primary lg:justify-center w-full lg:w-auto border-t lg:border-t-0 border-white/5 pt-3 lg:pt-0">
-                    <span className="lg:hidden text-[10px] text-text-secondary font-bold uppercase w-24 shrink-0">Author:</span>
+                  <div className="lg:col-span-2 flex items-center gap-1.5 text-xs text-[var(--primary)] lg:justify-center w-full lg:w-auto border-t lg:border-t-0 border-[var(--gray-200)] pt-3 lg:pt-0">
+                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 shrink-0">Author:</span>
                     <div className="flex items-center gap-1">
-                      <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold text-text-secondary hover:text-text-primary transition-colors cursor-pointer">
+                      <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold text-[var(--gray-700)] hover:text-[var(--primary)] transition-colors cursor-pointer">
                         @{skill.ownerUsername || 'unknown'}
                       </Link>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-kresh-green fill-kresh-green/10" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[var(--blue-700)] fill-[var(--blue-100)]" />
                     </div>
                   </div>
 
                   {/* Version column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs text-text-secondary font-mono lg:text-center w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-text-secondary font-bold uppercase w-24 inline-block">Version:</span>
+                  <div className="lg:col-span-1 text-xs text-[var(--gray-700)] font-mono lg:text-center w-full lg:w-auto">
+                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Version:</span>
                     <span>v{skill.currentVersion || '1.0.0'}</span>
                   </div>
 
                   {/* Installs column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs text-text-secondary font-mono lg:text-center w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-text-secondary font-bold uppercase w-24 inline-block">Installs:</span>
+                  <div className="lg:col-span-1 text-xs text-[var(--gray-700)] font-mono lg:text-center w-full lg:w-auto">
+                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Installs:</span>
                     <span>{formatStatCount(skill.installsCount)}</span>
                   </div>
 
                   {/* Stars column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs font-semibold font-mono text-kresh-green lg:text-center w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-text-secondary font-bold uppercase w-24 inline-block">Stars:</span>
+                  <div className="lg:col-span-1 text-xs font-semibold font-mono text-[var(--blue-700)] lg:text-center w-full lg:w-auto">
+                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Stars:</span>
                     <span>{skill.starsCount || 0}</span>
                   </div>
 
                   {/* Updated date column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs text-text-secondary/85 text-left lg:text-right w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-text-secondary font-bold uppercase w-24 inline-block">Updated:</span>
+                  <div className="lg:col-span-1 text-xs text-[var(--gray-700)]/85 text-left lg:text-right w-full lg:w-auto">
+                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Updated:</span>
                     <span className="font-mono">{formatDate(skill.createdAt)}</span>
                   </div>
 
                 </div>
 
                 {/* Bottom row actions (aligned on the right side) */}
-                <div className="mt-4 flex items-center justify-end gap-2.5 border-t border-white/5 pt-3">
+                <div className="mt-4 flex items-center justify-end gap-2.5 border-t border-[var(--gray-200)] pt-3">
                   <Link href={`/skills/${skill.slug}`}>
                     <button 
                       type="button" 
-                      className="rounded border border-border-color bg-white/5 hover:bg-white/10 px-4 py-1.5 text-center text-xs font-semibold text-text-primary transition-all duration-150 outline-none"
+                      className="rounded border border-[var(--gray-400)] bg-[var(--gray-100)] hover:bg-[var(--gray-200)] px-4 py-1.5 text-center text-xs font-semibold text-[var(--primary)] transition-all duration-150 outline-none"
                     >
                       View
                     </button>
@@ -503,7 +503,7 @@ function SkillsListContent({ skills }) {
                   <a href={`/api/skills/download/${skill.slug}`}>
                     <button 
                       type="button" 
-                      className="rounded border border-border-color bg-text-primary px-4 py-1.5 text-center text-xs font-bold text-background hover:opacity-90 transition-all duration-150 outline-none flex items-center gap-1.5"
+                      className="rounded border border-[var(--gray-400)] bg-[var(--gray-1000)] px-4 py-1.5 text-center text-xs font-bold text-[var(--background-100)] hover:opacity-90 transition-all duration-150 outline-none flex items-center gap-1.5"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>Install</span>
@@ -524,7 +524,7 @@ function SkillsListContent({ skills }) {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="h-7 w-7 rounded-md border border-border-color bg-white/[0.01] text-text-secondary hover:text-text-primary hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-150"
+            className="h-7 w-7 rounded-md border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-150"
             title="Previous page"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -537,7 +537,7 @@ function SkillsListContent({ skills }) {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="h-7 w-7 rounded-md border border-border-color bg-white/[0.01] text-text-secondary hover:text-text-primary hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-150"
+            className="h-7 w-7 rounded-md border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-150"
             title="Next page"
           >
             <ChevronRight className="w-4 h-4" />
@@ -551,7 +551,7 @@ function SkillsListContent({ skills }) {
 
 export function SkillsList({ skills }) {
   return (
-    <Suspense fallback={<div className="text-center py-12 text-sm text-text-secondary">Loading search...</div>}>
+    <Suspense fallback={<div className="text-center py-12 text-sm text-[var(--gray-700)]">Loading search...</div>}>
       <SkillsListContent skills={skills} />
     </Suspense>
   );

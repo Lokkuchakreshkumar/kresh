@@ -48,25 +48,25 @@ export function ProfileSidebar({ username, isOwner, activities = [] }) {
       
       {/* Quick Actions (Owner Only) */}
       {isOwner && (
-        <Glass className="p-5 border-white/10 bg-white/[0.02]">
-          <h3 className="text-xs font-bold uppercase text-text-primary flex items-center gap-2 mb-4">
-            <Zap className="w-4 h-4 text-kresh-green" />
+        <div className="p-5 border-[var(--gray-200)] bg-[var(--gray-100)]">
+          <h3 className="text-xs font-bold uppercase text-[var(--primary)] flex items-center gap-2 mb-4">
+            <Zap className="w-4 h-4 text-[var(--blue-700)]" />
             Quick Actions
           </h3>
           <div className="flex flex-col divide-y divide-white/5 text-sm">
             <Link 
               href="/dashboard/publish" 
-              className="flex items-center justify-between py-3 text-text-secondary hover:text-text-primary transition-colors group"
+              className="flex items-center justify-between py-3 text-[var(--gray-700)] hover:text-[var(--primary)] transition-colors group"
             >
               <span>Publish a new skill</span>
-              <Plus className="w-4 h-4 text-text-secondary/60 group-hover:text-text-primary transition-colors" />
+              <Plus className="w-4 h-4 text-[var(--gray-700)]/60 group-hover:text-[var(--primary)] transition-colors" />
             </Link>
             <a 
               href="/skills" 
-              className="flex items-center justify-between py-3 text-text-secondary hover:text-text-primary transition-colors group"
+              className="flex items-center justify-between py-3 text-[var(--gray-700)] hover:text-[var(--primary)] transition-colors group"
             >
               <span>Documentation</span>
-              <ArrowUpRight className="w-4 h-4 text-text-secondary/60 group-hover:text-text-primary transition-colors" />
+              <ArrowUpRight className="w-4 h-4 text-[var(--gray-700)]/60 group-hover:text-[var(--primary)] transition-colors" />
             </a>
             <button 
               type="button"
@@ -77,39 +77,39 @@ export function ProfileSidebar({ username, isOwner, activities = [] }) {
               <LogOut className="w-4 h-4 text-red-400/70 group-hover:text-red-300 transition-colors" />
             </button>
           </div>
-        </Glass>
+        </div>
       )}
 
       {/* Recent Activity Timeline */}
-      <Glass className="p-5 border-white/10 bg-white/[0.02]">
-        <h3 className="text-xs font-bold uppercase text-text-primary flex items-center gap-2 mb-5">
-          <Clock className="w-4 h-4 text-text-secondary" />
+      <div className="p-5 border-[var(--gray-200)] bg-[var(--gray-100)]">
+        <h3 className="text-xs font-bold uppercase text-[var(--primary)] flex items-center gap-2 mb-5">
+          <Clock className="w-4 h-4 text-[var(--gray-700)]" />
           Recent Activity
         </h3>
 
         {activities.length === 0 ? (
-          <p className="text-xs text-text-secondary/70 py-4 text-center">No recent activities logged.</p>
+          <p className="text-xs text-[var(--gray-700)]/70 py-4 text-center">No recent activities logged.</p>
         ) : (
-          <div className="relative border-l border-white/10 pl-5 ml-2.5 space-y-6 py-2">
+          <div className="relative border-l border-[var(--gray-200)] pl-5 ml-2.5 space-y-6 py-2">
             {activities.map((act, index) => {
               const isPublish = act.type === 'publish';
               return (
                 <div key={index} className="relative">
                   {/* Timeline bullet */}
-                  <span className={`absolute -left-[27px] top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-background ${
+                  <span className={`absolute -left-[27px] top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-[var(--background-100)] ${
                     isPublish 
-                      ? 'border-kresh-green/40' 
+                      ? 'border-[var(--blue-700)]/40' 
                       : 'border-purple-500/40'
                   }`}>
                     <span className={`h-1.5 w-1.5 rounded-full ${
-                      isPublish ? 'bg-kresh-green' : 'bg-purple-400'
+                      isPublish ? 'bg-[var(--blue-700)]' : 'bg-purple-400'
                     }`} />
                   </span>
                   
                   {/* Details */}
                   <div className="flex flex-col gap-1 text-xs">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-text-secondary/70 font-mono text-[10px]">
+                      <span className="text-[var(--gray-700)]/70 font-mono text-[10px]">
                         {new Date(act.date).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -118,17 +118,17 @@ export function ProfileSidebar({ username, isOwner, activities = [] }) {
                       </span>
                       <span className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase ${
                         isPublish 
-                          ? 'bg-kresh-green/10 border border-kresh-green/20 text-kresh-green' 
+                          ? 'bg-[var(--blue-100)] border border-[var(--blue-200)] text-[var(--blue-700)]' 
                           : 'bg-purple-500/10 border border-purple-500/20 text-purple-400'
                       }`}>
                         {isPublish ? 'PUBLISHED' : 'STAR'}
                       </span>
                     </div>
-                    <span className="font-semibold text-text-primary leading-normal mt-0.5">
+                    <span className="font-semibold text-[var(--primary)] leading-normal mt-0.5">
                       {act.title}
                     </span>
                     {isPublish && act.version && (
-                      <span className="text-[10px] text-text-secondary font-mono">v{act.version}</span>
+                      <span className="text-[10px] text-[var(--gray-700)] font-mono">v{act.version}</span>
                     )}
                   </div>
                 </div>
@@ -136,28 +136,28 @@ export function ProfileSidebar({ username, isOwner, activities = [] }) {
             })}
           </div>
         )}
-      </Glass>
+      </div>
 
       {/* Profile Link Card */}
-      <Glass className="p-5 border-white/10 bg-white/[0.02]">
-        <h3 className="text-xs font-bold uppercase text-text-primary flex items-center gap-2 mb-4">
-          <LinkIcon className="w-4 h-4 text-text-secondary" />
+      <div className="p-5 border-[var(--gray-200)] bg-[var(--gray-100)]">
+        <h3 className="text-xs font-bold uppercase text-[var(--primary)] flex items-center gap-2 mb-4">
+          <LinkIcon className="w-4 h-4 text-[var(--gray-700)]" />
           Profile Link
         </h3>
-        <div className="flex items-center justify-between rounded-lg border border-border-color bg-white/[0.01] p-3 text-xs font-mono text-text-secondary backdrop-blur-sm">
-          <span className="truncate text-text-primary select-all">{profileUrl}</span>
+        <div className="flex items-center justify-between rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] p-3 text-xs font-mono text-[var(--gray-700)] backdrop-blur-sm">
+          <span className="truncate text-[var(--primary)] select-all">{profileUrl}</span>
           <button 
             type="button"
             onClick={handleCopy}
-            className={`transition-all duration-200 p-1.5 rounded-md hover:bg-white/10 ml-2 shrink-0 outline-none ${
-              copied ? 'text-kresh-green' : 'text-text-secondary hover:text-text-primary'
+            className={`transition-all duration-200 p-1.5 rounded-md hover:bg-[var(--gray-200)] ml-2 shrink-0 outline-none ${
+              copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
             }`}
             aria-label="Copy profile URL"
           >
             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
         </div>
-      </Glass>
+      </div>
 
     </div>
   );

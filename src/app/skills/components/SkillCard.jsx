@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
-import { GlassCard } from '@/components/ui/GlassCard';
 
 function formatPublishedDate(value) {
   try {
@@ -14,13 +13,13 @@ function formatPublishedDate(value) {
 
 export function SkillCard({ skill }) {
   return (
-    <GlassCard className="flex h-full flex-col border-white/5 bg-white/[0.01]">
+    <div className="flex h-full flex-col bg-[var(--background-100)] border border-[var(--gray-400)] rounded-[12px] p-5 shadow-card transition-colors duration-150 hover:border-[var(--gray-600)]">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="truncate text-lg font-bold text-text-primary">{skill.name}</h2>
-          <p className="mt-1 text-xs text-text-secondary">
+          <h2 className="truncate text-lg font-bold text-[var(--primary)]">{skill.name}</h2>
+          <p className="mt-1 text-xs text-[var(--gray-700)]">
             by{' '}
-            <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold hover:text-text-primary transition-colors">
+            <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold hover:text-[var(--primary)] transition-colors">
               @{skill.ownerUsername || 'unknown'}
             </Link>{' '}
             | v{skill.currentVersion || '1.0.0'}
@@ -31,34 +30,34 @@ export function SkillCard({ skill }) {
         </Badge>
       </div>
 
-      <p className="line-clamp-3 flex-1 text-sm leading-6 text-text-secondary">
+      <p className="line-clamp-3 flex-1 text-[14px] leading-5 text-[var(--gray-700)]">
         {skill.description || 'No description provided.'}
       </p>
 
-      <div className="mt-6 rounded border border-border-color bg-text-primary/5 px-3 py-2 font-mono text-xs text-text-secondary select-all">
+      <div className="mt-6 rounded-[6px] border border-[var(--gray-400)] bg-[var(--gray-100)] px-3 py-2 font-mono text-xs text-[var(--gray-900)] select-all">
         kresh install {skill.slug}
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+      <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-medium">
         <Link
           href={`/skills/${skill.slug}`}
-          className="rounded border border-border-color bg-text-primary/5 px-3 py-2 text-center text-text-primary transition-colors hover:bg-text-primary/10"
+          className="rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] px-3 py-2 text-center text-[var(--primary)] transition-colors hover:bg-[var(--gray-100)] hover:border-[var(--gray-500)]"
         >
           View SKILL.md
         </Link>
         <a
           href={`/api/skills/download/${skill.slug}`}
-          className="rounded border border-border-color bg-text-primary px-3 py-2 text-center font-semibold text-background transition-opacity hover:opacity-90"
+          className="rounded-[6px] border border-transparent bg-[var(--gray-1000)] px-3 py-2 text-center text-[var(--background-100)] transition-colors hover:bg-[var(--gray-900)]"
         >
           Download
         </a>
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4 text-xs text-text-secondary">
+      <div className="mt-4 flex items-center justify-between border-t border-[var(--gray-200)] pt-4 text-[12px] text-[var(--gray-700)]">
         <span>{skill.installsCount || 0} installs</span>
         <span>{skill.starsCount || 0} stars</span>
         <span>{formatPublishedDate(skill.createdAt)}</span>
       </div>
-    </GlassCard>
+    </div>
   );
 }

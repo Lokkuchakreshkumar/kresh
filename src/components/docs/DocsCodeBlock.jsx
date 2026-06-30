@@ -29,7 +29,7 @@ export function DocsCodeBlock({ code, language = "bash", tabs = [] }) {
   }
 
   return (
-    <div className="bg-[#111111] border border-geist-gray-200 rounded-[12px] overflow-hidden my-6 not-prose">
+    <div className="bg-[#111111] border border-[var(--gray-400)] rounded-[12px] overflow-hidden my-6 not-prose">
       {tabs.length > 0 && (
         <div className="flex items-center px-4 bg-[#111111] border-b border-[#333]">
           {tabs.map((tab) => (

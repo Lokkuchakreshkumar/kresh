@@ -73,17 +73,17 @@ export default async function PublishSkillPage({ searchParams }) {
   const defaultMarkdown = await getDefaultSkillMarkdown();
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-white/20">
+    <div className="min-h-screen bg-[var(--background-100)] text-[var(--primary)] selection:bg-white/20">
       <Header />
       <main className="mx-auto max-w-5xl px-6 pb-16 pt-32">
         <div className="mb-8">
-          <div className="font-mono text-xs text-text-secondary">
+          <div className="font-mono text-xs text-[var(--gray-700)]">
             $ kresh {initialSkill ? 'edit' : 'publish'}
           </div>
-          <h1 className="mt-4 text-4xl font-black text-text-primary">
+          <h1 className="mt-4 text-4xl font-black text-[var(--primary)]">
             {initialSkill ? 'Edit skill version' : 'Publish a skill'}
           </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--gray-700)]">
             {initialSkill 
               ? `Update details and publish a new version of @${session.username}/${initialSkill.slug}.`
               : 'Publish installable intelligence by shipping a real `SKILL.md`. Upload the file or write it here, then Kresh stores it as a versioned registry module.'

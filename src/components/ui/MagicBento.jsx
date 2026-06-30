@@ -593,7 +593,7 @@ export const MagicBento = ({
                 </div>
                 {card.body && (
                   <div className="magic-bento-card__body mt-6 mb-auto flex-1">
-                    <p className="text-[13px] md:text-sm text-zinc-400 leading-relaxed font-sans font-medium">{card.body}</p>
+                    <p className="text-[13px] md:text-sm text-[var(--gray-600)] leading-relaxed font-sans font-medium">{card.body}</p>
                   </div>
                 )}
                 <div className="magic-bento-card__content">
@@ -737,7 +737,7 @@ export const MagicBento = ({
               </div>
               {card.body && (
                 <div className="magic-bento-card__body mt-6 mb-auto flex-1">
-                  <p className="text-[13px] md:text-sm text-zinc-400 leading-relaxed font-sans font-medium">{card.body}</p>
+                  <p className="text-[13px] md:text-sm text-[var(--gray-600)] leading-relaxed font-sans font-medium">{card.body}</p>
                 </div>
               )}
               <div className="magic-bento-card__content">
