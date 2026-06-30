@@ -5,9 +5,19 @@ import { logger } from '../utils/logger.js';
 import chalk from 'chalk';
 
 export async function getLoop(loopId) {
-  const spinner = ora(`Fetching loop "${loopId}"...`).start();
+  let formattedLoopId = loopId;
+  if (!loopId.startsWith('@')) {
+    const parts = loopId.split('/');
+    if (parts.length === 2) {
+      formattedLoopId = `@${parts[0].toLowerCase()}/${parts[1].toLowerCase()}`;
+    }
+  } else {
+    formattedLoopId = loopId.toLowerCase();
+  }
+
+  const spinner = ora(`Fetching loop "${formattedLoopId}"...`).start();
   try {
-    const response = await api.get(`/api/loops/${encodeURIComponent(loopId)}`);
+    const response = await api.get(`/api/loops/${encodeURIComponent(formattedLoopId)}`);
     const loop = response.data;
     spinner.stop();
     
@@ -23,7 +33,7 @@ export async function getLoop(loopId) {
     // Fallback: try fetching as a skill in case the backend hasn't split them yet
     try {
       spinner.start(`Trying to fetch from skills...`);
-      const fallbackResponse = await api.get(`/api/skills/${encodeURIComponent(loopId)}`);
+      const fallbackResponse = await api.get(`/api/skills/${encodeURIComponent(formattedLoopId)}`);
       const skill = fallbackResponse.data;
       spinner.stop();
       if (skill && skill.skillContent) {
