@@ -14,11 +14,11 @@ function LoopCard({ loop, formatDate }) {
     e.preventDefault();
     e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(`kresh install loops/${loop.name}`);
+      await navigator.clipboard.writeText(loop.text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy install command:', err);
+      console.error('Failed to copy loop content:', err);
     }
   };
 
