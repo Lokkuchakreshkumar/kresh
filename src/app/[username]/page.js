@@ -9,13 +9,8 @@ import ProfileClientWrapper from './ProfileClientWrapper';
 
 import { getCachedData, setCachedData } from '@/lib/memoryCache';
 
-export const revalidate = 60; // Cache this page at the server/ISR level for 60 seconds
-
-export async function generateStaticParams() {
-  return [
-    { username: 'chakresh' }
-  ];
-}
+// Profiles depend on runtime database state and must not contact production during builds.
+export const dynamic = 'force-dynamic';
 
 async function fetchUser(username) {
   const userRows = await db

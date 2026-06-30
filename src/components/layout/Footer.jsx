@@ -8,7 +8,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-6 gap-8">
         <div className="col-span-1 md:col-span-2 space-y-6">
           <div className="flex items-center gap-3 mb-2">
-            <Image src="/logo/kresh_logo_exact.svg" alt="Kresh Logo" width={40} height={40} className="object-contain" />
+            <Image src="/logo/logo.png" alt="Kresh Logo" width={70} height={40} className="object-contain invert" unoptimized />
             <span className="text-[var(--primary)] font-bold text-xl">kresh</span>
           </div>
           <p className="text-[var(--gray-700)] text-[14px] leading-5 max-w-xs">

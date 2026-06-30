@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, timestamp, integer, unique } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, timestamp, integer, unique, boolean, index } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const skills = pgTable("skills", {
@@ -47,3 +47,35 @@ export const skillStars = pgTable("skill_stars", {
 }, (t) => ({
   unq: unique().on(t.userId, t.skillId)
 }));
+
+export const externalSkills = pgTable("external_skills", {
+  id: uuid("id").primaryKey(),
+  externalId: text("external_id").notNull().unique(),
+  kreshSlug: text("kresh_slug").notNull().unique(),
+  name: varchar("name", { length: 240 }).notNull(),
+  description: text("description"),
+  sourceOwner: varchar("source_owner", { length: 160 }),
+  sourceRepository: varchar("source_repository", { length: 240 }),
+  sourceUrl: text("source_url"),
+  skillSelector: text("skill_selector").notNull(),
+  upstreamUrl: text("upstream_url").notNull(),
+  upstreamInstalls: integer("upstream_installs").notNull().default(0),
+  upstreamRank: integer("upstream_rank"),
+  isInstallable: boolean("is_installable").notNull().default(false),
+  isAvailable: boolean("is_available").notNull().default(true),
+  firstSeenAt: timestamp("first_seen_at", { withTimezone: true }).notNull().defaultNow(),
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => ({
+  rankIdx: index("external_skills_rank_idx").on(t.isAvailable, t.upstreamRank),
+  installsIdx: index("external_skills_installs_idx").on(t.upstreamInstalls)
+}));
+
+export const externalSkillSyncState = pgTable("external_skill_sync_state", {
+  source: varchar("source", { length: 60 }).primaryKey(),
+  nextPage: integer("next_page").notNull().default(0),
+  runStartedAt: timestamp("run_started_at", { withTimezone: true }),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  lastError: text("last_error")
+});

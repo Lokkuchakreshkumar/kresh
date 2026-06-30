@@ -19,20 +19,79 @@ export default function LoopDetailPage() {
   const [loop, setLoop] = useState(null);
   const [copiedInstall, setCopiedInstall] = useState(false);
   const [copiedContent, setCopiedContent] = useState(false);
+  const [session, setSession] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
-    try {
-      const existingLoopsRaw = localStorage.getItem('kresh_loops');
-      if (existingLoopsRaw) {
-        const loopsList = JSON.parse(existingLoopsRaw);
-        const found = loopsList.find(l => l.id === id);
-        if (found) {
-          setLoop(found);
-        }
-      }
-    } catch (err) {
-      console.error('Failed to load loop details:', err);
+    import('@/app/(auth)/actions').then(m => {
+      m.getSessionAction().then(res => setSession(res || null));
+    });
+  }, []);
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this loop? This action cannot be undone.')) {
+      return;
     }
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      const { deleteLoopAction } = await import('../actions');
+      const res = await deleteLoopAction(id);
+      if (res?.error) {
+        setDeleteError(res.error);
+        setDeleting(false);
+        return;
+      }
+      
+      // Also delete from localStorage if present
+      try {
+        const existingLoopsRaw = localStorage.getItem('kresh_loops');
+        if (existingLoopsRaw) {
+          const parsed = JSON.parse(existingLoopsRaw);
+          const filtered = parsed.filter(l => l.id !== id);
+          localStorage.setItem('kresh_loops', JSON.stringify(filtered));
+        }
+      } catch (e) {
+        console.error('Failed to clean up localStorage loop:', e);
+      }
+
+      router.push('/loops');
+    } catch (err) {
+      setDeleteError('Failed to delete loop.');
+      setDeleting(false);
+    }
+  };
+
+  useEffect(() => {
+    async function loadLoop() {
+      // 1. Try localStorage first
+      try {
+        const existingLoopsRaw = localStorage.getItem('kresh_loops');
+        if (existingLoopsRaw) {
+          const loopsList = JSON.parse(existingLoopsRaw);
+          const found = loopsList.find(l => l.id === id);
+          if (found) {
+            setLoop(found);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load loop details from localStorage:', err);
+      }
+
+      // 2. Try DB
+      try {
+        const { getLoopByIdAction } = await import('../actions');
+        const dbLoop = await getLoopByIdAction(id);
+        if (dbLoop) {
+          setLoop(dbLoop);
+        }
+      } catch (err) {
+        console.error('Failed to load loop from DB:', err);
+      }
+    }
+    loadLoop();
   }, [id]);
 
   if (!loop) {
@@ -50,11 +109,13 @@ export default function LoopDetailPage() {
     );
   }
 
+  const loopName = loop.slug ? loop.slug.split('/').pop() : loop.name.replace(/\s+/g, '_');
+
   const handleCopyInstall = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(`kresh get ${loop.ownerUsername}/${loop.name}`);
+      await navigator.clipboard.writeText(`kresh get ${loop.ownerUsername}/${loopName}`);
       setCopiedInstall(true);
       setTimeout(() => setCopiedInstall(false), 2000);
     } catch (err) {
@@ -92,7 +153,7 @@ export default function LoopDetailPage() {
             </Link>
             <span className="text-[var(--gray-700)]/50 font-mono">/</span>
             <span className="font-bold text-[var(--primary)] font-mono select-all">
-              {loop.name}
+              {loopName}
             </span>
             <span className="ml-1.5 rounded-full border border-[var(--gray-400)] bg-[var(--gray-100)] px-2 py-0.5 text-[10px] font-semibold text-[var(--gray-700)]">
               public
@@ -160,7 +221,7 @@ export default function LoopDetailPage() {
               <div className="flex items-center justify-between gap-2 rounded border border-[var(--gray-400)] bg-[var(--background-100)] px-2.5 py-1.5 font-mono text-[11px] text-[var(--gray-700)] select-all">
                 <div className="flex items-center gap-1.5 truncate">
                   <span className="text-[var(--blue-700)]">$</span>
-                  <span className="truncate">kresh get {loop.ownerUsername}/{loop.name}</span>
+                  <span className="truncate">kresh get {loop.ownerUsername}/{loopName}</span>
                 </div>
                 <button
                   type="button"
@@ -198,6 +259,26 @@ export default function LoopDetailPage() {
                 </div>
               </div>
             </div>
+
+            {/* Owner Delete Option */}
+            {session && loop && session.username.toLowerCase() === loop.ownerUsername.toLowerCase() && (
+              <div className="rounded-xl border border-[var(--red-300)] p-5 bg-[var(--background-100)] space-y-3 mt-4">
+                <h4 className="text-xs font-bold text-[var(--red-700)]">Danger Zone</h4>
+                <p className="text-[11px] text-[var(--gray-700)] leading-normal">
+                  Permanently delete this loop registry module. This action cannot be undone.
+                </p>
+                {deleteError && (
+                  <p className="text-[11px] text-[var(--red-700)] font-medium">{deleteError}</p>
+                )}
+                <Button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="w-full rounded-lg bg-[var(--red-700)] hover:bg-[var(--red-800)] text-white text-xs py-2"
+                >
+                  {deleting ? 'Deleting...' : 'Delete Loop'}
+                </Button>
+              </div>
+            )}
 
           </div>
 

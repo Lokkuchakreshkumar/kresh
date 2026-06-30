@@ -1,13 +1,45 @@
 import { and, desc, eq, or, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { skillFiles, skills, skillVersions, users } from '@/db/schema';
+import { externalSkills, skillFiles, skills, skillVersions, users } from '@/db/schema';
 import { decrypt } from '@/lib/auth';
 
 export async function GET(request, { params }) {
   try {
     const { slug: rawSlug } = await params;
     const slug = decodeURIComponent(Array.isArray(rawSlug) ? rawSlug.join('/') : rawSlug || '');
+
+    if (slug.startsWith('external/')) {
+      const externalRows = await db.select().from(externalSkills)
+        .where(and(eq(externalSkills.kreshSlug, slug), eq(externalSkills.isAvailable, true)))
+        .limit(1);
+      const external = externalRows[0];
+      if (!external) {
+        return NextResponse.json({ error: 'Imported skill not found.' }, { status: 404 });
+      }
+      return NextResponse.json({
+        name: external.name,
+        slug: external.kreshSlug,
+        description: external.description,
+        category: 'Imported skill',
+        currentVersion: 'upstream',
+        ownerUsername: external.sourceOwner || 'upstream',
+        installsCount: external.upstreamInstalls,
+        skillContent: '',
+        files: [],
+        installStrategy: external.isInstallable ? 'external-npx' : 'unsupported-external',
+        source: external.isInstallable ? {
+          type: 'github',
+          url: external.sourceUrl,
+          skillSelector: external.skillSelector
+        } : null,
+        attribution: {
+          owner: external.sourceOwner,
+          repository: external.sourceRepository,
+          skillsShUrl: external.upstreamUrl
+        }
+      });
+    }
 
     // Extract optional CLI token
     const authHeader = request.headers.get('authorization');

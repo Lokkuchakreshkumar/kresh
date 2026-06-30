@@ -171,7 +171,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-8">
           <a href="/" className="flex items-center gap-3 cursor-pointer">
-            <Image src="/logo/kresh_logo_exact.svg" alt="Kresh Logo" width={36} height={36} className="object-contain" />
+            <Image src="/logo/logo.png" alt="Kresh Logo" width={56} height={32} className="object-contain invert" unoptimized />
             <span className="text-[var(--primary)] font-bold text-xl hidden sm:inline-block">kresh</span>
           </a>
           

@@ -167,7 +167,7 @@ function SkillsListContent({ skills }) {
     setCurrentPage(1);
   }, [initialSearch, initialCategory]);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = Math.max(skills.length, 1);
 
   // Extract unique authors for filtering dropdown
   const uniqueAuthors = useMemo(() => {

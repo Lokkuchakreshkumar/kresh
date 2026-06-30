@@ -19,9 +19,15 @@ export function SkillCard({ skill }) {
           <h2 className="truncate text-lg font-bold text-[var(--primary)]">{skill.name}</h2>
           <p className="mt-1 text-xs text-[var(--gray-700)]">
             by{' '}
-            <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold hover:text-[var(--primary)] transition-colors">
-              @{skill.ownerUsername || 'unknown'}
-            </Link>{' '}
+            {skill.external ? (
+              <a href={skill.sourceUrl || skill.upstreamUrl} target="_blank" rel="noreferrer" className="font-semibold hover:text-[var(--primary)] transition-colors">
+                @{skill.ownerUsername || 'upstream'}
+              </a>
+            ) : (
+              <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold hover:text-[var(--primary)] transition-colors">
+                @{skill.ownerUsername || 'unknown'}
+              </Link>
+            )}{' '}
             | v{skill.currentVersion || '1.0.0'}
           </p>
         </div>
@@ -40,16 +46,18 @@ export function SkillCard({ skill }) {
 
       <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-medium">
         <Link
-          href={`/skills/${skill.slug}`}
+          href={skill.external ? `/skills/external/${skill.slug.replace(/^external\//, '')}` : `/skills/${skill.slug}`}
           className="rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] px-3 py-2 text-center text-[var(--primary)] transition-colors hover:bg-[var(--gray-100)] hover:border-[var(--gray-500)]"
         >
-          View SKILL.md
+          {skill.external ? 'View source' : 'View SKILL.md'}
         </Link>
         <a
-          href={`/api/skills/download/${skill.slug}`}
+          href={skill.external ? skill.upstreamUrl : `/api/skills/download/${skill.slug}`}
+          target={skill.external ? '_blank' : undefined}
+          rel={skill.external ? 'noreferrer' : undefined}
           className="rounded-[6px] border border-transparent bg-[var(--gray-1000)] px-3 py-2 text-center text-[var(--background-100)] transition-colors hover:bg-[var(--gray-900)]"
         >
-          Download
+          {skill.external ? 'Original source' : 'Download'}
         </a>
       </div>
 

@@ -7,6 +7,7 @@ import { api } from '../services/api.js';
 import { writeLocalSkill, getWorkspaceRoot } from '../services/filesystem.js';
 import { logger } from '../utils/logger.js';
 import { cliAuthFlow, getToken } from '../services/auth.js';
+import { installExternalSkill } from '../services/externalInstaller.js';
 
 /**
  * Installs a skill from the registry locally.
@@ -17,6 +18,15 @@ export async function installSkill(skillSlug, isRetry = false, options = {}) {
     const response = await api.get(`/api/skills/${skillSlug}`);
     const { skillContent, files, ...metadata } = response.data;
     spinner.stop();
+
+    if (metadata.installStrategy === 'unsupported-external') {
+      logger.error('This imported skill does not have a validated GitHub installation source.');
+      return;
+    }
+    if (metadata.installStrategy === 'external-npx') {
+      await installExternalSkill(metadata);
+      return;
+    }
 
     const isAgent = metadata.category === 'AGENTS.md/CLAUDE.md' || metadata.category === 'AGENT.md/CLAUDE.md' || metadata.category === 'Agents';
     const isDesign = metadata.category === 'Design.md';

@@ -92,20 +92,44 @@ export default function LoopsPage() {
   const [loops, setLoops] = useState([]);
 
   useEffect(() => {
-    try {
-      const existingLoopsRaw = localStorage.getItem('kresh_loops');
-      if (existingLoopsRaw) {
-        const parsed = JSON.parse(existingLoopsRaw);
-        // Filter out any anonymous loops
-        const filtered = parsed.filter(l => l.ownerUsername !== 'anonymous' && l.ownerUsername !== 'Anonymous');
-        setLoops(filtered);
-        if (filtered.length !== parsed.length) {
-          localStorage.setItem('kresh_loops', JSON.stringify(filtered));
+    async function loadLoops() {
+      let dbLoops = [];
+      try {
+        const { getLoopsAction } = await import('./actions');
+        const res = await getLoopsAction();
+        if (res?.loops) {
+          dbLoops = res.loops;
+        }
+      } catch (err) {
+        console.error('Failed to load loops from DB:', err);
+      }
+
+      let localLoops = [];
+      try {
+        const existingLoopsRaw = localStorage.getItem('kresh_loops');
+        if (existingLoopsRaw) {
+          const parsed = JSON.parse(existingLoopsRaw);
+          localLoops = parsed.filter(l => l.ownerUsername !== 'anonymous' && l.ownerUsername !== 'Anonymous');
+        }
+      } catch (err) {
+        console.error('Failed to load loops from localStorage:', err);
+      }
+
+      // Merge local and db loops, preferring db loops in case of duplicate slugs/names
+      const merged = [...dbLoops];
+      for (const local of localLoops) {
+        const nameSlug = local.name.toLowerCase().replace(/[^a-z0-9_]+/g, '_');
+        const exists = merged.some(dbL => {
+          const dbSlug = dbL.slug.toLowerCase().replace(/^@/, '');
+          return dbSlug.endsWith(nameSlug) || dbL.name.toLowerCase() === local.name.toLowerCase();
+        });
+        if (!exists) {
+          merged.push(local);
         }
       }
-    } catch (err) {
-      console.error('Failed to load loops from localStorage:', err);
+      setLoops(merged);
     }
+    loadLoops();
   }, []);
 
   const formatDate = (dateString) => {

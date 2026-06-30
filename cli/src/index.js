@@ -8,6 +8,7 @@ import { removeSkill } from './commands/remove.js';
 import { publishSkill } from './commands/publish.js';
 import { loginCommand } from './commands/login.js';
 import { getLoop } from './commands/get.js';
+import { trustCommand } from './commands/trust.js';
 
 const program = new Command();
 
@@ -64,6 +65,13 @@ program
   .description('Authenticate with the Kresh registry. Use "kresh login flush" to clear your session.')
   .action(async (action) => {
     await loginCommand({ flush: action === 'flush' });
+  });
+
+program
+  .command('trust <action> [repository]')
+  .description('List or revoke trusted upstream repositories')
+  .action(async (action, repository) => {
+    await trustCommand(action, repository);
   });
 
 program

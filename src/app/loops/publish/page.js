@@ -48,8 +48,20 @@ export default function PublishLoopPage() {
 
     setLoading(true);
     try {
-      // Simulate validation and API timing
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const formData = new FormData();
+      formData.append('name', name.trim());
+      formData.append('version', version.trim());
+      formData.append('description', description.trim() || 'No description provided.');
+      formData.append('loopText', loopText);
+
+      const { createLoopAction } = await import('../actions');
+      const result = await createLoopAction(formData);
+
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
 
       const newLoop = {
         id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2),
@@ -61,7 +73,7 @@ export default function PublishLoopPage() {
         ownerUsername: session.username
       };
 
-      // Save to localStorage
+      // Save to localStorage for fallback/local sync
       const existingLoopsRaw = localStorage.getItem('kresh_loops');
       const existingLoops = existingLoopsRaw ? JSON.parse(existingLoopsRaw) : [];
       existingLoops.unshift(newLoop);
@@ -69,7 +81,7 @@ export default function PublishLoopPage() {
 
       router.push('/loops');
     } catch (err) {
-      setError('An error occurred while publishing the loop.');
+      setError(err.message || 'An error occurred while publishing the loop.');
     } finally {
       setLoading(false);
     }

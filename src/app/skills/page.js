@@ -8,8 +8,11 @@ import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
 import { EmptySkills } from './components/EmptySkills';
 import { SkillsList } from './components/SkillsList';
+import { ImportedSkillsFeed } from './components/ImportedSkillsFeed';
 
 import { getCachedData, setCachedData } from '@/lib/memoryCache';
+
+export const dynamic = 'force-dynamic';
 
 async function fetchPublicSkills() {
   try {
@@ -60,6 +63,8 @@ export default async function SkillsPage() {
             <Button className="rounded-lg">Publish a skill</Button>
           </Link>
         </section>
+
+        <ImportedSkillsFeed />
 
         {publicSkills.length === 0 ? (
           <EmptySkills />
