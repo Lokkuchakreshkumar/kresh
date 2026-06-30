@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
 import './MagicBento.css';
 
-const DEFAULT_PARTICLE_COUNT = 12;
+const DEFAULT_PARTICLE_COUNT = 40;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const DEFAULT_GLOW_COLOR = '46, 204, 113'; // kresh-green default
 const MOBILE_BREAKPOINT = 768;
@@ -54,20 +54,28 @@ const cardData = [
   }
 ];
 
+const ASCII_CHARS = ['✦', '✧', '★', '☆', '·', '°', '•', '●', '○', '◎', '+', '×', '※', '✨'];
+
 const createParticleElement = (x, y, color = DEFAULT_GLOW_COLOR) => {
   const el = document.createElement('div');
   el.className = 'particle';
+  const char = ASCII_CHARS[Math.floor(Math.random() * ASCII_CHARS.length)];
+  el.innerText = char;
   el.style.cssText = `
     position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(${color}, 1);
-    box-shadow: 0 0 6px rgba(${color}, 0.6);
+    color: rgba(${color}, 1);
+    text-shadow: 0 0 4px rgba(${color}, 0.8);
+    font-size: ${6 + Math.random() * 8}px;
+    font-family: monospace;
+    font-weight: bold;
     pointer-events: none;
     z-index: 100;
     left: ${x}px;
     top: ${y}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
   `;
   return el;
 };

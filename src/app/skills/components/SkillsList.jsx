@@ -153,17 +153,19 @@ function CopyCommandLine({ slug }) {
 function SkillsListContent({ skills }) {
   const searchParams = useSearchParams();
   const initialSearch = searchParams.get('search') || searchParams.get('q') || '';
+  const initialCategory = searchParams.get('category') || 'all';
   const [search, setSearch] = useState(initialSearch);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'popular', 'recent', 'most-installed'
   const [authorFilter, setAuthorFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Sync initialSearch if it changes (e.g. searching from the Header while on the page)
+  // Sync initialSearch and initialCategory if they change
   useEffect(() => {
     setSearch(initialSearch || '');
+    setCategoryFilter(initialCategory || 'all');
     setCurrentPage(1);
-  }, [initialSearch]);
+  }, [initialSearch, initialCategory]);
 
   const itemsPerPage = 5;
 
@@ -206,10 +208,17 @@ function SkillsListContent({ skills }) {
 
     // 3. Category Filter
     if (categoryFilter !== 'all') {
-      result = result.filter(s => s.category === categoryFilter);
+      const lowerCat = categoryFilter.toLowerCase();
+      result = result.filter(s => {
+        const itemCat = (s.category || '').toLowerCase();
+        if (lowerCat === 'agent.md') {
+          return itemCat.includes('agent') || itemCat.includes('claude');
+        }
+        return itemCat === lowerCat || itemCat.includes(lowerCat);
+      });
     }
 
-    // 3. Tab Sorting
+    // 4. Tab Sorting
     if (activeTab === 'popular') {
       result.sort((a, b) => (b.starsCount || 0) - (a.starsCount || 0));
     } else if (activeTab === 'recent') {

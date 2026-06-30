@@ -213,17 +213,7 @@
   overflow: hidden;
 }
 
-.particle::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: rgba(var(--glow-color), 0.2);
-  border-radius: 50%;
-  z-index: -1;
-}
+/* .particle::before removed since we use ascii text characters now */
 
 .particle-container:hover {
   box-shadow:

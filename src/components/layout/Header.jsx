@@ -177,7 +177,10 @@ export function Header() {
           </a>
           
           <nav className="hidden md:flex items-center gap-6 text-sm text-text-secondary font-medium">
-            <a href="/skills" className="hover:text-text-primary transition-all duration-200 hover:-translate-y-[1px]">Skills</a>
+            <a href="/skills?category=skill" className="hover:text-text-primary transition-all duration-200 hover:-translate-y-[1px]">Skills</a>
+            <a href="/skills?category=agents.md/claude.md" className="hover:text-text-primary transition-all duration-200 hover:-translate-y-[1px]">Agent.md/Claude.md</a>
+            <a href="/skills?category=design.md" className="hover:text-text-primary transition-all duration-200 hover:-translate-y-[1px]">Design.md</a>
+            <a href="/loops" className="hover:text-text-primary transition-all duration-200 hover:-translate-y-[1px]">Loops</a>
             <a href="/docs" className="hover:text-text-primary transition-all duration-200 hover:-translate-y-[1px]">Docs</a>
           </nav>
         </div>

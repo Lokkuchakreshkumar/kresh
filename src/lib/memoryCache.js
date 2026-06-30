@@ -1,4 +1,7 @@
-const cache = new Map();
+const cache = global.kreshCache || new Map();
+if (process.env.NODE_ENV !== 'production') {
+  global.kreshCache = cache;
+}
 
 export function getCachedData(key) {
   const item = cache.get(key);

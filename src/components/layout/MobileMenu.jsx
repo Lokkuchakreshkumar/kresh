@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, LogOut, Plus, BookOpen, Compass, Settings, ArrowLeft } from 'lucide-react';
+import { Menu, X, Search, LogOut, Plus, BookOpen, Compass, Settings, ArrowLeft, Brain, Layers, RefreshCw } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Glass } from '../ui/Glass';
 
@@ -144,12 +144,36 @@ export function MobileMenu({ session, onLogout }) {
               {/* Nav Links */}
               <nav className="flex flex-col gap-1.5 text-sm text-text-primary font-bold">
                 <a 
-                  href="/skills" 
+                  href="/skills?category=skill" 
                   onClick={handleLinkClick}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-text-primary/10 hover:text-text-primary transition-all duration-200"
                 >
                   <Compass className="w-4 h-4 shrink-0" />
                   <span>Skills</span>
+                </a>
+                <a 
+                  href="/skills?category=agents.md/claude.md" 
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-text-primary/10 hover:text-text-primary transition-all duration-200"
+                >
+                  <Brain className="w-4 h-4 shrink-0 text-kresh-green" />
+                  <span>Agent.md/Claude.md</span>
+                </a>
+                <a 
+                  href="/skills?category=design.md" 
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-text-primary/10 hover:text-text-primary transition-all duration-200"
+                >
+                  <Layers className="w-4 h-4 shrink-0" />
+                  <span>Design.md</span>
+                </a>
+                <a 
+                  href="/loops" 
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-text-primary/10 hover:text-text-primary transition-all duration-200"
+                >
+                  <RefreshCw className="w-4 h-4 shrink-0" />
+                  <span>Loops</span>
                 </a>
                 <a 
                   href="/docs" 
