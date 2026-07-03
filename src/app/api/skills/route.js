@@ -1,10 +1,7 @@
 import { and, desc, eq, like, or, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
-import { getVercelOidcToken } from '@vercel/oidc';
 import { db } from '@/db';
 import { skills, users } from '@/db/schema';
-import { toExternalSkillDto } from '@/lib/externalSkills';
-import { fetchSkillsShSkillList } from '@/lib/skillsShClient';
 
 export async function GET(request) {
   try {
@@ -44,17 +41,7 @@ export async function GET(request) {
 
     const results = await dbQuery.orderBy(desc(skills.createdAt)).limit(50);
 
-    const live = await fetchSkillsShSkillList({ page: 0, perPage: 50, query }, getVercelOidcToken);
-    const imported = (live?.items || []).map(toExternalSkillDto);
-
-    // Filter out external/imported skills that have the same slug as local public skills
-    const localSlugs = new Set(results.map(s => s.slug));
-    const uniqueImported = imported.filter(s => !localSlugs.has(s.slug));
-
-    // Combine local results and imported results
-    const combined = [...results, ...uniqueImported];
-
-    return NextResponse.json(combined.slice(0, 50));
+    return NextResponse.json(results);
   } catch (error) {
     console.error('Failed to query search skills:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

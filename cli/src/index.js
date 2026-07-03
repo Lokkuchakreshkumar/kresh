@@ -30,11 +30,11 @@ program
   });
 
 program
-  .command('search <query>')
+  .command('search [query]')
   .alias('s')
-  .description('Search skills in the registry')
+  .description('Search skills in the registry. If no query is provided, lists all available skills.')
   .action(async (query) => {
-    await searchSkills(query);
+    await searchSkills(query || '');
   });
 
 program
