@@ -2,6 +2,8 @@ import { and, desc, eq, like, or, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { skills, users } from '@/db/schema';
+import { toExternalSkillDto } from '@/lib/externalSkills';
+import { fetchSkillsShSkillListFromDb } from '@/lib/skillsShClient';
 
 export async function GET(request) {
   try {
@@ -41,7 +43,15 @@ export async function GET(request) {
 
     const results = await dbQuery.orderBy(desc(skills.createdAt)).limit(50);
 
-    return NextResponse.json(results);
+    const external = await fetchSkillsShSkillListFromDb({ page: 0, perPage: 50, query });
+    const imported = (external?.items || []).map(toExternalSkillDto);
+
+    const localSlugs = new Set(results.map(s => s.slug));
+    const uniqueImported = imported.filter(s => !localSlugs.has(s.slug));
+
+    const combined = [...results, ...uniqueImported];
+
+    return NextResponse.json(combined.slice(0, 50));
   } catch (error) {
     console.error('Failed to query search skills:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

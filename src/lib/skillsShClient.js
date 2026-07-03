@@ -20,7 +20,7 @@ async function resolveToken(getOidcToken) {
   }
 }
 
-async function fetchSkillsShSkillListFromDb({ page = 0, perPage = 20, query = '' }) {
+export async function fetchSkillsShSkillListFromDb({ page = 0, perPage = 20, query = '' }) {
   try {
     let dbQuery = db
       .select()
