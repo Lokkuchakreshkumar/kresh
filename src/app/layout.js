@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Script from "next/script";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +27,16 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID && process.env.NEXT_PUBLIC_DATAFAST_DOMAIN && (
+          <Script
+            data-website-id={process.env.NEXT_PUBLIC_DATAFAST_WEBSITE_ID}
+            data-domain={process.env.NEXT_PUBLIC_DATAFAST_DOMAIN}
+            src="https://datafa.st/js/script.js"
+            strategy="afterInteractive"
+          />
+        )}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-full flex flex-col font-sans`}
