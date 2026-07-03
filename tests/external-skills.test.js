@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { isSafeSkillSelector, mapSkillsShFiles, normalizeSkillsShSkill, parseGitHubSource, parseSkillsShListPayload } from '../src/lib/externalSkills.js';
+import { isSafeSkillSelector, mapSkillsShFiles, normalizeSkillsShSkill, parseGitHubSource, parseSkillsShListPayload, readSkillsShTotal } from '../src/lib/externalSkills.js';
 
 test('normalizes a skills.sh leaderboard entry without file content', () => {
   const entry = normalizeSkillsShSkill({
@@ -46,4 +46,9 @@ test('parses skills.sh list pagination metadata', () => {
   assert.equal(parsed.total, 857000);
   assert.equal(parsed.hasMore, true);
   assert.equal(parsed.nextPage, 1);
+});
+
+test('reads nested skills.sh total fields', () => {
+  assert.equal(readSkillsShTotal({ pagination: { total_count: 12000 } }), 12000);
+  assert.equal(readSkillsShTotal({ skills: [] }), null);
 });

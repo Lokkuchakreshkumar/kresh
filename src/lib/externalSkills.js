@@ -62,13 +62,32 @@ export function mapSkillsShFiles(detailFiles) {
     .filter((file) => file.path && file.content);
 }
 
+export function readSkillsShTotal(payload) {
+  if (!payload || typeof payload !== 'object') return null;
+  const candidates = [
+    payload.total,
+    payload.total_count,
+    payload.totalCount,
+    payload.count,
+    payload.meta?.total,
+    payload.meta?.total_count,
+    payload.pagination?.total,
+    payload.pagination?.total_count
+  ];
+  for (const value of candidates) {
+    const num = Number(value);
+    if (Number.isFinite(num) && num > 0) return num;
+  }
+  return null;
+}
+
 export function parseSkillsShListPayload(payload, page, perPage) {
   const entries = Array.isArray(payload) ? payload : payload.skills || payload.data || payload.items || [];
   const explicitHasMore = payload.has_more ?? payload.hasMore;
   const hasMore = typeof explicitHasMore === 'boolean'
     ? explicitHasMore
     : Boolean(payload.next_page ?? payload.nextPage) || entries.length === perPage;
-  const total = Number(payload.total ?? payload.total_count ?? payload.totalCount ?? 0) || null;
+  const total = readSkillsShTotal(payload);
   const nextPage = hasMore && entries.length > 0 ? page + 1 : null;
   return { entries, hasMore, total, nextPage };
 }

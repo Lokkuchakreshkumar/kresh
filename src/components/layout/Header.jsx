@@ -92,14 +92,26 @@ export function Header() {
     const fetchSkills = async () => {
       setLoading(true);
       try {
-        const url = `/api/skills?q=${encodeURIComponent(searchQuery)}`;
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          setResults(data.slice(0, 6));
-        } else {
-          setResults([]);
+        const query = encodeURIComponent(searchQuery);
+        const [localRes, externalRes] = await Promise.all([
+          fetch(`/api/skills?q=${query}`),
+          fetch(`/api/external-skills?limit=5&q=${query}`)
+        ]);
+        
+        let localData = [];
+        let externalData = [];
+        
+        if (localRes.ok) localData = await localRes.json();
+        if (externalRes.ok) {
+          const e = await externalRes.json();
+          externalData = e.items || [];
         }
+        
+        const localSlugs = new Set(localData.map(s => s.slug));
+        const uniqueExternal = externalData.filter(s => !localSlugs.has(s.slug));
+        
+        const combined = [...localData, ...uniqueExternal].slice(0, 8);
+        setResults(combined);
       } catch (err) {
         console.error('Error searching skills:', err);
         setResults([]);
@@ -295,6 +307,19 @@ export function Header() {
                     })
                   )}
                 </div>
+                
+                {results.length > 0 && (
+                  <div 
+                    onClick={() => {
+                      router.push(`/skills?search=${encodeURIComponent(searchQuery)}`);
+                      setIsOpen(false);
+                      setSearchQuery('');
+                    }}
+                    className="px-3 py-2.5 border-t border-[var(--gray-200)] text-center cursor-pointer hover:bg-[var(--gray-100)] text-[11px] font-semibold text-[var(--primary)] uppercase tracking-wider"
+                  >
+                    View all full results
+                  </div>
+                )}
 
                 <div className="px-3 py-2 border-t border-[var(--gray-400)]/40 bg-white/[0.02] flex items-center justify-between text-[9px] text-[var(--gray-700)]/70 select-none font-mono">
                   <div className="flex items-center gap-1">

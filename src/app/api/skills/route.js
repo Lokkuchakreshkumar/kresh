@@ -13,6 +13,7 @@ export async function GET(request) {
 
     let dbQuery = db
       .select({
+        id: skills.id,
         name: skills.name,
         slug: skills.slug,
         description: skills.description,
@@ -46,7 +47,14 @@ export async function GET(request) {
     const live = await fetchSkillsShSkillList({ page: 0, perPage: 50, query }, getVercelOidcToken);
     const imported = (live?.items || []).map(toExternalSkillDto);
 
-    return NextResponse.json([...imported, ...results].slice(0, 50));
+    // Filter out external/imported skills that have the same slug as local public skills
+    const localSlugs = new Set(results.map(s => s.slug));
+    const uniqueImported = imported.filter(s => !localSlugs.has(s.slug));
+
+    // Combine local results and imported results
+    const combined = [...results, ...uniqueImported];
+
+    return NextResponse.json(combined.slice(0, 50));
   } catch (error) {
     console.error('Failed to query search skills:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

@@ -6,9 +6,7 @@ import { skills, users } from '@/db/schema';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/Button';
-import { EmptySkills } from './components/EmptySkills';
 import { SkillsList } from './components/SkillsList';
-import { ImportedSkillsFeed } from './components/ImportedSkillsFeed';
 
 import { getCachedData, setCachedData } from '@/lib/memoryCache';
 
@@ -64,13 +62,7 @@ export default async function SkillsPage() {
           </Link>
         </section>
 
-        <ImportedSkillsFeed />
-
-        {publicSkills.length === 0 ? (
-          <EmptySkills />
-        ) : (
-          <SkillsList skills={publicSkills} />
-        )}
+        <SkillsList skills={publicSkills} />
       </main>
       <Footer />
     </div>

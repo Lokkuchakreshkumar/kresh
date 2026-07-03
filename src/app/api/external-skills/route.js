@@ -6,17 +6,43 @@ import { fetchSkillsShSkillList } from '@/lib/skillsShClient';
 export async function GET(request) {
   try {
     const params = new URL(request.url).searchParams;
-    const page = Math.max(0, Number(params.get('cursor') || 0));
-    const limit = Math.min(50, Math.max(1, Number(params.get('limit') || 20)));
+    const cursor = Math.max(0, Number(params.get('cursor') || 0));
+    const limit = Math.min(500, Math.max(1, Number(params.get('limit') || 500)));
     const query = params.get('q')?.trim() || '';
-    const live = await fetchSkillsShSkillList({ page, perPage: limit, query }, getVercelOidcToken);
-    if (!live) {
-      return NextResponse.json({ error: 'Could not load imported skills.' }, { status: 502 });
+    
+    const CHUNK_SIZE = 100;
+    const numChunks = Math.ceil(limit / CHUNK_SIZE);
+    
+    const startUpstreamPage = cursor;
+    
+    const fetchPromises = [];
+    for (let i = 0; i < numChunks; i++) {
+      const p = startUpstreamPage + i;
+      fetchPromises.push(
+        fetchSkillsShSkillList({ page: p, perPage: CHUNK_SIZE, query }, getVercelOidcToken)
+      );
     }
+    
+    const results = await Promise.all(fetchPromises);
+    
+    let combinedItems = [];
+    let total = 0;
+    
+    for (const res of results) {
+      if (!res) continue;
+      if (res.items && Array.isArray(res.items)) {
+        combinedItems = combinedItems.concat(res.items);
+      }
+      total = res.total > total ? res.total : total;
+    }
+    
+    const lastValidRes = results.reverse().find(r => r != null);
+    const hasMore = lastValidRes ? lastValidRes.hasMore : false;
+    
     return NextResponse.json({
-      items: live.items.map(toExternalSkillDto),
-      total: live.total ?? live.items.length,
-      nextCursor: live.hasMore ? live.nextPage : null
+      items: combinedItems.slice(0, limit).map(toExternalSkillDto),
+      total: total,
+      nextCursor: hasMore ? cursor + numChunks : null
     });
   } catch (error) {
     console.error('Failed to list imported skills:', error);

@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, Suspense } from 'react';
+import React, { useState, useMemo, useEffect, Suspense, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { 
   Search, Code, Feather, Brain, Network, Terminal, CheckCircle2, 
-  Copy, Check, Eye, Download, ChevronLeft, ChevronRight 
+  Copy, Check, Eye, Download
 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -131,43 +131,125 @@ function CopyCommandLine({ slug }) {
   };
 
   return (
-    <div className="mt-2 flex items-center justify-between gap-2 rounded border border-[var(--gray-400)] bg-[var(--background-100)] px-2.5 py-1 font-mono text-[11px] text-[var(--gray-700)] w-full max-w-[280px] sm:max-w-xs shrink-0 select-all">
-      <div className="flex items-center gap-1.5 truncate">
-        <span className="text-[var(--blue-700)]">$</span>
-        <span className="truncate">{command}</span>
-      </div>
-      <button
-        type="button"
-        onClick={handleCopy}
-        className={`transition-all duration-150 p-0.5 rounded hover:bg-[var(--gray-200)] shrink-0 outline-none ${
-          copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)]/70 hover:text-[var(--primary)]'
-        }`}
-        title="Copy install command"
-      >
-        {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-      </button>
+    <div 
+      onClick={handleCopy}
+      className={`flex items-center gap-2 rounded border px-3 py-1.5 font-mono text-xs cursor-pointer select-all transition-all duration-150 shrink-0 ${
+        copied 
+          ? 'bg-[var(--blue-1000)]/40 border-[var(--blue-700)]/50 text-[var(--blue-400)] shadow-[0_0_8px_rgba(0,107,255,0.15)]' 
+          : 'bg-[var(--background-100)] border-[var(--gray-300)] text-[var(--primary)] hover:bg-[var(--gray-100)] hover:border-[var(--gray-400)] shadow-sm'
+      }`}
+      title="Click to copy install command"
+    >
+      {copied ? (
+        <Check className="w-3.5 h-3.5 text-[var(--blue-500)] shrink-0" />
+      ) : (
+        <Copy className="w-3.5 h-3.5 text-[var(--secondary)] shrink-0" />
+      )}
+      <span>{command}</span>
     </div>
   );
+}
+
+/**
+ * Computes a human-readable time-ago string from a date.
+ */
+function formatTimeAgo(dateVal) {
+  if (!dateVal) return 'recently';
+  try {
+    const now = new Date();
+    const past = new Date(dateVal);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    const diffWeeks = Math.floor(diffDays / 7);
+    const diffMonths = Math.floor(diffDays / 30);
+
+    if (diffMins < 60) return `${Math.max(1, diffMins)}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffWeeks < 4) return `${diffWeeks}w ago`;
+    if (diffMonths < 12) return `${diffMonths}mo ago`;
+    return `${Math.floor(diffDays / 365)}y ago`;
+  } catch (e) {
+    return 'recently';
+  }
+}
+
+/**
+ * Returns color classes based on category name matching vercel_design.md dark mode colors.
+ */
+function getCategoryClass(category) {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('discover') || cat.includes('api')) {
+    return 'bg-[#2f004e]/40 text-[#dfa7ff] border border-[#8500d1]/30';
+  }
+  if (cat.includes('front') || cat.includes('design') || cat.includes('theme') || cat.includes('css') || cat.includes('ui')) {
+    return 'bg-[#002359]/40 text-[#94ccff] border border-[#0059ec]/30';
+  }
+  if (cat.includes('content') || cat.includes('write') || cat.includes('prompt')) {
+    return 'bg-[#47000c]/40 text-[#ffb1b3] border border-[#ea001d]/30';
+  }
+  if (cat.includes('agent') || cat.includes('claude') || cat.includes('ai')) {
+    return 'bg-[#561900]/40 text-[#ffc543] border border-[#ff9300]/30';
+  }
+  return 'bg-[var(--gray-200)] text-[var(--gray-800)] border border-[var(--gray-300)]';
 }
 
 function SkillsListContent({ skills }) {
   const searchParams = useSearchParams();
   const initialSearch = searchParams.get('search') || searchParams.get('q') || '';
   const initialCategory = searchParams.get('category') || 'all';
+  
   const [search, setSearch] = useState(initialSearch);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'popular', 'recent', 'most-installed'
   const [authorFilter, setAuthorFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState(initialCategory);
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const [externalSkills, setExternalSkills] = useState([]);
+  const [externalTotal, setExternalTotal] = useState(0);
+  const [cursor, setCursor] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Keep state variables in refs to construct stable callbacks
+  const loadingRef = useRef(loading);
+  const hasMoreRef = useRef(hasMore);
+  const cursorRef = useRef(cursor);
+  const searchRef = useRef(search);
+  const categoryFilterRef = useRef(categoryFilter);
+  const errorRef = useRef(error);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  useEffect(() => {
+    hasMoreRef.current = hasMore;
+  }, [hasMore]);
+
+  useEffect(() => {
+    cursorRef.current = cursor;
+  }, [cursor]);
+
+  useEffect(() => {
+    searchRef.current = search;
+  }, [search]);
+
+  useEffect(() => {
+    categoryFilterRef.current = categoryFilter;
+  }, [categoryFilter]);
+
+  useEffect(() => {
+    errorRef.current = error;
+  }, [error]);
 
   // Sync initialSearch and initialCategory if they change
   useEffect(() => {
     setSearch(initialSearch || '');
     setCategoryFilter(initialCategory || 'all');
-    setCurrentPage(1);
   }, [initialSearch, initialCategory]);
-
-  const itemsPerPage = Math.max(skills.length, 1);
 
   // Extract unique authors for filtering dropdown
   const uniqueAuthors = useMemo(() => {
@@ -178,23 +260,119 @@ function SkillsListContent({ skills }) {
     return Array.from(authors).sort();
   }, [skills]);
 
-  // Extract unique categories for filtering dropdown
+  // Extract unique categories for filtering dropdown, including imported
   const uniqueCategories = useMemo(() => {
     const categories = new Set();
     skills.forEach(s => {
-      if (s.category) categories.add(s.category);
+      if (s.category) categories.add(s.category.toLowerCase());
     });
+    categories.add('imported');
+    categories.add('skill');
     return Array.from(categories).sort();
   }, [skills]);
 
+  const abortControllerRef = useRef(null);
+
+  const fetchExternalSkills = useCallback(async (queryVal, categoryVal, cursorVal, append = false) => {
+    // If paginating, ignore if already loading to prevent double pages
+    if (append && loadingRef.current) return;
+
+    // Load external skills only when category is all, imported, or skill
+    if (categoryVal !== 'all' && categoryVal !== 'imported' && categoryVal !== 'skill') {
+      setExternalSkills([]);
+      setExternalTotal(0);
+      setHasMore(false);
+      return;
+    }
+
+    // Abort previous in-flight request if starting a new search/category query
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    setLoading(true);
+    setError('');
+    try {
+      const limit = cursorVal === 0 ? 500 : 100;
+      const response = await fetch(
+        `/api/external-skills?cursor=${cursorVal}&limit=${limit}&q=${encodeURIComponent(queryVal)}`,
+        { signal: abortController.signal }
+      );
+      if (!response.ok) throw new Error('Catalog request failed');
+      const data = await response.json();
+      
+      setExternalSkills((current) => {
+        if (!append) {
+          return data.items;
+        }
+        const known = new Set(current.map((item) => item.slug));
+        return [...current, ...data.items.filter((item) => !known.has(item.slug))];
+      });
+      if (data.total !== undefined) {
+        setExternalTotal(data.total);
+      }
+      setCursor(data.nextCursor || 0);
+      setHasMore(Boolean(data.nextCursor));
+    } catch (loadError) {
+      if (loadError.name === 'AbortError') {
+        // Silence aborted request errors
+        return;
+      }
+      console.error('Failed to load imported skill catalog:', loadError);
+      setError('The imported catalog could not be loaded.');
+    } finally {
+      if (abortControllerRef.current === abortController) {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  // Reset and fetch external skills when search query or category changes
+  useEffect(() => {
+    fetchExternalSkills(search, categoryFilter, 0, false);
+  }, [search, categoryFilter, fetchExternalSkills]);
+
+  const loadNextPage = useCallback(() => {
+    if (loadingRef.current || !hasMoreRef.current) return;
+    fetchExternalSkills(searchRef.current, categoryFilterRef.current, cursorRef.current, true);
+  }, [fetchExternalSkills]);
+
+  const sentinelNodeRef = useRef(null);
+
+  // Standard intersection observer (fetch only when scrolled to bottom)
+  useEffect(() => {
+    if (!loading && hasMore && !error) {
+      const node = sentinelNodeRef.current;
+      if (!node) return undefined;
+      
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          loadNextPage();
+        }
+      }, { rootMargin: '100px' });
+      
+      observer.observe(node);
+      return () => observer.disconnect();
+    }
+  }, [loading, hasMore, error, loadNextPage, categoryFilter]);
+
+  // Handle manual load / retry
+  const handleManualLoad = () => {
+    setError('');
+    loadNextPage();
+  };
+
   // Handle filtering and sorting
   const filteredAndSortedSkills = useMemo(() => {
-    let result = [...skills];
+    let localResult = [...skills];
 
     // 1. Search Query
     if (search.trim()) {
       const q = search.toLowerCase();
-      result = result.filter(s => 
+      localResult = localResult.filter(s => 
         s.name.toLowerCase().includes(q) ||
         (s.description || '').toLowerCase().includes(q) ||
         (s.ownerUsername || '').toLowerCase().includes(q)
@@ -203,103 +381,111 @@ function SkillsListContent({ skills }) {
 
     // 2. Author Filter
     if (authorFilter !== 'all') {
-      result = result.filter(s => s.ownerUsername === authorFilter);
+      localResult = localResult.filter(s => s.ownerUsername === authorFilter);
     }
 
     // 3. Category Filter
-    if (categoryFilter !== 'all') {
+    let combinedResult = [];
+    if (categoryFilter === 'imported') {
+      let uniqueExternal = [...externalSkills];
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        uniqueExternal = uniqueExternal.filter(s => 
+          s.name.toLowerCase().includes(q) ||
+          (s.description || '').toLowerCase().includes(q) ||
+          (s.ownerUsername || '').toLowerCase().includes(q)
+        );
+      }
+      combinedResult = uniqueExternal;
+    } else if (categoryFilter === 'all') {
+      const localSlugs = new Set(localResult.map(s => s.slug));
+      let uniqueExternal = externalSkills.filter(s => !localSlugs.has(s.slug));
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        uniqueExternal = uniqueExternal.filter(s => 
+          s.name.toLowerCase().includes(q) ||
+          (s.description || '').toLowerCase().includes(q) ||
+          (s.ownerUsername || '').toLowerCase().includes(q)
+        );
+      }
+      combinedResult = [...localResult, ...uniqueExternal];
+    } else if (categoryFilter === 'skill') {
+      const filteredLocal = localResult.filter(s => (s.category || '').toLowerCase() === 'skill');
+      const localSlugs = new Set(filteredLocal.map(s => s.slug));
+      let uniqueExternal = externalSkills.filter(s => !localSlugs.has(s.slug));
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        uniqueExternal = uniqueExternal.filter(s => 
+          s.name.toLowerCase().includes(q) ||
+          (s.description || '').toLowerCase().includes(q) ||
+          (s.ownerUsername || '').toLowerCase().includes(q)
+        );
+      }
+      combinedResult = [...filteredLocal, ...uniqueExternal];
+    } else {
       const lowerCat = categoryFilter.toLowerCase();
-      result = result.filter(s => {
+      localResult = localResult.filter(s => {
         const itemCat = (s.category || '').toLowerCase();
         if (lowerCat === 'agent.md') {
           return itemCat.includes('agent') || itemCat.includes('claude');
         }
         return itemCat === lowerCat || itemCat.includes(lowerCat);
       });
+      combinedResult = localResult;
     }
 
     // 4. Tab Sorting
     if (activeTab === 'popular') {
-      result.sort((a, b) => (b.starsCount || 0) - (a.starsCount || 0));
+      combinedResult.sort((a, b) => (b.starsCount || b.upstreamInstalls || 0) - (a.starsCount || a.upstreamInstalls || 0));
     } else if (activeTab === 'recent') {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      combinedResult.sort((a, b) => {
+        if (a.external && b.external) {
+          return (a.upstreamRank || 999999) - (b.upstreamRank || 999999);
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
     } else if (activeTab === 'most-installed') {
-      result.sort((a, b) => (b.installsCount || 0) - (a.installsCount || 0));
+      combinedResult.sort((a, b) => (b.installsCount || 0) - (a.installsCount || 0));
     } else {
-      // Default: order by creation newest
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      // Default: order local first (by date), then external (by rank/order)
+      combinedResult.sort((a, b) => {
+        if (a.external && !b.external) return 1;
+        if (!a.external && b.external) return -1;
+        if (a.external && b.external) {
+          // Sort external skills by their true API rank/order
+          return (a.upstreamRank || 999999) - (b.upstreamRank || 999999);
+        }
+        // Sort local skills by newest first
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
     }
 
-    return result;
-  }, [skills, search, activeTab, authorFilter, categoryFilter]);
+    return combinedResult;
+  }, [skills, externalSkills, search, activeTab, authorFilter, categoryFilter]);
 
-  // Calculate paginated index
-  const totalPages = Math.ceil(filteredAndSortedSkills.length / itemsPerPage) || 1;
-  const paginatedSkills = useMemo(() => {
-    // Reset page if it exceeds maximum
-    const maxPage = Math.ceil(filteredAndSortedSkills.length / itemsPerPage) || 1;
-    const activePage = currentPage > maxPage ? maxPage : currentPage;
+  // Determine sort label for display
+  const sortLabel = useMemo(() => {
+    if (activeTab === 'popular') return 'stars';
+    if (activeTab === 'recent') return 'date';
+    if (activeTab === 'most-installed') return 'installs';
+    return 'order';
+  }, [activeTab]);
+
+  const trueTotal = useMemo(() => {
+    // If we're looking at purely imported, total is externalTotal
+    if (categoryFilter === 'imported') return externalTotal;
+    // Local skills base count (pre-filter to estimate real total if we want, but using filtered local is safer)
+    const localCount = skills.length;
+    // Since we don't have server-side pagination for local skills yet, we just add local + externalTotal
+    // But if we're filtering locally, we should use the filtered local count
+    const filteredLocalCount = filteredAndSortedSkills.filter(s => !s.external).length;
     
-    const startIdx = (activePage - 1) * itemsPerPage;
-    return filteredAndSortedSkills.slice(startIdx, startIdx + itemsPerPage);
-  }, [filteredAndSortedSkills, currentPage]);
-
-  const handlePageChange = (pageNum) => {
-    if (pageNum >= 1 && pageNum <= totalPages) {
-      setCurrentPage(pageNum);
-      // Smooth scroll back to top of lists
-      window.scrollTo({ top: 180, behavior: 'smooth' });
+    if (categoryFilter === 'all' || categoryFilter === 'skill') {
+      return filteredLocalCount + externalTotal;
     }
-  };
-
-  // Safe pagination tabs render
-  const renderPaginationButtons = () => {
-    const pages = [];
-    
-    // First page
-    pages.push(1);
-
-    if (currentPage > 3) {
-      pages.push('...');
-    }
-
-    // Neighbors
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
-      if (!pages.includes(i)) pages.push(i);
-    }
-
-    if (currentPage < totalPages - 2) {
-      pages.push('...');
-    }
-
-    // Last page
-    if (totalPages > 1 && !pages.includes(totalPages)) {
-      pages.push(totalPages);
-    }
-
-    return pages.map((p, idx) => {
-      if (p === '...') {
-        return (
-          <span key={`dots-${idx}`} className="px-2.5 py-1.5 text-xs text-[var(--gray-700)]/60 font-mono">
-            ...
-          </span>
-        );
-      }
-      return (
-        <button
-          key={`page-${p}`}
-          onClick={() => handlePageChange(p)}
-          className={`h-7 w-7 rounded-md text-xs font-semibold font-mono transition-all duration-150 ${
-            currentPage === p
-              ? 'bg-[var(--blue-700)] text-[var(--background-100)] border border-[var(--blue-200)]'
-              : 'border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)]'
-          }`}
-        >
-          {p}
-        </button>
-      );
-    });
-  };
+    // For other categories, we only have local skills
+    return filteredLocalCount;
+  }, [filteredAndSortedSkills, externalTotal, categoryFilter, skills.length]);
 
   return (
     <div className="space-y-6">
@@ -315,7 +501,6 @@ function SkillsListContent({ skills }) {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setCurrentPage(1);
             }}
             className="bg-transparent border-none outline-none w-full text-[var(--primary)] placeholder-text-secondary/50 text-xs"
           />
@@ -335,7 +520,6 @@ function SkillsListContent({ skills }) {
                 key={tab.id}
                 onClick={() => {
                   setActiveTab(tab.id);
-                  setCurrentPage(1);
                 }}
                 className={`rounded px-3.5 py-1.5 transition-colors duration-150 ${
                   activeTab === tab.id
@@ -354,7 +538,6 @@ function SkillsListContent({ skills }) {
               value={authorFilter}
               onChange={(e) => {
                 setAuthorFilter(e.target.value);
-                setCurrentPage(1);
               }}
               className="rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] px-3 py-2 text-xs text-[var(--primary)] outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-[var(--background-100)] [&>option]:text-[var(--primary)] cursor-pointer"
             >
@@ -373,7 +556,6 @@ function SkillsListContent({ skills }) {
               value={categoryFilter}
               onChange={(e) => {
                 setCategoryFilter(e.target.value);
-                setCurrentPage(1);
               }}
               className="rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] px-3 py-2 text-xs text-[var(--primary)] outline-none transition-colors focus:border-text-primary/30 min-w-[120px] [&>option]:bg-[var(--background-100)] [&>option]:text-[var(--primary)] cursor-pointer uppercase"
             >
@@ -390,158 +572,139 @@ function SkillsListContent({ skills }) {
 
       </div>
 
-      {/* Row count info */}
-      <div className="text-xs font-medium text-[var(--gray-700)]">
-        {filteredAndSortedSkills.length} public skills
-      </div>
-
-      {/* Skills list table */}
-      <div className="space-y-4">
+      {/* Sleek Terminal-like Skills Container aligned with Geist Dark tokens */}
+      <div className="border border-[var(--gray-300)] rounded-xl bg-[var(--background-200)] p-6 shadow-card font-mono text-[13px] text-[var(--secondary)]">
         
-        {/* Table column headers (desktop only) */}
-        <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-6 text-[10px] font-bold uppercase tracking-wider text-[var(--gray-700)]/70">
-          <div className="col-span-6">Skill</div>
-          <div className="col-span-2 text-center">Author</div>
-          <div className="col-span-1 text-center">Version</div>
-          <div className="col-span-1 text-center">Installs</div>
-          <div className="col-span-1 text-center font-semibold text-[var(--blue-700)]">Stars</div>
-          <div className="col-span-1 text-right">Updated</div>
+        {/* Terminal Header */}
+        <div className="flex items-center justify-between border-b border-[var(--gray-300)]/70 pb-4 mb-4 select-none text-[11px] font-semibold text-[var(--secondary)]">
+          <div className="font-mono text-[var(--primary)]">
+            $ kresh skills – {filteredAndSortedSkills.length.toLocaleString()} visible / {trueTotal.toLocaleString()} total
+          </div>
+          <div className="font-mono text-[var(--secondary)]">sorted by {sortLabel}</div>
         </div>
 
         {/* Skills rows */}
-        {paginatedSkills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-[var(--background-100)] border border-[var(--gray-400)] shadow-card rounded-lg text-center">
-            <span className="font-mono text-xs text-[var(--gray-700)]/50 mb-3">$ no skills found</span>
-            <p className="text-sm text-[var(--gray-700)]">Try searching with another keyword or author.</p>
+        {filteredAndSortedSkills.length === 0 ? (
+          <div className="py-12 text-center">
+            <span className="font-mono text-xs text-[var(--secondary)]/50 mb-3 block">$ no skills found</span>
+            <p className="text-sm text-[var(--secondary)] font-sans">Try searching with another keyword or category.</p>
           </div>
         ) : (
-          paginatedSkills.map((skill) => {
-            const iconObj = getSkillIcon(skill.name, skill.category);
-            const gradientStyle = getSkillGradient(skill.slug);
-            const IconComponent = iconObj.type === 'icon' ? iconObj.element : null;
+          <div className="divide-y divide-[var(--gray-300)]/45">
+            {filteredAndSortedSkills.map((skill) => {
+              const detailHref = skill.external 
+                ? `/skills/external/${skill.slug.replace(/^external\//, '')}` 
+                : `/skills/${skill.slug}`;
+              const author = skill.ownerUsername || (skill.external ? 'upstream' : 'unknown');
+              
+              const badgeClass = getCategoryClass(skill.category);
+              const timeAgo = formatTimeAgo(skill.createdAt);
 
-            return (
-              <div 
-                key={skill.id}
-                className="bg-[var(--background-100)] border border-[var(--gray-400)] shadow-card rounded-xl p-5 hover:border-[var(--gray-400)] hover:bg-[var(--gray-100)] transition-all duration-200"
-              >
-                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-5 items-start lg:items-center">
-                  
-                  {/* Skill main info column (Col span 6) */}
-                  <div className="col-span-6 flex gap-4 w-full">
-                    {/* Gradient Icon box */}
-                    <div 
-                      style={gradientStyle}
-                      className="w-12 h-12 rounded-xl border shrink-0 shadow-inner select-none"
-                    />
+              return (
+                <div 
+                  key={skill.id || skill.slug}
+                  className="py-5 first:pt-2 last:pb-2 flex flex-col gap-2.5"
+                >
+                  {/* Header: Badge & Link Title */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono tracking-wide ${badgeClass}`}>
+                      {skill.category || 'skill'}
+                    </span>
                     
-                    {/* Details details */}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Link href={`/skills/${skill.slug}`} className="hover:text-[var(--blue-700)] transition-colors duration-150">
-                          <h3 className="text-sm font-bold text-[var(--primary)] truncate">{skill.name}</h3>
-                        </Link>
-                        <Badge variant="default" className="text-[9px] px-1.5 py-0.5 lowercase tracking-normal font-semibold">
-                          {skill.category}
-                        </Badge>
-                      </div>
-                      <p className="mt-1 text-xs text-[var(--gray-700)] line-clamp-2 max-w-xl">
-                        {skill.description || 'No description provided.'}
-                      </p>
-                      {/* Copy CLI CLI command box */}
-                      <CopyCommandLine slug={skill.slug} />
+                    <Link 
+                      href={detailHref} 
+                      className="text-base font-bold text-white hover:text-[var(--blue-500)] transition-colors duration-150 font-mono tracking-tight"
+                    >
+                      {skill.name}
+                    </Link>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-xs text-[var(--secondary)] leading-relaxed font-sans max-w-4xl">
+                    {skill.description || 'No description provided.'}
+                  </p>
+
+                  {/* Metadata & Command Input Box */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
+                    
+                    {/* Meta info columns */}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--secondary)] font-mono">
+                      <span className="flex items-center gap-1 font-semibold text-[var(--primary)]">
+                        {skill.external ? (
+                          <a 
+                            href={skill.sourceUrl || skill.upstreamUrl} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="hover:underline hover:text-white"
+                          >
+                            {author}
+                          </a>
+                        ) : (
+                          <Link href={`/@${author}`} className="hover:underline hover:text-white">
+                            {author}
+                          </Link>
+                        )}
+                        {(skill.external || author === 'vercel-labs' || author === 'anthropics' || author === 'chakresh') && (
+                          <span className="text-[var(--blue-500)] font-bold ml-0.5">✓</span>
+                        )}
+                      </span>
+                      
+                      <span className="text-[var(--gray-300)]">|</span>
+                      
+                      <span className="flex items-center gap-1">
+                        <span>↓</span>
+                        <span>{formatStatCount(skill.installsCount)}</span>
+                      </span>
+
+                      <span className="text-[var(--gray-300)]">|</span>
+
+                      <span className="flex items-center gap-1">
+                        <span>★</span>
+                        <span>{skill.starsCount || 0}</span>
+                      </span>
+
+                      <span className="text-[var(--gray-300)]">|</span>
+
+                      <span>updated {timeAgo}</span>
                     </div>
-                  </div>
 
-                  {/* Author column (Col span 2) */}
-                  <div className="lg:col-span-2 flex items-center gap-1.5 text-xs text-[var(--primary)] lg:justify-center w-full lg:w-auto border-t lg:border-t-0 border-[var(--gray-200)] pt-3 lg:pt-0">
-                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 shrink-0">Author:</span>
-                    <div className="flex items-center gap-1">
-                      <Link href={`/@${skill.ownerUsername || 'unknown'}`} className="font-semibold text-[var(--gray-700)] hover:text-[var(--primary)] transition-colors cursor-pointer">
-                        @{skill.ownerUsername || 'unknown'}
-                      </Link>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[var(--blue-700)] fill-[var(--blue-100)]" />
-                    </div>
-                  </div>
+                    {/* Command display box */}
+                    <CopyCommandLine slug={skill.slug} />
 
-                  {/* Version column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs text-[var(--gray-700)] font-mono lg:text-center w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Version:</span>
-                    <span>v{skill.currentVersion || '1.0.0'}</span>
-                  </div>
-
-                  {/* Installs column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs text-[var(--gray-700)] font-mono lg:text-center w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Installs:</span>
-                    <span>{formatStatCount(skill.installsCount)}</span>
-                  </div>
-
-                  {/* Stars column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs font-semibold font-mono text-[var(--blue-700)] lg:text-center w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Stars:</span>
-                    <span>{skill.starsCount || 0}</span>
-                  </div>
-
-                  {/* Updated date column (Col span 1) */}
-                  <div className="lg:col-span-1 text-xs text-[var(--gray-700)]/85 text-left lg:text-right w-full lg:w-auto">
-                    <span className="lg:hidden text-[10px] text-[var(--gray-700)] font-bold uppercase w-24 inline-block">Updated:</span>
-                    <span className="font-mono">{formatDate(skill.createdAt)}</span>
                   </div>
 
                 </div>
-
-                {/* Bottom row actions (aligned on the right side) */}
-                <div className="mt-4 flex items-center justify-end gap-2.5 border-t border-[var(--gray-200)] pt-3">
-                  <Link href={`/skills/${skill.slug}`}>
-                    <button 
-                      type="button" 
-                      className="rounded border border-[var(--gray-400)] bg-[var(--gray-100)] hover:bg-[var(--gray-200)] px-4 py-1.5 text-center text-xs font-semibold text-[var(--primary)] transition-all duration-150 outline-none"
-                    >
-                      View
-                    </button>
-                  </Link>
-                  <a href={`/api/skills/download/${skill.slug}`}>
-                    <button 
-                      type="button" 
-                      className="rounded border border-[var(--gray-400)] bg-[var(--gray-1000)] px-4 py-1.5 text-center text-xs font-bold text-[var(--background-100)] hover:opacity-90 transition-all duration-150 outline-none flex items-center gap-1.5"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Install</span>
-                    </button>
-                  </a>
-                </div>
-
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
 
       </div>
 
-      {/* Pagination controls */}
-      {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-2.5 pt-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="h-7 w-7 rounded-md border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-150"
-            title="Previous page"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+      {/* Sentinel for infinite scroll / Load More */}
+      {(categoryFilter === 'all' || categoryFilter === 'imported' || categoryFilter === 'skill') && (
+        <div ref={sentinelNodeRef} className="mt-8 mb-8 min-h-[40px] flex flex-col items-center justify-center text-xs text-[var(--gray-700)]">
+          {loading ? (
+            <div className="flex items-center gap-2 font-mono mt-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--blue-500)] animate-ping" />
+              <span>Loading more community skills…</span>
+            </div>
+          ) : error ? (
+            <div className="text-[var(--red-500)] mt-4">Failed to load more skills.</div>
+          ) : !hasMore ? (
+            <div className="mt-4 font-mono text-center">End of community catalog</div>
+          ) : null}
           
-          <div className="flex items-center gap-1.5">
-            {renderPaginationButtons()}
-          </div>
-
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="h-7 w-7 rounded-md border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--gray-700)] hover:text-[var(--primary)] hover:bg-[var(--gray-100)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors duration-150"
-            title="Next page"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          {/* Manual fallback button if not loading but has more (handles error and observer misses) */}
+          {!loading && hasMore && (
+            <button 
+              type="button" 
+              onClick={handleManualLoad} 
+              className="mt-6 block rounded-lg border border-[var(--gray-400)] bg-[var(--background-100)] px-6 py-2.5 font-mono text-xs text-[var(--primary)] hover:bg-[var(--gray-100)] shadow-sm transition-all hover:border-[var(--gray-500)]"
+            >
+              {error ? 'Retry Loading' : 'Load More Skills'}
+            </button>
+          )}
         </div>
       )}
 
@@ -551,7 +714,7 @@ function SkillsListContent({ skills }) {
 
 export function SkillsList({ skills }) {
   return (
-    <Suspense fallback={<div className="text-center py-12 text-sm text-[var(--gray-700)]">Loading search...</div>}>
+    <Suspense fallback={<div className="text-center py-12 text-sm text-[var(--gray-700)] font-mono">Loading search...</div>}>
       <SkillsListContent skills={skills} />
     </Suspense>
   );
