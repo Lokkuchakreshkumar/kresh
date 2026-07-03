@@ -42,8 +42,51 @@ function CopyButton({ text }) {
   );
 }
 
+function PromptCopyBox({ promptText }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  return (
+    <div 
+      onClick={handleCopy}
+      className="w-full rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] shadow-card transition-all duration-150 cursor-pointer hover:border-[var(--gray-600)] hover:bg-[var(--gray-100)] select-none"
+    >
+      <div className="p-4 flex items-center justify-between group w-full min-w-0 gap-3">
+        <div className="flex items-center gap-3 font-mono text-sm sm:text-base min-w-0">
+          <span className="text-[var(--primary)] font-semibold truncate">
+            {copied ? "Prompt copied!" : "Copy prompt for AI Agent"}
+          </span>
+        </div>
+        <button
+          type="button"
+          className={`transition-all duration-150 p-1.5 rounded-[6px] ${
+            copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)] group-hover:text-[var(--primary)]'
+          }`}
+          aria-label="Copy prompt"
+        >
+          {copied ? (
+            <Check className="w-4 h-4" />
+          ) : (
+            <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [session, setSession] = useState(null);
+  const [mode, setMode] = useState('human');
   const [scrollImages, setScrollImages] = useState([
     { src: '/scroll/chatgpt_logo.png', name: 'ChatGPT' },
     { src: '/scroll/claude_logo.png', name: 'Claude' },
@@ -91,6 +134,36 @@ export default function Home() {
               <span>Kresh v0.1.3 is now public</span>
             </div>
 
+            {/* Toggle Switcher */}
+            <div className="flex p-0.5 rounded-[8px] bg-[var(--gray-200)] border border-[var(--gray-300)] max-w-[200px] w-full mx-auto mb-8 relative">
+              <button
+                type="button"
+                onClick={() => setMode('human')}
+                className={`flex-1 py-1.5 px-4 rounded-[6px] text-xs font-semibold uppercase transition-all duration-200 relative z-10 ${
+                  mode === 'human' ? 'text-[var(--background-100)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
+                }`}
+              >
+                Human
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('ai')}
+                className={`flex-1 py-1.5 px-4 rounded-[6px] text-xs font-semibold uppercase transition-all duration-200 relative z-10 ${
+                  mode === 'ai' ? 'text-[var(--background-100)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
+                }`}
+              >
+                AI
+              </button>
+              {/* Active sliding background indicator */}
+              <div
+                className="absolute top-0.5 bottom-0.5 rounded-[6px] bg-[var(--primary)] transition-all duration-300 ease-out shadow-sm"
+                style={{
+                  left: mode === 'human' ? '2px' : 'calc(50% + 1px)',
+                  width: 'calc(50% - 3px)'
+                }}
+              />
+            </div>
+
             <h1 className="text-[var(--primary)] mb-8 flex flex-wrap justify-center items-center text-center max-w-4xl font-bold w-full text-5xl sm:text-7xl leading-[1.1] tracking-tight">
               <span>Install </span>
               <TextRotator 
@@ -103,17 +176,23 @@ export default function Home() {
               AI Knows More With Kresh.
             </p>
 
-            <div className="relative w-full max-w-sm mb-8 mx-auto">
-              <div className="w-full rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] shadow-card transition-colors duration-150">
-                <div className="p-4 flex items-center justify-between group cursor-text w-full min-w-0 gap-3">
-                  <div className="flex items-center gap-3 font-mono text-base min-w-0">
-                    <span className="text-[var(--gray-700)] shrink-0">$</span>
-                    <span className="text-[var(--primary)] font-semibold truncate">npm i -g @chakresh/kresh</span>
+            {mode === 'human' ? (
+              <div className="relative w-full max-w-sm mb-8 mx-auto transition-all duration-300">
+                <div className="w-full rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] shadow-card transition-colors duration-150">
+                  <div className="p-4 flex items-center justify-between group cursor-text w-full min-w-0 gap-3">
+                    <div className="flex items-center gap-3 font-mono text-base min-w-0">
+                      <span className="text-[var(--gray-700)] shrink-0">$</span>
+                      <span className="text-[var(--primary)] font-semibold truncate">npm i -g @chakresh/kresh</span>
+                    </div>
+                    <CopyButton text="npm i -g @chakresh/kresh" />
                   </div>
-                  <CopyButton text="npm i -g @chakresh/kresh" />
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="relative w-full max-w-sm mb-8 mx-auto transition-all duration-300">
+                <PromptCopyBox promptText="Install the Kresh CLI: npm i -g @chakresh/kresh. Then run kresh install chakresh/kresh to pull in the Kresh skill — a registry of reusable skills, AGENTS.md/CLAUDE.md configs, design.md docs, and loops built for AI agents. Read the installed SKILL.md fully before doing anything else. From now on, before improvising a workflow for anything domain-specific or repeated (testing, docs, deployment, design systems, etc.), run kresh search <query> first to check if a purpose-built skill already exists, and install it with kresh install <slug> if it's a good match. Tell me what you installed and understood before starting my actual task." />
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
               <a 
