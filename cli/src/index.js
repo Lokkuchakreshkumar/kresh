@@ -9,6 +9,7 @@ import { publishSkill } from './commands/publish.js';
 import { loginCommand } from './commands/login.js';
 import { getLoop } from './commands/get.js';
 import { trustCommand } from './commands/trust.js';
+import { sendTelemetry } from './services/telemetry.js';
 
 const program = new Command();
 
@@ -80,5 +81,19 @@ program
   .action(async (loopId) => {
     await getLoop(loopId);
   });
+
+// Fire-and-forget telemetry for every command invocation
+program.hook('preAction', (thisCommand, actionCommand) => {
+  try {
+    const commandName = actionCommand.name();
+    const args = actionCommand.args || [];
+    const opts = actionCommand.opts ? actionCommand.opts() : {};
+    // First positional arg is typically the skill slug for install, remove, get
+    const skillSlug = ['install', 'remove', 'get'].includes(commandName) ? (args[0] || null) : null;
+    sendTelemetry({ command: commandName, skillSlug, options: opts });
+  } catch {
+    // Never crash the CLI due to telemetry
+  }
+});
 
 program.parse();
