@@ -56,7 +56,7 @@ function PromptCopyBox({ promptText }) {
   };
 
   return (
-    <div 
+    <div
       onClick={handleCopy}
       className="w-full rounded-[6px] border border-[var(--gray-400)] bg-[var(--background-100)] shadow-card transition-all duration-150 cursor-pointer hover:border-[var(--gray-600)] hover:bg-[var(--gray-100)] select-none"
     >
@@ -68,9 +68,8 @@ function PromptCopyBox({ promptText }) {
         </div>
         <button
           type="button"
-          className={`transition-all duration-150 p-1.5 rounded-[6px] ${
-            copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)] group-hover:text-[var(--primary)]'
-          }`}
+          className={`transition-all duration-150 p-1.5 rounded-[6px] ${copied ? 'text-[var(--blue-700)]' : 'text-[var(--gray-700)] group-hover:text-[var(--primary)]'
+            }`}
           aria-label="Copy prompt"
         >
           {copied ? (
@@ -126,7 +125,7 @@ export default function Home() {
         {/* HERO SECTION */}
         <section className="relative w-full overflow-hidden mb-32 flex flex-col items-center justify-center min-h-screen pt-[120px] pb-[70px] border-b border-[var(--gray-200)]">
 
-          
+
           <div className="relative z-20 max-w-6xl mx-auto px-6 text-center flex flex-col items-center w-full">
             {/* Premium Release Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--gray-200)] bg-[var(--background-200)] text-[12px] text-[var(--gray-900)] font-medium mb-6 select-none">
@@ -139,18 +138,16 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setMode('human')}
-                className={`flex-1 py-1.5 px-4 rounded-[6px] text-xs font-semibold uppercase transition-all duration-200 relative z-10 ${
-                  mode === 'human' ? 'text-[var(--background-100)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
-                }`}
+                className={`flex-1 py-1.5 px-4 rounded-[6px] text-xs font-semibold uppercase transition-all duration-200 relative z-10 ${mode === 'human' ? 'text-[var(--background-100)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
+                  }`}
               >
                 Human
               </button>
               <button
                 type="button"
                 onClick={() => setMode('ai')}
-                className={`flex-1 py-1.5 px-4 rounded-[6px] text-xs font-semibold uppercase transition-all duration-200 relative z-10 ${
-                  mode === 'ai' ? 'text-[var(--background-100)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
-                }`}
+                className={`flex-1 py-1.5 px-4 rounded-[6px] text-xs font-semibold uppercase transition-all duration-200 relative z-10 ${mode === 'ai' ? 'text-[var(--background-100)]' : 'text-[var(--gray-700)] hover:text-[var(--primary)]'
+                  }`}
               >
                 AI
               </button>
@@ -166,9 +163,9 @@ export default function Home() {
 
             <h1 className="text-[var(--primary)] mb-8 flex flex-wrap justify-center items-center text-center max-w-4xl font-bold w-full text-5xl sm:text-7xl leading-[1.1] tracking-tight">
               <span>Install </span>
-              <TextRotator 
-                words={['Intelligence.', 'Skills.', 'agent.md.', 'Design.md.', 'Loops.']} 
-                className="text-[var(--gray-700)]" 
+              <TextRotator
+                words={['Intelligence.', 'Skills.', 'agent.md.', 'Design.md.', 'Loops.']}
+                className="text-[var(--gray-700)]"
               />
             </h1>
 
@@ -190,18 +187,18 @@ export default function Home() {
               </div>
             ) : (
               <div className="relative w-full max-w-sm mb-8 mx-auto transition-all duration-300">
-                <PromptCopyBox promptText="Install the Kresh CLI: npm i -g @chakresh/kresh. Then run kresh install chakresh/kresh to pull in the Kresh skill — a registry of reusable skills, AGENTS.md/CLAUDE.md configs, design.md docs, and loops built for AI agents. Read the installed SKILL.md fully before doing anything else. From now on, before improvising a workflow for anything domain-specific or repeated (testing, docs, deployment, design systems, etc.), run kresh search <query> first to check if a purpose-built skill already exists, and install it with kresh install <slug> if it's a good match. Tell me what you installed and understood before starting my actual task." />
+                <PromptCopyBox promptText="Install the Kresh CLI: npm i -g @chakresh/kresh. Then run kresh install @chakresh/kresh to pull in the Kresh skill — a registry of reusable skills, AGENTS.md/CLAUDE.md configs, design.md docs, and loops built for AI agents. Read the installed SKILL.md fully before doing anything else. From now on, before improvising a workflow for anything domain-specific or repeated (testing, docs, deployment, design systems, etc.), run kresh search <query> first to check if a purpose-built skill already exists, and install it with kresh install <slug> if it's a good match. Tell me what you installed and understood before starting my actual task." />
               </div>
             )}
 
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-              <a 
+              <a
                 href={session ? `/@${session.username}` : "/signup"}
                 className="font-medium px-4 h-10 bg-[var(--gray-1000)] text-[var(--background-100)] hover:bg-[var(--gray-900)] rounded-[6px] text-[14px] inline-flex items-center justify-center transition-colors duration-150"
               >
                 {session ? "Go to Dashboard" : "Get Started"} <ChevronRight className="w-4 h-4 ml-1" />
               </a>
-              <a 
+              <a
                 href={session ? `/skills` : "/signin"}
                 className="font-medium px-4 h-10 border border-[var(--gray-400)] bg-[var(--background-100)] text-[var(--primary)] hover:bg-[var(--gray-100)] rounded-[6px] text-[14px] inline-flex items-center justify-center transition-colors duration-150"
               >
