@@ -37,6 +37,13 @@ export default function RootLayout({ children }) {
             strategy="afterInteractive"
           />
         )}
+        {process.env.NEXT_PUBLIC_FEATBACK_SITE_ID && (
+          <Script
+            src="https://featback.vercel.app/widget.js"
+            data-site-id={process.env.NEXT_PUBLIC_FEATBACK_SITE_ID}
+            strategy="afterInteractive"
+          />
+        )}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-full flex flex-col font-sans`}

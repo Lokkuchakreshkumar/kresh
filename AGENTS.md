@@ -25,4 +25,4 @@ Instructions:
 Security:
 security should also be the top priority 
 use try-catch blocks when creating something (should not crash in production.).
-make files more organized and clean structure ,no file should get bloated with 100's lines of code ,split the code into multiple files where required
+make files more organized and clean structure ,no file should get bloated with 100's lines of code ,split the code into multiple files where req
